@@ -4,8 +4,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import AuthStackNavigator from './navigators/AuthStackNavigator';
+import AppStackNavigator from './navigators/AppStackNavigator';
 
-import { View, Text } from 'react-native';
 
 const RootStack = createStackNavigator();
 
@@ -18,7 +18,8 @@ export default function App() {
 				}}
 			>
 				<RootStack.Screen name={'AuthStack'} component={AuthStackNavigator} />
-			</RootStack.Navigator>
+                <RootStack.Screen name={'AppStack'} component={AppStackNavigator} />
+            </RootStack.Navigator>
 		</NavigationContainer>
 	);
 }

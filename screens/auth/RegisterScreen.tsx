@@ -19,6 +19,7 @@ const RegisterScreen = ({ navigation }: any) => {
 
 	return (
 		<View style={styles.container}>
+            <Text>INSCRIPTION</Text>
             <Text style={styles.error}>{error}</Text>
 			<View style={styles.containerTextinput}>
 				<TextInput

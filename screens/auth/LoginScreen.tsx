@@ -3,20 +3,22 @@ import { TextInput, StyleSheet, View, Button, TouchableOpacity, Text, ToastAndro
 
 import Fire from '../../config/Fire';
 
+import Error from '../../components/auth/Error'
+
 const LoginScreen = ({ navigation }: any) => {
 
     const [password, setPassword] = useState('');
     const [mail, setMail] = useState('');
-    const [error, setError] = useState('');
+    const [error, setError] = useState('aaaa');
 
     const connect = () => {
-        Fire.shared.connect(mail, password).then(() => ToastAndroid.show("Connexion ok", 1000)).catch((err) => setError(err.toString()))
+        Fire.shared.connect(mail, password).then(() => {ToastAndroid.show("Connexion ok", 1000); navigation.navigate('AppStack')}).catch((err) => setError(err.toString()))
     }
 
     
 	return (
 		<View style={styles.container}>
-            <Text style={styles.error}>{error}</Text>
+            <Error error={error} />
 			<View style={styles.containerTextinput}>
                 <TextInput style={styles.textinput} placeholder='Votre mail' onChangeText={(text) => setMail(text)} value={mail}></TextInput>
                 <TextInput style={styles.textinput} placeholder='Votre mot de passe' onChangeText={(text) => setPassword(text)} secureTextEntry value={password}></TextInput>
