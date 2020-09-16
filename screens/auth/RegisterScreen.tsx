@@ -3,100 +3,113 @@ import { Button, StyleSheet, TextInput, TouchableOpacity, View, Text, ToastAndro
 
 import Fire from '../../config/Fire';
 
+import Error from '../../components/auth/Error';
+import Heading from '../../components/auth/Heading';
+import FilledButton from '../../components/auth/FilledButton';
+import Input from '../../components/auth/Input';
+import TextButton from '../../components/auth/TextButton';
+import ProfilePicturePicker from '../../components/auth/ProfilePicturePicker';
+
+import * as Permissions from 'expo-permissions';
+import * as ImagePicker from 'expo-image-picker';
+
 export interface RegisterScreenProps {}
 
 const RegisterScreen = ({ navigation }: any) => {
 	const [mail, setMail] = useState('');
 	const [nom, setNom] = useState('');
 	const [prenom, setPrenom] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+	const [password, setPassword] = useState('');
+	const [error, setError] = useState('');
+	const [avatar, setAvatar] = useState<null | string>(null);
 
-    const create = (mail: string, nom: string, prenom: string, password: string) => {
-        setError('');
-        Fire.shared.createUser(mail, password,nom,prenom, null).then(() => ToastAndroid.show("inscription ok", 1000)).catch((err) => setError(err.toString()))
-    }
+	const register = (mail: string, nom: string, prenom: string, password: string, avatar: null | string) => {
+		setError('');
+		Fire.shared
+			.createUser(mail, password, nom, prenom, avatar)
+			.then(() => {
+				ToastAndroid.show('Inscription réussi', 5000);
+				navigation.navigate('AppStack');
+			})
+			.catch((err) => setError(err.toString()));
+	};
+
+	const handlePickAvatar = async () => {
+		getCameraPermission();
+
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [1, 1],
+		});
+
+		if (!result.cancelled) {
+			setAvatar(result.uri);
+		}
+	};
+
+	const getCameraPermission = async () => {
+		const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+
+		if (status != 'granted') {
+			alert('Il besoin de la camera');
+		}
+	};
 
 	return (
 		<View style={styles.container}>
-            <Text>INSCRIPTION</Text>
-            <Text style={styles.error}>{error}</Text>
-			<View style={styles.containerTextinput}>
-				<TextInput
-					style={styles.textinput}
-					placeholder="Votre mail"
-					onChangeText={(text) => setMail(text)}
-					value={mail}
-				></TextInput>
-				<TextInput
-					style={styles.textinput}
-					placeholder="Votre nom"
-					onChangeText={(text) => setNom(text)}
-					value={nom}
-				></TextInput>
-				<TextInput
-					style={styles.textinput}
-					placeholder="Votre prenom"
-					onChangeText={(text) => setPrenom(text)}
-					value={prenom}
-				></TextInput>
-				<TextInput
-					style={styles.textinput}
-					placeholder="Votre mot de passe"
-					onChangeText={(text) => setPassword(text)}
-					secureTextEntry
-					value={password}
-				></TextInput>
-			</View>
-			<TouchableOpacity style={styles.containerButton} onPress={() => create(mail, nom, prenom, password)}>
-				<Text style={styles.textButton}>INSCRIPTION</Text>
-			</TouchableOpacity>
-			<TouchableOpacity style={styles.containerAuthSwitch} onPress={() => navigation.navigate('Login')}>
-				<Text style={styles.authSwitch}>J'ai deja un compte</Text>
-			</TouchableOpacity>
+			<Heading style={styles.title}>INSCRIPTION</Heading>
+			<Error error={error} />
+			<ProfilePicturePicker onPress={handlePickAvatar} avatarLink={avatar} />
+			<Input
+				style={styles.input}
+				placeholder={'Mail'}
+				keyboardType={'email-address'}
+				value={mail}
+				onChangeText={setMail}
+			/>
+			<Input style={styles.input} placeholder={'Nom'} value={nom} onChangeText={setNom} />
+			<Input style={styles.input} placeholder={'Prenom'} value={prenom} onChangeText={setPrenom} />
+			<Input
+				style={styles.input}
+				placeholder={'Mot de Passe'}
+				secureTextEntry
+				value={password}
+				onChangeText={setPassword}
+			/>
+			<FilledButton
+				title={"s'inscrire"}
+				style={styles.loginButton}
+				onPress={() => {
+					register(mail, password, nom, prenom, avatar);
+				}}
+			/>
+			<TextButton
+				title="Déja inscrit ?"
+				onPress={() => {
+					navigation.pop();
+				}}
+			/>
 		</View>
 	);
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex :1,
-        justifyContent: "center",
-    },
-    containerTextinput: {
-        marginHorizontal: 15,
-        marginBottom: 30,
-    },
-    textinput: {
-        paddingVertical: 20,
-        marginVertical: 10,
-        paddingLeft: 20,
-        color: "black",
-        marginBottom: 20,
-        backgroundColor: "#e5e5e5",
-    },
-    containerAuthSwitch : {
-        alignSelf: "center",
-        marginTop: 30
-    },
-    authSwitch: {
-        textDecorationLine: "underline",
-        color: "#2a54c5"
-    },
-    containerButton: {
-        backgroundColor: "#5e86f2",
-        borderRadius: 5,
-        alignItems: "center",
-        marginHorizontal: 60,
-        paddingVertical: 20
-    },
-    textButton:{
-        color: "white"
-    },
-    error : {
-        color: "red",
-        alignSelf: "center"
-    }
+	container: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		marginHorizontal: 20,
+	},
+	title: {
+		marginBottom: 0,
+	},
+	input: {
+		marginVertical: 8,
+	},
+	loginButton: {
+		marginVertical: 32,
+	},
 });
 
 export default RegisterScreen;
