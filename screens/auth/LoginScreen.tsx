@@ -13,15 +13,18 @@ const LoginScreen = ({ navigation }: any) => {
 	const [password, setPassword] = useState('');
 	const [mail, setMail] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
 	const connect = () => {
+        setError('');
+        setLoading(true);
 		Fire.shared
 			.connect(mail, password)
 			.then(() => {
 				ToastAndroid.show('Connexion réussi', 5000);
 				navigation.navigate('AppStack');
 			})
-			.catch((err) => setError(err.toString()));
+			.catch((err) => {setError(err.toString()); setLoading(false)});
 	};
 
 	return (
@@ -46,8 +49,9 @@ const LoginScreen = ({ navigation }: any) => {
 				title={'Me connecter'}
 				style={styles.loginButton}
 				onPress={() => {
-					alert("ok")
-				}}
+					connect()
+                }}
+                loading={loading}
 			/>
 			<TextButton
 				title="Pas encore inscrit ?"

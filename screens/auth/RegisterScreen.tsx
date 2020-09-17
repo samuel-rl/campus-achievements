@@ -21,17 +21,19 @@ const RegisterScreen = ({ navigation }: any) => {
 	const [prenom, setPrenom] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
-	const [avatar, setAvatar] = useState<null | string>(null);
+    const [avatar, setAvatar] = useState<null | string>(null);
+    const [loading, setLoading] = useState(false);
 
 	const register = (mail: string, nom: string, prenom: string, password: string, avatar: null | string) => {
-		setError('');
+        setError('');
+        setLoading(true);
 		Fire.shared
 			.createUser(mail, password, nom, prenom, avatar)
 			.then(() => {
 				ToastAndroid.show('Inscription réussi', 5000);
 				navigation.navigate('AppStack');
 			})
-			.catch((err) => setError(err.toString()));
+			.catch((err) => {setError(err.toString()); setLoading(false)});
 	};
 
 	const handlePickAvatar = async () => {
@@ -82,7 +84,8 @@ const RegisterScreen = ({ navigation }: any) => {
 				style={styles.loginButton}
 				onPress={() => {
 					register(mail, password, nom, prenom, avatar);
-				}}
+                }}
+                loading={loading}
 			/>
 			<TextButton
 				title="Déja inscrit ?"

@@ -1,18 +1,19 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 import colors from '../../config/constants';
 
 export interface FilledButtonProps {
     title : string,
     style: StyleSheet,
-    onPress: Function
+    onPress: Function,
+    loading :boolean
 }
 
-const FilledButton = ({ title, style, onPress }: any) => {
+const FilledButton = ({ title, style, onPress, loading }: any) => {
 	return (
 		<TouchableOpacity style={[styles.container, style]} onPress={onPress}>
-			<Text style={styles.text}>{title.toUpperCase()}</Text>
+			{loading ? <ActivityIndicator size="small"/> : <Text style={styles.text}>{title.toUpperCase()}</Text>}
 		</TouchableOpacity>
 	);
 };
