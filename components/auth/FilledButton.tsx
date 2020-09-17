@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
-import colors from '../../config/constants';
+import {colors} from '../../config/constants';
 
 export interface FilledButtonProps {
     title : string,

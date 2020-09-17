@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
-import colors from '../../config/constants';
+import {colors} from '../../config/constants';
 
 const TextButton = ({ title, style, onPress }: any) => {
 	return (

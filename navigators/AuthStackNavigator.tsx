@@ -5,8 +5,14 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 
+//creation de la stack
 const AuthStack = createStackNavigator();
 
+//stack qui s'appelera AuthStackNavigator
+//Pas de header car pas besoin pour l'authentification
+//deux screens dans cette stack : 
+// -LoginScreen   =>   (lancer en première)
+// -RegisterScreen
 export default function AuthStackNavigator() {
 	return (
         <AuthStack.Navigator 

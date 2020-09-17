@@ -21,38 +21,61 @@ const RegisterScreen = ({ navigation }: any) => {
 	const [prenom, setPrenom] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
-    const [avatar, setAvatar] = useState<null | string>(null);
-    const [loading, setLoading] = useState(false);
+	const [avatar, setAvatar] = useState<null | string>(null);
+	const [loading, setLoading] = useState(false);
 
-	const register = (mail: string, nom: string, prenom: string, password: string, avatar: null | string) => {
-        setError('');
-        setLoading(true);
+	//fonction appeler lorsque il clique sur se connecter
+	const register = (mail: string, password: string, nom: string, prenom: string, avatar: null | string) => {
+		//On réinitialise l'error
+		setError('');
+		//On lance le loader
+		setLoading(true);
+		//
+		console.log({ mail, password, nom, prenom, avatar });
 		Fire.shared
 			.createUser(mail, password, nom, prenom, avatar)
 			.then(() => {
+				//si la connexion est réussi :
+				//On affiche un Toast
 				ToastAndroid.show('Inscription réussi', 5000);
-				navigation.navigate('AppStack');
+				//on change de stack
+				navigation.reset({
+					index: 0,
+					routes: [{ name: 'AppStack' }],
+				});
 			})
-			.catch((err) => {setError(err.toString()); setLoading(false)});
+			.catch((err) => {
+				//si on à une erreur :
+				//on met l'erreur dans le state
+				setError(err.toString());
+				//on remet le loader a false
+				setLoading(false);
+			});
 	};
 
+	//fonction appelé lorsque on click sur l'avatar
 	const handlePickAvatar = async () => {
+		//on demande la permission d'ouvrir les photos
 		getCameraPermission();
 
+		//on va aller chercher une image au format 1/1
 		let result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
 			aspect: [1, 1],
 		});
 
+		//si l'utilisateur à bien pris une image, alors on la met dans le state
 		if (!result.cancelled) {
 			setAvatar(result.uri);
 		}
 	};
 
+	//function qui demande la permission d'acceder aux photos
 	const getCameraPermission = async () => {
 		const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
+		//si il refuse on lui met une alerte
 		if (status != 'granted') {
 			alert('Il besoin de la camera');
 		}
@@ -75,7 +98,7 @@ const RegisterScreen = ({ navigation }: any) => {
 			<Input
 				style={styles.input}
 				placeholder={'Mot de Passe'}
-				secureTextEntry
+				//secureTextEntry
 				value={password}
 				onChangeText={setPassword}
 			/>
@@ -84,8 +107,8 @@ const RegisterScreen = ({ navigation }: any) => {
 				style={styles.loginButton}
 				onPress={() => {
 					register(mail, password, nom, prenom, avatar);
-                }}
-                loading={loading}
+				}}
+				loading={loading}
 			/>
 			<TextButton
 				title="Déja inscrit ?"

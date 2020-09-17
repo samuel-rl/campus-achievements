@@ -7,6 +7,7 @@ import AuthStackNavigator from './navigators/AuthStackNavigator';
 import AppStackNavigator from './navigators/AppStackNavigator';
 
 
+//Stack contenant toute l'application
 const RootStack = createStackNavigator();
 
 export default function App() {
