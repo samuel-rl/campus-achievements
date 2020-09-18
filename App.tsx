@@ -18,8 +18,8 @@ export default function App() {
 					headerShown: false,
 				}}
 			>
-				<RootStack.Screen name={'AuthStack'} component={AuthStackNavigator} />
                 <RootStack.Screen name={'AppStack'} component={AppStackNavigator} />
+				<RootStack.Screen name={'AuthStack'} component={AuthStackNavigator} />
             </RootStack.Navigator>
 		</NavigationContainer>
 	);

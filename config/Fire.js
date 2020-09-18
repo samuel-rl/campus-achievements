@@ -36,7 +36,9 @@ class Fire {
 					res(x);
                 })
                 //sinon on renvoie l'erreur
-				.catch(x => rej(x));
+				.catch(err => {
+                    rej(err);
+                });
 		});
 	};
 
@@ -99,6 +101,9 @@ class Fire {
 				res('inscription ok');
 			} catch (error) {
                 //on renvoie l'erreur si il y en a une
+                console.log(error.code)
+                console.log(error.message)
+                console.log({error})
 				rej(error);
 			}
 		});
@@ -112,6 +117,7 @@ class Fire {
     /* ******************************
                  getter
     ****************************** */
+
 	get firestore() {
 		return firebase.firestore();
 	}

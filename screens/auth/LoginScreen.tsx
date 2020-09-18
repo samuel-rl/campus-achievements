@@ -35,7 +35,7 @@ const LoginScreen = ({ navigation }: any) => {
 			})
 			.catch((err) => {
 				//si on à une erreur :
-				//on met l'erreur dans le state
+                //on met l'erreur dans le state
 				setError(err.toString());
 				//on remet le loader a false
 				setLoading(false);
