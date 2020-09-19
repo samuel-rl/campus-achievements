@@ -1,24 +1,40 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Button, TouchableOpacity } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 
-export interface ParametersScreenProps {
-}
+import Fire from '../../config/Fire';
 
 const ParametersScreen = () => {
 
-  return (
-    <View style={styles.container}>
-        <Text>paramètres</Text>
-    </View>
-  );
+	const logout = () => {
+        Fire.shared.signOut();
+    }
+
+	return (
+		<View style={styles.container}>
+			<TouchableOpacity style={styles.action} onPress={logout}>
+				<Text style={styles.text}>Déconnexion</Text>
+				<Feather name="log-out" size={24} color="black" />
+			</TouchableOpacity>
+		</View>
+	);
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex :1,
-        justifyContent: "center",
-        alignItems: "center"
-    },
+	container: {
+		flex: 1,
+		justifyContent: 'flex-end',
+		marginHorizontal: 40,
+	},
+	action: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		marginVertical: 20,
+	},
+	text: {
+		fontSize: 24,
+	},
 });
 
 export default ParametersScreen;
