@@ -118,6 +118,10 @@ class Fire {
                  getter
     ****************************** */
 
+    get user() {
+        return firebase.auth.currentUser() || null;
+    }
+
 	get firestore() {
 		return firebase.firestore();
 	}

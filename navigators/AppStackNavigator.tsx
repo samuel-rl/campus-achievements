@@ -1,40 +1,82 @@
 import React from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { FontAwesome5, Feather } from '@expo/vector-icons';
+import { createStackNavigator } from '@react-navigation/stack';
 
-import {colors} from '../config/constants';
+import { colors } from '../config/constants';
 
 import HomeScreen from '../screens/app/HomeScreen';
-import ParametersScreen from '../screens/app/ParametersScreen';
-import RewardsScreen from '../screens/app/RewardsScreen';
 import StatsScreen from '../screens/app/StatsScreen';
-import NotificationsScreen from '../screens/app/NotificationsScreen';
+import RewardsScreen from '../screens/app/RewardsScreen';
+
+import HeaderAvatar from '../components/app/HeaderAvatar';
+
+const HomeStack = createStackNavigator();
+const RewardsStack = createStackNavigator();
+const StatsStack = createStackNavigator();
+
+const HomeStackScreen = ({ navigation }: any) => (
+	<HomeStack.Navigator>
+		<HomeStack.Screen
+			name="Home"
+            component={HomeScreen}
+            
+			options={{
+                title: 'Mes cours',
+                headerTransparent:true,
+				headerLeft: () => (
+                    <HeaderAvatar navigation={navigation}/>
+				),
+				headerTitleAlign: 'center',
+			}}
+		/>
+	</HomeStack.Navigator>
+);
+
+const RewardsStackScreen = ({ navigation }: any) => (
+	<RewardsStack.Navigator>
+		<RewardsStack.Screen
+			name="Home"
+            component={RewardsScreen}
+            
+			options={{
+                title: 'Rewards',
+                headerTransparent:true,
+				headerLeft: () => (
+                    <HeaderAvatar navigation={navigation}/>
+				),
+				headerTitleAlign: 'center',
+			}}
+		/>
+	</RewardsStack.Navigator>
+);
+
+const StatsStackScreen = ({ navigation }: any) => (
+	<StatsStack.Navigator>
+		<StatsStack.Screen
+			name="Home"
+            component={StatsScreen}
+            
+			options={{
+                title: 'Statistiques',
+                headerTransparent:true,
+				headerLeft: () => (
+                    <HeaderAvatar navigation={navigation}/>
+				),
+				headerTitleAlign: 'center',
+			}}
+		/>
+	</StatsStack.Navigator>
+);
 
 const Tab = createMaterialBottomTabNavigator();
+
 export default function AppStackNavigator() {
 	return (
-		<Tab.Navigator
-			initialRouteName="Home"
-			activeColor="#AFAFAF"
-			inactiveColor="#AAAAAA"
-            shifting={true}
-            screenOptions={{
-
-            }}
-		>
-			<Tab.Screen
-				name="Paramètres"
-				component={ParametersScreen}
-				options={{
-					tabBarColor: 'white',
-					tabBarIcon: ({ color, focused }) => (
-						<Feather name="settings" color={focused ? colors.foam : color} size={24} />
-					),
-				}}
-			/>
+		<Tab.Navigator initialRouteName="Mes cours" activeColor="#AFAFAF" inactiveColor="#AAAAAA" shifting={true}>
 			<Tab.Screen
 				name="Statistiques"
-				component={StatsScreen}
+				component={StatsStackScreen}
 				options={{
 					tabBarColor: 'white',
 					tabBarIcon: ({ color, focused }) => (
@@ -44,7 +86,7 @@ export default function AppStackNavigator() {
 			/>
 			<Tab.Screen
 				name="Mes cours"
-				component={HomeScreen}
+				component={HomeStackScreen}
 				options={{
 					tabBarColor: 'white',
 					tabBarIcon: ({ color, focused }) => (
@@ -53,18 +95,8 @@ export default function AppStackNavigator() {
 				}}
 			/>
 			<Tab.Screen
-				name="Notifications"
-				component={NotificationsScreen}
-				options={{
-					tabBarColor: 'white',
-					tabBarIcon: ({ color, focused }) => (
-						<FontAwesome5 name="bell" color={focused ? colors.shrimp : color} size={24} />
-					),
-				}}
-			/>
-			<Tab.Screen
 				name="Rewards"
-				component={RewardsScreen}
+				component={RewardsStackScreen}
 				options={{
 					tabBarColor: 'white',
 					tabBarIcon: ({ color, focused }) => (

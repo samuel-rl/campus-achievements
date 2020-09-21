@@ -6,16 +6,8 @@ import Fire from '../../config/Fire';
 
 const ParametersScreen = () => {
 
-	const logout = () => {
-        Fire.shared.signOut();
-    }
-
 	return (
 		<View style={styles.container}>
-			<TouchableOpacity style={styles.action} onPress={logout}>
-				<Text style={styles.text}>Déconnexion</Text>
-				<Feather name="log-out" size={24} color="black" />
-			</TouchableOpacity>
 		</View>
 	);
 };

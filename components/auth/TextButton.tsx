@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
         borderRadius: 6,
     },
     text : {
-        color: colors.blue,
+        color: colors.shrimp,
         fontWeight: "500",
         fontSize: 14
     }
