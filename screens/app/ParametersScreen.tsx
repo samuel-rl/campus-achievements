@@ -1,24 +1,32 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Button, TouchableOpacity } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 
-export interface ParametersScreenProps {
-}
+import Fire from '../../config/Fire';
 
 const ParametersScreen = () => {
 
-  return (
-    <View style={styles.container}>
-        <Text>paramètres</Text>
-    </View>
-  );
+	return (
+		<View style={styles.container}>
+		</View>
+	);
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex :1,
-        justifyContent: "center",
-        alignItems: "center"
-    },
+	container: {
+		flex: 1,
+		justifyContent: 'flex-end',
+		marginHorizontal: 40,
+	},
+	action: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		marginVertical: 20,
+	},
+	text: {
+		fontSize: 24,
+	},
 });
 
 export default ParametersScreen;
