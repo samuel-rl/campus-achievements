@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { Button, StyleSheet, TextInput, TouchableOpacity, View, Text, ToastAndroid } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, ToastAndroid, Platform } from 'react-native';
+
+import Constants from 'expo-constants';
+import * as Notifications from 'expo-notifications';
 
 import Fire from '../../config/Fire';
 
@@ -23,6 +26,46 @@ const RegisterScreen = ({ navigation }: any) => {
 	const [error, setError] = useState('');
 	const [avatar, setAvatar] = useState<null | string>(null);
 	const [loading, setLoading] = useState(false);
+    const [token, setToken] = useState<null|string|undefined>(null);
+    const [random] = useState(Date.now() % 9);
+
+
+    useEffect(() => {
+        registerForPushNotificationsAsync();
+    })
+
+    async function registerForPushNotificationsAsync() {
+        console.log("registerForPushNotificationsAsync...");
+        let token;
+        if (Constants.isDevice) {
+          const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+          let finalStatus = existingStatus;
+          if (existingStatus !== 'granted') {
+            const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+            finalStatus = status;
+          }
+          if (finalStatus !== 'granted') {
+            alert('Failed to get push token for push notification!');
+            return;
+          }
+          token = (await Notifications.getExpoPushTokenAsync()).data;
+        } else {
+          //alert('Must use physical device for Push Notifications');
+        }
+
+        setToken(token);
+      
+        if (Platform.OS === 'android') {
+          Notifications.setNotificationChannelAsync('default', {
+            name: 'default',
+            importance: Notifications.AndroidImportance.MAX,
+            vibrationPattern: [0, 250, 250, 250],
+            lightColor: '#FF231F7C',
+          });
+        }
+      
+        return token;
+      }
 
 	//fonction appeler lorsque il clique sur se connecter
 	const register = (mail: string, password: string, nom: string, prenom: string, avatar: null | string) => {
@@ -34,8 +77,11 @@ const RegisterScreen = ({ navigation }: any) => {
 		console.log({ mail, password, nom, prenom, avatar });
 		Fire.shared
 			.createUser(mail, password, nom, prenom, avatar)
-			.then(() => {
-				//si la connexion est réussi :
+			.then(async () => {
+                //si la connexion est réussi :
+                
+                await Fire.shared.updateToken(token);
+
 				//On affiche un Toast
 				ToastAndroid.show('Inscription réussi', 5000);
 				//on change de stack
@@ -79,13 +125,14 @@ const RegisterScreen = ({ navigation }: any) => {
 		if (status != 'granted') {
 			alert('Il besoin de la camera');
 		}
-	};
+    };
+
 
 	return (
 		<View style={styles.container}>
 			<Heading style={styles.title}>INSCRIPTION</Heading>
 			<Error error={error} />
-			<ProfilePicturePicker onPress={handlePickAvatar} avatarLink={avatar} />
+			<ProfilePicturePicker onPress={handlePickAvatar} avatarLink={avatar} randomAvatar={random}/>
 			<Input
 				style={styles.input}
 				placeholder={'Mail'}

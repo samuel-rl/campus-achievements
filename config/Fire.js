@@ -40,10 +40,11 @@ class Fire {
                     rej(err);
                 });
 		});
-	};
+    };
 
     //function qui va uploader la photo
 	uploadPhotoAsync = async (uri, filename) => {
+        console.log('uploadPhotoAsync...');
 		return new Promise(async (res, rej) => {
 			const response = await fetch(uri);
 			const file = await response.blob();
@@ -107,12 +108,76 @@ class Fire {
 				rej(error);
 			}
 		});
-	};
+    };
 
-    //function qui déconnecte l'utilisateur 
+    getPromos = async () => {
+        console.log('getPromos...');
+        let response = [];
+        let db = this.firestore.collection('promos');
+        db.get().then(querySnapshot => {
+            let docs = querySnapshot.docs;
+            for (let doc of docs) {
+                const selectedEvent = {
+                       name: doc.id,
+                       items: doc.data().Matieres
+                    };
+               response.push(selectedEvent);
+            }
+            console.log(response)
+        })
+        return response;
+    }
+
+        //function qui déconnecte l'utilisateur 
 	signOut = () => {
 		firebase.auth().signOut();
 	};
+    
+    /* ******************************
+                 update
+    ****************************** */
+
+    updateToken = async (token) => {
+        console.log('updateToken...');
+        let db = this.firestore.collection('users').doc(this.uid);
+        db.update({token: token})
+    }
+
+    updateUser = async (mail) => {
+        return new Promise(async (res, rej) => {
+            this.user.updateEmail(mail).then(() =>{
+                res(true);
+            }).catch((error) => {
+                rej(error);
+            })
+        });
+    }
+
+    updatePassword = async (password) => {
+        return new Promise(async (res, rej) => {
+            this.user.updatePassword(password).then(() => {
+                res(true);
+            }).catch((error) => {
+                rej(error);
+            })
+        });
+    }
+
+    /* ******************************
+                delete
+    ****************************** */
+
+    deleteUser = async () => {
+        return new Promise(async (res, rej) => {
+            this.user.delete().then(() => {
+                res(true);
+            }).catch((error) => {
+                rej(error)
+            })
+        });
+    } 
+
+
 
     /* ******************************
                  getter

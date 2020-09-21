@@ -35,7 +35,7 @@ const ParametersStackScreen = ({ navigation }: any) => (
 	<ParametersStack.Navigator>
 		<ParametersStack.Screen
 			name="Home"
-            component={NotificationScreen}
+            component={ParametersScreen}
             
 			options={{
                 title: 'Paramètres',
