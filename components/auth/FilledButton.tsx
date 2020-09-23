@@ -3,6 +3,8 @@ import { ActivityIndicator, StyleSheet, Text, TouchableOpacity } from 'react-nat
 
 import {colors} from '../../config/constants';
 
+import Loading from '../../components/auth/Loading';
+
 export interface FilledButtonProps {
     title : string,
     style: StyleSheet,
@@ -13,7 +15,7 @@ export interface FilledButtonProps {
 const FilledButton = ({ title, style, onPress, loading }: any) => {
 	return (
 		<TouchableOpacity style={[styles.container, style]} onPress={onPress}>
-			{loading ? <ActivityIndicator size="small"/> : <Text style={styles.text}>{title.toUpperCase()}</Text>}
+			{loading ? <Loading /> : <Text style={styles.text}>{title.toUpperCase()}</Text>}
 		</TouchableOpacity>
 	);
 };
@@ -25,7 +27,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         padding: 15,
-        borderRadius: 8
+        borderRadius: 8,
+        height: 50
     },
     text:{
         color: 'white',

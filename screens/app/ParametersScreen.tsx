@@ -8,6 +8,7 @@ const ParametersScreen = () => {
 
 	return (
 		<View style={styles.container}>
+            <Button onPress={() => {Fire.shared.getPromos()}} title="getPromos"></Button>
 		</View>
 	);
 };

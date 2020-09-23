@@ -1,5 +1,9 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, ToastAndroid } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, ToastAndroid, Platform } from 'react-native';
+
+import Constants from 'expo-constants';
+import * as Notifications from 'expo-notifications';
+import * as Permissions from 'expo-permissions';
 
 import Fire from '../../config/Fire';
 
@@ -9,11 +13,51 @@ import FilledButton from '../../components/auth/FilledButton';
 import Input from '../../components/auth/Input';
 import TextButton from '../../components/auth/TextButton';
 
+
 const LoginScreen = ({ navigation }: any) => {
 	const [password, setPassword] = useState('');
 	const [mail, setMail] = useState('');
 	const [error, setError] = useState('');
-	const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [token, setToken] = useState<null|string|undefined>(null);
+
+    useEffect(() => {
+        registerForPushNotificationsAsync();
+    })
+
+    async function registerForPushNotificationsAsync() {
+        console.log("registerForPushNotificationsAsync...");
+        let token;
+        if (Constants.isDevice) {
+          const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+          let finalStatus = existingStatus;
+          if (existingStatus !== 'granted') {
+            const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+            finalStatus = status;
+          }
+          if (finalStatus !== 'granted') {
+            alert('Failed to get push token for push notification!');
+            return;
+          }
+          token = (await Notifications.getExpoPushTokenAsync()).data;
+          console.log(token);
+        } else {
+          alert('Must use physical device for Push Notifications');
+        }
+
+        setToken(token);
+      
+        if (Platform.OS === 'android') {
+          Notifications.setNotificationChannelAsync('default', {
+            name: 'default',
+            importance: Notifications.AndroidImportance.MAX,
+            vibrationPattern: [0, 250, 250, 250],
+            lightColor: '#FF231F7C',
+          });
+        }
+      
+        return token;
+      }
 
 	//fonction appeler lorsque il clique sur s'inscrire
 	const connect = () => {
@@ -23,9 +67,11 @@ const LoginScreen = ({ navigation }: any) => {
 		setLoading(true);
 		Fire.shared
 			.connect(mail, password)
-			.then(() => {
+			.then(async () => {
 				//si l'inscription est réussi :
-				//On affiche un Toast
+                await Fire.shared.updateToken(token);
+
+                //On affiche un Toast
 				ToastAndroid.show('Connexion réussi', 5000);
 				//on change de stack
 				navigation.reset({
