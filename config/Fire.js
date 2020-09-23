@@ -175,9 +175,34 @@ class Fire {
                 rej(error)
             })
         });
-    } 
+	} 
+	
 
+    /* ******************************
+                 rewards
+    ****************************** */
+   getAllReward = async () => {
+	console.log("getAllReward...");
+	return new Promise(async (res, rej) => {
+		let response = [];
+		const db = this.firestore.collection('rewards');
+		await db.get().then(querySnapshot => {
+			let docs = querySnapshot.docs;
+			for (let doc of docs) {
+				const event = {
+					   nom: doc.data().nom,
+					   description: doc.data().description
+					};
+			   response.push(event);
+			}
+		})
+		res(response);
+	})
+}
 
+EstInscrit = async () => {
+	
+}
 
     /* ******************************
                  getter
