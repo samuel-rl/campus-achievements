@@ -34,17 +34,17 @@ class Fire {
 				//si ça se passe bien on retourne 'l'etat' de l'utilisateur ?
 				.then(x => {
 					res(x);
-                })
-                //sinon on renvoie l'erreur
+				})
+				//sinon on renvoie l'erreur
 				.catch(err => {
-                    rej(err);
-                });
+					rej(err);
+				});
 		});
-    };
+	};
 
-    //function qui va uploader la photo
+	//function qui va uploader la photo
 	uploadPhotoAsync = async (uri, filename) => {
-        console.log('uploadPhotoAsync...');
+		console.log('uploadPhotoAsync...');
 		return new Promise(async (res, rej) => {
 			const response = await fetch(uri);
 			const file = await response.blob();
@@ -55,7 +55,7 @@ class Fire {
 				'state_changed',
 				snapshot => {},
 				err => {
-                    //on renvoie l'erreur si il y en a une
+					//on renvoie l'erreur si il y en a une
 					rej(err);
 				},
 				async () => {
@@ -66,19 +66,19 @@ class Fire {
 		});
 	};
 
-    //fonction de creation d'utilisateur:
+	//fonction de creation d'utilisateur:
 	createUser = async (mail, password, nom, prenom, avatar) => {
 		console.log('createuser...');
 		return new Promise(async (res, rej) => {
 			let remoteUri = null;
 			try {
-                //creation du compte sur firebase
+				//creation du compte sur firebase
 				await firebase.auth().createUserWithEmailAndPassword(mail, password);
 
-                //on rajoute dans la collection Users (l'ID sera son UID)
+				//on rajoute dans la collection Users (l'ID sera son UID)
 				let db = this.firestore.collection('users').doc(this.uid);
 
-                //On met dans son document ses informations
+				//On met dans son document ses informations
 				db.set({
 					nom: nom,
 					prenom: prenom,
@@ -86,13 +86,13 @@ class Fire {
 					avatar: null,
 				});
 
-                //si l'avatar est pas null, on upload la photo et on la rajoute dans ses informations
+				//si l'avatar est pas null, on upload la photo et on la rajoute dans ses informations
 				if (avatar) {
 					remoteUri = await this.uploadPhotoAsync(avatar, `avatars/${this.uid}`);
 					db.set({ avatar: remoteUri }, { merge: true });
 				}
 
-                //on le rajoute dans la base de donnée
+				//on le rajoute dans la base de donnée
 				firebase.database().ref().child(`Users/${this.uid}`).set({
 					nom: nom,
 					prenom: prenom,
@@ -101,91 +101,106 @@ class Fire {
 				});
 				res('inscription ok');
 			} catch (error) {
-                //on renvoie l'erreur si il y en a une
-                console.log(error.code)
-                console.log(error.message)
-                console.log({error})
+				//on renvoie l'erreur si il y en a une
+				console.log(error.code);
+				console.log(error.message);
+				console.log({ error });
 				rej(error);
 			}
 		});
-    };
+	};
 
-    getPromos = async () => {
-        console.log('getPromos...');
-        let response = [];
-        let db = this.firestore.collection('promos');
-        db.get().then(querySnapshot => {
-            let docs = querySnapshot.docs;
-            for (let doc of docs) {
-                const selectedEvent = {
-                       name: doc.id,
-                       items: doc.data().Matieres
-                    };
-               response.push(selectedEvent);
-            }
-            console.log(response)
-        })
-        return response;
-    }
+	getPromos = async () => {
+		console.log('getPromos...');
+		return new Promise(async (res, rej) => {
+			try {
+				let response = [];
+				let i = 0;
+				let db = this.firestore.collection('promos');
+				db
+					.get()
+					.then(querySnapshot => {
+						let docs = querySnapshot.docs;
+						for (let doc of docs) {
+							const selectedEvent = {
+								name: doc.id,
+								items: doc.data().Matieres,
+							};
+							response.push(selectedEvent);
+						}
+					})
+					.then(() => res(response));
+			} catch (error) {
+				rej(error);
+			}
+		});
+	};
 
-        //function qui déconnecte l'utilisateur 
+	//function qui déconnecte l'utilisateur
 	signOut = () => {
 		firebase.auth().signOut();
 	};
-    
-    /* ******************************
+
+	/* ******************************
                  update
     ****************************** */
 
-    updateToken = async (token) => {
-        console.log('updateToken...');
-        let db = this.firestore.collection('users').doc(this.uid);
-        db.update({token: token})
-    }
+	updateToken = async token => {
+		console.log('updateToken...');
+		let db = this.firestore.collection('users').doc(this.uid);
+		db.update({ token: token });
+	};
 
-    updateUser = async (mail) => {
-        return new Promise(async (res, rej) => {
-            this.user.updateEmail(mail).then(() =>{
-                res(true);
-            }).catch((error) => {
-                rej(error);
-            })
-        });
-    }
+	updateUser = async mail => {
+		return new Promise(async (res, rej) => {
+			this.user
+				.updateEmail(mail)
+				.then(() => {
+					res(true);
+				})
+				.catch(error => {
+					rej(error);
+				});
+		});
+	};
 
-    updatePassword = async (password) => {
-        return new Promise(async (res, rej) => {
-            this.user.updatePassword(password).then(() => {
-                res(true);
-            }).catch((error) => {
-                rej(error);
-            })
-        });
-    }
+	updatePassword = async password => {
+		return new Promise(async (res, rej) => {
+			this.user
+				.updatePassword(password)
+				.then(() => {
+					res(true);
+				})
+				.catch(error => {
+					rej(error);
+				});
+		});
+	};
 
-    /* ******************************
+	/* ******************************
                 delete
     ****************************** */
 
-    deleteUser = async () => {
-        return new Promise(async (res, rej) => {
-            this.user.delete().then(() => {
-                res(true);
-            }).catch((error) => {
-                rej(error)
-            })
-        });
-    } 
+	deleteUser = async () => {
+		return new Promise(async (res, rej) => {
+			this.user
+				.delete()
+				.then(() => {
+					res(true);
+				})
+				.catch(error => {
+					rej(error);
+				});
+		});
+	};
 
-
-
-    /* ******************************
+	/* ******************************
                  getter
     ****************************** */
 
-    get user() {
-        return firebase.auth.currentUser() || null;
-    }
+	get user() {
+		return firebase.auth.currentUser() || null;
+	}
 
 	get firestore() {
 		return firebase.firestore();
