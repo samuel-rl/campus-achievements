@@ -18,7 +18,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 export interface RegisterScreenProps {}
 
-const RegisterScreen = ({ navigation }: any) => {
+const RegisterScreen = ({ navigation, route }: any) => {
 	const [mail, setMail] = useState('');
 	const [nom, setNom] = useState('');
 	const [prenom, setPrenom] = useState('');
@@ -29,10 +29,17 @@ const RegisterScreen = ({ navigation }: any) => {
     const [token, setToken] = useState<null|string|undefined>(null);
     const [random] = useState(Date.now() % 9);
 
+    const [isStudent, setIsStudent] = useState<null | boolean>(null);
+	const [annee, setAnnee] = useState<null | string>(null);
+	const [filliere, setFilliere] = useState<null | string>(null);
+
 
     useEffect(() => {
+        setIsStudent(route.params.isStudent);
+        setAnnee(route.params.annee);
+        setFilliere(route.params.filliere);
         registerForPushNotificationsAsync();
-    })
+    }, [route.params])
 
     async function registerForPushNotificationsAsync() {
         console.log("registerForPushNotificationsAsync...");
@@ -73,10 +80,8 @@ const RegisterScreen = ({ navigation }: any) => {
 		setError('');
 		//On lance le loader
 		setLoading(true);
-		//
-		console.log({ mail, password, nom, prenom, avatar });
 		Fire.shared
-			.createUser(mail, password, nom, prenom, avatar)
+			.createUser(mail, password, nom, prenom, avatar, isStudent, annee, filliere)
 			.then(async () => {
                 //si la connexion est réussi :
                 
@@ -130,7 +135,10 @@ const RegisterScreen = ({ navigation }: any) => {
 
 	return (
 		<View style={styles.container}>
-			<Heading style={styles.title}>INSCRIPTION</Heading>
+            {
+                isStudent ? <Heading style={styles.title}>{annee} {" > "} {filliere}</Heading> : <Heading style={styles.title}>ENSEIGNANT</Heading>
+            }
+
 			<Error error={error} />
 			<ProfilePicturePicker onPress={handlePickAvatar} avatarLink={avatar} randomAvatar={random}/>
 			<Input
@@ -160,7 +168,7 @@ const RegisterScreen = ({ navigation }: any) => {
 			<TextButton
 				title="Déja inscrit ?"
 				onPress={() => {
-					navigation.pop();
+					navigation.navigate('Login');
 				}}
 			/>
 		</View>

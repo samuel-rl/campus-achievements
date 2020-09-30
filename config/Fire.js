@@ -67,7 +67,7 @@ class Fire {
 	};
 
 	//fonction de creation d'utilisateur:
-	createUser = async (mail, password, nom, prenom, avatar) => {
+	createUser = async (mail, password, nom, prenom, avatar, isStudent, annee, filliere) => {
 		console.log('createuser...');
 		return new Promise(async (res, rej) => {
 			let remoteUri = null;
@@ -83,7 +83,10 @@ class Fire {
 					nom: nom,
 					prenom: prenom,
 					mail: mail,
-					avatar: null,
+                    avatar: null,
+                    etudiant: isStudent,
+                    annee: annee,
+                    filliere: filliere
 				});
 
 				//si l'avatar est pas null, on upload la photo et on la rajoute dans ses informations
