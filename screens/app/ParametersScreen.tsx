@@ -2,12 +2,14 @@ import React from 'react';
 import { StyleSheet, View, Text, Button, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
+
 import Fire from '../../config/Fire';
 
-const ParametersScreen = () => {
+const ParametersScreen = ({navigation}:any) => {
 
 	return (
 		<View style={styles.container}>
+			<Button onPress={()=>{navigation.navigate("ChangePassword")}} title="Changer mes identifiants de connexion"></Button>
             <Button onPress={() => {Fire.shared.getPromos()}} title="getPromos"></Button>
 		</View>
 	);
@@ -16,7 +18,7 @@ const ParametersScreen = () => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: 'flex-end',
+		justifyContent: 'center',
 		marginHorizontal: 40,
 	},
 	action: {

@@ -22,7 +22,7 @@ const LoginScreen = ({ navigation }: any) => {
     const [token, setToken] = useState<null|string|undefined>(null);
 
     useEffect(() => {
-        registerForPushNotificationsAsync();
+        // registerForPushNotificationsAsync();
     })
 
     async function registerForPushNotificationsAsync() {

@@ -108,7 +108,8 @@ class Fire {
 				rej(error);
 			}
 		});
-    };
+	};
+	
 
     getPromos = async () => {
         console.log('getPromos...');
@@ -143,14 +144,25 @@ class Fire {
         db.update({token: token})
     }
 
-    updateUser = async (mail) => {
-        return new Promise(async (res, rej) => {
-            this.user.updateEmail(mail).then(() =>{
-                res(true);
-            }).catch((error) => {
-                rej(error);
-            })
-        });
+
+    updateMail = async (mail) => {
+		console.log("change mail ...");
+		return new Promise(async(resolve, reject) => {
+			try {
+				let db = this.firestore.collection('users').doc(this.uid);
+				db.update({mail: mail});
+
+				var user = firebase.auth().currentUser; 
+
+				// user.updateEmail(mail).then(()=>resolve(true)).catch((error)=>{reject(error)})
+				user.updateProfile(
+					{email:mail}
+				).then(()=>resolve(true));
+				// resolve(true);
+			} catch (error) {
+				reject(error);
+			}	
+		})
     }
 
     updatePassword = async (password) => {
