@@ -1,15 +1,16 @@
-import firebase from 'firebase';
-import 'firebase/firestore';
+import * as firebase from "firebase";
+import "firebase/firestore";
+import { Alert } from "react-native";
 
 //config pris sur Firebase
 var firebaseConfig = {
-	apiKey: 'AIzaSyC3D8lS7xO1cjw9csov-TRah9XtIWjDuB0',
-	authDomain: 'campus-achievements.firebaseapp.com',
-	databaseURL: 'https://campus-achievements.firebaseio.com',
-	projectId: 'campus-achievements',
-	storageBucket: 'campus-achievements.appspot.com',
-	messagingSenderId: '206721630249',
-	appId: '1:206721630249:web:e5fece1948fc5939995c38',
+    apiKey: "AIzaSyC3D8lS7xO1cjw9csov-TRah9XtIWjDuB0",
+    authDomain: "campus-achievements.firebaseapp.com",
+    databaseURL: "https://campus-achievements.firebaseio.com",
+    projectId: "campus-achievements",
+    storageBucket: "campus-achievements.appspot.com",
+    messagingSenderId: "206721630249",
+    appId: "1:206721630249:web:e5fece1948fc5939995c38",
 };
 
 //class qui va gérer les échanges avec firebase
@@ -18,162 +19,208 @@ var firebaseConfig = {
 //   appel   =>   Fire.shared.LE-NOM-DE-LA-METHODE()
 //           =>   FIRE.shared.GETTER
 class Fire {
-	//constructeur qui initialise la connexion avec notre config
-	constructor() {
-		firebase.initializeApp(firebaseConfig);
-	}
+    //constructeur qui initialise la connexion avec notre config
+    constructor() {
+        firebase.initializeApp(firebaseConfig);
+    }
 
-	//function de connexion de compte sur Firebase avec email et mot de passe
-	connect = async (mail, password) => {
-		console.log('connect...');
-		//retourne une promesse
-		return new Promise(async (res, rej) => {
-			await firebase
-				.auth()
-				.signInWithEmailAndPassword(mail, password)
-				//si ça se passe bien on retourne 'l'etat' de l'utilisateur ?
-				.then(x => {
-					res(x);
+    //function de connexion de compte sur Firebase avec email et mot de passe
+    connect = async (mail, password) => {
+        console.log("connect...");
+        //retourne une promesse
+        return new Promise(async (res, rej) => {
+            await firebase
+                .auth()
+                .signInWithEmailAndPassword(mail, password)
+                //si ça se passe bien on retourne 'l'etat' de l'utilisateur ?
+                .then((x) => {
+                    res(x);
                 })
                 //sinon on renvoie l'erreur
-				.catch(err => {
+                .catch((err) => {
                     rej(err);
                 });
-		});
+        });
     };
 
     //function qui va uploader la photo
-	uploadPhotoAsync = async (uri, filename) => {
-        console.log('uploadPhotoAsync...');
-		return new Promise(async (res, rej) => {
-			const response = await fetch(uri);
-			const file = await response.blob();
+    uploadPhotoAsync = async (uri, filename) => {
+        console.log("uploadPhotoAsync...");
+        return new Promise(async (res, rej) => {
+            const response = await fetch(uri);
+            const file = await response.blob();
 
-			let upload = firebase.storage().ref(filename).put(file);
+            let upload = firebase.storage().ref(filename).put(file);
 
-			upload.on(
-				'state_changed',
-				snapshot => {},
-				err => {
+            upload.on(
+                "state_changed",
+                (snapshot) => {},
+                (err) => {
                     //on renvoie l'erreur si il y en a une
-					rej(err);
-				},
-				async () => {
-					const url = await upload.snapshot.ref.getDownloadURL();
-					res(url);
-				}
-			);
-		});
-	};
+                    rej(err);
+                },
+                async () => {
+                    const url = await upload.snapshot.ref.getDownloadURL();
+                    res(url);
+                }
+            );
+        });
+    };
 
     //fonction de creation d'utilisateur:
-	createUser = async (mail, password, nom, prenom, avatar) => {
-		console.log('createuser...');
-		return new Promise(async (res, rej) => {
-			let remoteUri = null;
-			try {
+    createUser = async (mail, password, nom, prenom, avatar) => {
+        console.log("createuser...");
+        return new Promise(async (res, rej) => {
+            let remoteUri = null;
+            try {
                 //creation du compte sur firebase
-				await firebase.auth().createUserWithEmailAndPassword(mail, password);
+                await firebase
+                    .auth()
+                    .createUserWithEmailAndPassword(mail, password);
 
                 //on rajoute dans la collection Users (l'ID sera son UID)
-				let db = this.firestore.collection('users').doc(this.uid);
+                let db = this.firestore.collection("users").doc(this.uid);
 
                 //On met dans son document ses informations
-				db.set({
-					nom: nom,
-					prenom: prenom,
-					mail: mail,
-					avatar: null,
-				});
+                db.set({
+                    nom: nom,
+                    prenom: prenom,
+                    mail: mail,
+                    avatar: null,
+                });
 
                 //si l'avatar est pas null, on upload la photo et on la rajoute dans ses informations
-				if (avatar) {
-					remoteUri = await this.uploadPhotoAsync(avatar, `avatars/${this.uid}`);
-					db.set({ avatar: remoteUri }, { merge: true });
-				}
+                if (avatar) {
+                    remoteUri = await this.uploadPhotoAsync(
+                        avatar,
+                        `avatars/${this.uid}`
+                    );
+                    db.set({ avatar: remoteUri }, { merge: true });
+                }
 
                 //on le rajoute dans la base de donnée
-				firebase.database().ref().child(`Users/${this.uid}`).set({
-					nom: nom,
-					prenom: prenom,
-					mail: mail,
-					avatar: avatar,
-				});
-				res('inscription ok');
-			} catch (error) {
+                firebase.database().ref().child(`Users/${this.uid}`).set({
+                    nom: nom,
+                    prenom: prenom,
+                    mail: mail,
+                    avatar: avatar,
+                });
+                res("inscription ok");
+            } catch (error) {
                 //on renvoie l'erreur si il y en a une
-                console.log(error.code)
-                console.log(error.message)
-                console.log({error})
-				rej(error);
-			}
-		});
-	};
-	
+                console.log(error.code);
+                console.log(error.message);
+                console.log({ error });
+                rej(error);
+            }
+        });
+    };
 
     getPromos = async () => {
-        console.log('getPromos...');
+        console.log("getPromos...");
         let response = [];
-        let db = this.firestore.collection('promos');
-        db.get().then(querySnapshot => {
+        let db = this.firestore.collection("promos");
+        db.get().then((querySnapshot) => {
             let docs = querySnapshot.docs;
             for (let doc of docs) {
                 const selectedEvent = {
-                       name: doc.id,
-                       items: doc.data().Matieres
-                    };
-               response.push(selectedEvent);
+                    name: doc.id,
+                    items: doc.data().Matieres,
+                };
+                response.push(selectedEvent);
             }
-            console.log(response)
-        })
+            console.log(response);
+        });
         return response;
-    }
+    };
 
-        //function qui déconnecte l'utilisateur 
-	signOut = () => {
-		firebase.auth().signOut();
-	};
-    
+    //function qui déconnecte l'utilisateur
+    signOut = () => {
+        firebase.auth().signOut();
+    };
+
     /* ******************************
                  update
     ****************************** */
 
-    updateToken = async (token) => {
-        console.log('updateToken...');
-        let db = this.firestore.collection('users').doc(this.uid);
-        db.update({token: token})
-    }
 
+    updateToken = async (token) => {
+        console.log("updateToken...");
+        let db = this.firestore.collection("users").doc(this.uid);
+        db.update({ token: token });
+    };
 
     updateMail = async (mail) => {
-		console.log("change mail ...");
-		return new Promise(async(resolve, reject) => {
-			try {
-				let db = this.firestore.collection('users').doc(this.uid);
-				db.update({mail: mail});
+        console.log("change mail ...");
 
-				var user = firebase.auth().currentUser; 
+        return new Promise(async (resolve, reject) => {
+            try {
+                //update the user's mail in the db
+                let db = this.firestore.collection("users").doc(this.uid);
+                db.update({ mail: mail });
 
-				// user.updateEmail(mail).then(()=>resolve(true)).catch((error)=>{reject(error)})
-				user.updateProfile(
-					{email:mail}
-				).then(()=>resolve(true));
-				// resolve(true);
-			} catch (error) {
-				reject(error);
-			}	
-		})
-    }
+                var user = firebase.auth().currentUser;
 
-    updatePassword = async (password) => {
-        return new Promise(async (res, rej) => {
-            this.user.updatePassword(password).then(() => {
-                res(true);
-            }).catch((error) => {
-                rej(error);
-            })
+                //update user mail for authentification
+                user.updateProfile({ email: mail }).then(() => resolve(true));
+                // resolve(true);
+            } catch (error) {
+                reject(error);
+            }
         });
-    }
+    };
+
+    // updatePassword = async (currentPassword, password) => {
+    //     this.reauthenticate(currentPassword)
+    //         .then(() => {
+    //             return new Promise(async (res, rej) => {
+    //                 this.user
+    //                     .updatePassword(password)
+    //                     .then(() => {
+    //                         res(true);
+    //                     })
+    //                     .catch((error) => {
+    //                         rej(error);
+    //                     });
+    //             });
+    //         })
+    //         .catch((error) => {Alert.alert(error.message)});
+    // };
+
+    /**
+     * We need to reauthenticate the user when he does something sensitive, like
+     * choosing a new password or login
+     * @param {*} currentPassword
+     */
+    reauthenticate = (currentPassword) => {
+        var user = firebase.auth().currentUser;
+        var cred = firebase.auth.EmailAuthProvider.credential(
+            user.email,
+            currentPassword
+        );
+        return user.reauthenticateWithCredential(cred);
+    };
+
+
+    changePassword = (currentPassword, password)=>{
+
+        this.reauthenticate(currentPassword).then(()=>{
+            var user = firebase.auth().currentUser;
+            console.log("updating password ...");
+            user.updatePassword(password).then(() => {
+                console.log("updating password2 ...");
+                Alert.alert("Mot de passe modifié");
+            }).catch((error)=>{
+                console.log("oh oh");
+                Alert.alert(error.message);
+            });
+
+        }).catch((error)=>{
+            Alert.alert(error.message);
+        })
+
+
+    };
 
     /* ******************************
                 delete
@@ -181,60 +228,60 @@ class Fire {
 
     deleteUser = async () => {
         return new Promise(async (res, rej) => {
-            this.user.delete().then(() => {
-                res(true);
-            }).catch((error) => {
-                rej(error)
-            })
+            this.user
+                .delete()
+                .then(() => {
+                    res(true);
+                })
+                .catch((error) => {
+                    rej(error);
+                });
         });
-	} 
-	
+    };
 
     /* ******************************
                  rewards
     ****************************** */
-   getAllReward = async () => {
-	console.log("getAllReward...");
-	return new Promise(async (res, rej) => {
-		let response = [];
-		const db = this.firestore.collection('rewards');
-		await db.get().then(querySnapshot => {
-			let docs = querySnapshot.docs;
-			for (let doc of docs) {
-				const event = {
-					   nom: doc.data().nom,
-					   description: doc.data().description
-					};
-			   response.push(event);
-			}
-		})
-		res(response);
-	})
-}
+    getAllReward = async () => {
+        console.log("getAllReward...");
+        return new Promise(async (res, rej) => {
+            let response = [];
+            const db = this.firestore.collection("rewards");
+            await db.get().then((querySnapshot) => {
+                let docs = querySnapshot.docs;
+                for (let doc of docs) {
+                    const event = {
+                        nom: doc.data().nom,
+                        description: doc.data().description,
+                    };
+                    response.push(event);
+                }
+            });
+            res(response);
+        });
+    };
 
-EstInscrit = async () => {
-	
-}
+    EstInscrit = async () => {};
 
     /* ******************************
                  getter
     ****************************** */
 
     get user() {
-        return firebase.auth.currentUser() || null;
+        return firebase.auth().currentUser || null;
     }
 
-	get firestore() {
-		return firebase.firestore();
-	}
+    get firestore() {
+        return firebase.firestore();
+    }
 
-	get uid() {
-		return (firebase.auth().currentUser || {}).uid;
-	}
+    get uid() {
+        return (firebase.auth().currentUser || {}).uid;
+    }
 
-	get firebase() {
-		return firebase;
-	}
+    get firebase() {
+        return firebase;
+    }
 }
 
 //instance de la class Fire :
