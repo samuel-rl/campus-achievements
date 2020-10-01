@@ -13,6 +13,10 @@ import { Colors } from "react-native/Libraries/NewAppScreen";
 import { ScrollView } from "react-native-gesture-handler";
 
 const RewardsScreen = () => {
+
+  /**
+   * The layout for one reward
+   */
   const Reward = ({ name, description, done }: any) => {
     return (
       <TouchableOpacity
@@ -42,6 +46,7 @@ const RewardsScreen = () => {
   const [rewards, setRewards] = useState<any>(null);
 
   useEffect(() => {
+    //When the screen is launched, we get all rewards from our database
     const res = Fire.shared.getAllReward().then((result) => {
       setRewards(result);
       console.log("done!!!");

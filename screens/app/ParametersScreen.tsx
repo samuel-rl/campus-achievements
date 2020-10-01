@@ -1,13 +1,15 @@
 import React from "react";
-import { StyleSheet, View, Text, Button, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, Button } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
 import Fire from "../../config/Fire";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { colors, statusbar } from "../../config/constants";
 
 const ParametersScreen = ({ navigation }: any) => {
     return (
         <View style={styles.container}>
-            <Button
+            {/* <Button
                 title="Changer mes informations de profil"
                 onPress={() => {
 					navigation.navigate("ChangeProfile");
@@ -30,7 +32,49 @@ const ParametersScreen = ({ navigation }: any) => {
                     Fire.shared.getPromos();
                 }}
                 title="getPromos"
-            ></Button>
+            ></Button> */}
+
+            <TouchableOpacity
+                style={styles.touchable}
+                onPress={() => {
+                    navigation.navigate("ChangeProfile");
+                }}
+            >
+                <Text style={styles.buttonText}>
+                    Changer mes informations de profil
+                </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                style={styles.touchable}
+                onPress={() => {
+                    navigation.navigate("ChangePassword");
+                }}
+            >
+                <Text style={styles.buttonText}>Changer mon mot de passe</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                style={styles.touchable}
+                onPress={() => {
+                    navigation.navigate("ChangeEmail");
+                }}
+            >
+                <Text style={styles.buttonText}>
+                    Changer mon adresse mail d'identifiant
+                </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                style={styles.touchable}
+                onPress={() => {
+                    Fire.shared.getPromos();
+                }}
+            >
+                <Text style={styles.buttonText}>
+                    GetPromos (test)
+                </Text>
+            </TouchableOpacity>
         </View>
     );
 };
@@ -40,16 +84,18 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "space-evenly",
         marginHorizontal: 40,
-        marginVertical: 5,
+        marginTop: statusbar.height,
     },
-    action: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginVertical: 20,
+    touchable: {
+        backgroundColor: colors.lilac,
+        // width:"80%",
+        paddingVertical: 20,
+        borderRadius: 6,
     },
-    text: {
-        fontSize: 24,
+    buttonText: {
+        color: colors.darkLilac,
+        alignSelf: "center",
+        textAlign: "center",
     },
 });
 
