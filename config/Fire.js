@@ -150,42 +150,32 @@ class Fire {
         db.update({ token: token });
     };
 
-    updateMail = async (mail) => {
+/**
+ * Allow the user to change his mail adress, in the same time in the data base and also for the
+ * authentification
+ * @param {*} currentPassword 
+ * @param {*} mail 
+ */
+    changeEmail = (currentPassword,mail) => {
         console.log("change mail ...");
 
-        return new Promise(async (resolve, reject) => {
-            try {
-                //update the user's mail in the db
+        this.reauthenticate(currentPassword).then(()=>{
+            var user = firebase.auth().currentUser;
+            user.updateEmail(mail).then(() => {
+                //--- putting the mail in the database
                 let db = this.firestore.collection("users").doc(this.uid);
                 db.update({ mail: mail });
+                //---
+                Alert.alert("Adresse mail modifiée");
 
-                var user = firebase.auth().currentUser;
+            }).catch((error)=>{
+                Alert.alert(error.message);
+            });
 
-                //update user mail for authentification
-                user.updateProfile({ email: mail }).then(() => resolve(true));
-                // resolve(true);
-            } catch (error) {
-                reject(error);
-            }
-        });
+        }).catch((error)=>{
+            Alert.alert(error.message);
+        })
     };
-
-    // updatePassword = async (currentPassword, password) => {
-    //     this.reauthenticate(currentPassword)
-    //         .then(() => {
-    //             return new Promise(async (res, rej) => {
-    //                 this.user
-    //                     .updatePassword(password)
-    //                     .then(() => {
-    //                         res(true);
-    //                     })
-    //                     .catch((error) => {
-    //                         rej(error);
-    //                     });
-    //             });
-    //         })
-    //         .catch((error) => {Alert.alert(error.message)});
-    // };
 
     /**
      * We need to reauthenticate the user when he does something sensitive, like
@@ -201,17 +191,18 @@ class Fire {
         return user.reauthenticateWithCredential(cred);
     };
 
-
+/**
+ * Allows the user to change his password for authentification
+ * @param {*} currentPassword 
+ * @param {*} password 
+ */
     changePassword = (currentPassword, password)=>{
 
         this.reauthenticate(currentPassword).then(()=>{
             var user = firebase.auth().currentUser;
-            console.log("updating password ...");
             user.updatePassword(password).then(() => {
-                console.log("updating password2 ...");
                 Alert.alert("Mot de passe modifié");
             }).catch((error)=>{
-                console.log("oh oh");
                 Alert.alert(error.message);
             });
 

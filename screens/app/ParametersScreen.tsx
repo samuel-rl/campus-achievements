@@ -9,7 +9,9 @@ const ParametersScreen = ({navigation}:any) => {
 
 	return (
 		<View style={styles.container}>
-			<Button onPress={()=>{navigation.navigate("ChangePassword")}} title="Changer mes identifiants de connexion"></Button>
+			<Button onPress={()=>{navigation.navigate("ChangePassword")}} title="Changer mon mot de passe"></Button>
+			<Button title="Changer mon adresse mail d'identifiant"
+			onPress={()=>{navigation.navigate("ChangeEmail")}}></Button>
             <Button onPress={() => {Fire.shared.getPromos()}} title="getPromos"></Button>
 		</View>
 	);
