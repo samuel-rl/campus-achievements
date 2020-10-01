@@ -152,7 +152,7 @@ class Fire {
 
 /**
  * Allow the user to change his mail adress, in the same time in the data base and also for the
- * authentification
+ * authentication
  * @param {*} currentPassword 
  * @param {*} mail 
  */
