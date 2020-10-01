@@ -143,38 +143,60 @@ class Fire {
                  update
     ****************************** */
 
-
     updateToken = async (token) => {
         console.log("updateToken...");
         let db = this.firestore.collection("users").doc(this.uid);
         db.update({ token: token });
     };
 
-/**
- * Allow the user to change his mail adress, in the same time in the data base and also for the
- * authentication
- * @param {*} currentPassword 
- * @param {*} mail 
- */
-    changeEmail = (currentPassword,mail) => {
+    /**
+     * Allow the user to change his mail adress, in the same time in the data base and also for the
+     * authentication
+     * @param {*} currentPassword
+     * @param {*} mail
+     */
+    changeEmail = (currentPassword, mail) => {
         console.log("change mail ...");
 
-        this.reauthenticate(currentPassword).then(()=>{
-            var user = firebase.auth().currentUser;
-            user.updateEmail(mail).then(() => {
-                //--- putting the mail in the database
-                let db = this.firestore.collection("users").doc(this.uid);
-                db.update({ mail: mail });
-                //---
-                Alert.alert("Adresse mail modifiée");
-
-            }).catch((error)=>{
+        this.reauthenticate(currentPassword)
+            .then(() => {
+                var user = firebase.auth().currentUser;
+                user.updateEmail(mail)
+                    .then(() => {
+                        //--- putting the mail in the database
+                        let db = this.firestore
+                            .collection("users")
+                            .doc(this.uid);
+                        db.update({ mail: mail });
+                        //---
+                        Alert.alert("Adresse mail modifiée");
+                    })
+                    .catch((error) => {
+                        Alert.alert(error.message);
+                    });
+            })
+            .catch((error) => {
                 Alert.alert(error.message);
             });
+    };
 
-        }).catch((error)=>{
-            Alert.alert(error.message);
-        })
+    /**
+     * Allows the user to change his first name in the database
+     * @param {string} prénom
+     */
+    changePrenom = (prénom) => {
+        console.log("Change prénom ..." + prénom);
+        let db = this.firestore.collection("users").doc(this.uid);
+        db.update({ prenom: prénom });
+    };
+    /**
+     * Allows the user to change his name in the database
+     * @param {*} nom
+     */
+    changeNom = (nom) => {
+        console.log("change nom ..." + nom);
+        let db = this.firestore.collection("users").doc(this.uid);
+        db.update({ nom: nom });
     };
 
     /**
@@ -191,26 +213,26 @@ class Fire {
         return user.reauthenticateWithCredential(cred);
     };
 
-/**
- * Allows the user to change his password for authentification
- * @param {*} currentPassword 
- * @param {*} password 
- */
-    changePassword = (currentPassword, password)=>{
-
-        this.reauthenticate(currentPassword).then(()=>{
-            var user = firebase.auth().currentUser;
-            user.updatePassword(password).then(() => {
-                Alert.alert("Mot de passe modifié");
-            }).catch((error)=>{
+    /**
+     * Allows the user to change his password for authentification
+     * @param {*} currentPassword
+     * @param {*} password
+     */
+    changePassword = (currentPassword, password) => {
+        this.reauthenticate(currentPassword)
+            .then(() => {
+                var user = firebase.auth().currentUser;
+                user.updatePassword(password)
+                    .then(() => {
+                        Alert.alert("Mot de passe modifié");
+                    })
+                    .catch((error) => {
+                        Alert.alert(error.message);
+                    });
+            })
+            .catch((error) => {
                 Alert.alert(error.message);
             });
-
-        }).catch((error)=>{
-            Alert.alert(error.message);
-        })
-
-
     };
 
     /* ******************************

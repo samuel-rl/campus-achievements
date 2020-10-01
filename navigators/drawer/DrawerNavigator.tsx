@@ -11,6 +11,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import HeaderAvatar from "../../components/app/HeaderAvatar";
 import ChangePassword from "../../screens/app/settingsScreens/ChangePassword";
 import ChangeEmail from "../../screens/app/settingsScreens/ChangeEmail";
+import ChangeProfile from "../../screens/app/settingsScreens/ChangeProfile";
 
 const NotifticationsStack = createStackNavigator();
 const ParametersStack = createStackNavigator();
@@ -46,7 +47,7 @@ const ParametersStackScreen = ({ navigation }: any) => (
             name="ChangePassword"
             component={ChangePassword}
             options={{
-                title: "ChangePassword",
+                title: "Changer de mot de passe",
                 headerTransparent: true,
                 headerLeft: () => <HeaderAvatar navigation={navigation} />,
                 headerTitleAlign: "center",
@@ -56,7 +57,17 @@ const ParametersStackScreen = ({ navigation }: any) => (
             name="ChangeEmail"
             component={ChangeEmail}
             options={{
-                title: "ChangeEmail",
+                title: "Changer son adresse mail",
+                headerTransparent: true,
+                headerLeft: () => <HeaderAvatar navigation={navigation} />,
+                headerTitleAlign: "center",
+            }}
+        />
+        <ParametersStack.Screen
+            name="ChangeProfile"
+            component={ChangeProfile}
+            options={{
+                title: "Informations de profil",
                 headerTransparent: true,
                 headerLeft: () => <HeaderAvatar navigation={navigation} />,
                 headerTitleAlign: "center",

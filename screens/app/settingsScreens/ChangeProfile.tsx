@@ -11,38 +11,41 @@ import {
 import Fire from "../../../config/Fire";
 import Input from "../../../components/auth/Input";
 
-const ChangePassword = () => {
-    const [currentPassword, setcurrentPassword] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPaswword, setconfirmPaswword] = useState("");
-    const [mail, setMail] = useState("");
+const ChangeProfile = () => {
+    const [prénom, setprénom] = useState("");
+    const [nom, setnom] = useState("");
 
     return (
         <View style={styles.container}>
-            <Text>Votre mot de passe courant :</Text>
-            <Input
-                style={styles.input}
-                placeholder={"Mot de passe courant"}
-                secureTextEntry
-                value={currentPassword}
-                onChangeText={setcurrentPassword}
-            />
+            <Text>Hello.</Text>
 
-            <Text>Votre nouveau mot de passe :</Text>
             <Input
                 style={styles.input}
-                placeholder={"Nouveau mot de passe"}
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
+                placeholder={"Nouveau prénom"}
+                value={prénom}
+                onChangeText={setprénom}
             />
 
             <Button
-                title="Valider le mot de passe"
+                title="Changer le prénom"
                 onPress={() => {
-                    Fire.shared.changePassword(currentPassword,password);
+                    Fire.shared.changePrenom(prénom);
                 }}
             ></Button>
+
+            <Input
+                style={styles.input}
+                placeholder={"Nouveau nom"}
+                value={nom}
+                onChangeText={setnom}
+            />
+            <Button
+                title="Changer le nom"
+                onPress={()=>{
+                    Fire.shared.changeNom(nom);
+                }}
+            ></Button>
+
         </View>
     );
 };
@@ -68,4 +71,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ChangePassword;
+export default ChangeProfile;
