@@ -9,31 +9,6 @@ import { colors, statusbar } from "../../config/constants";
 const ParametersScreen = ({ navigation }: any) => {
     return (
         <View style={styles.container}>
-            {/* <Button
-                title="Changer mes informations de profil"
-                onPress={() => {
-					navigation.navigate("ChangeProfile");
-				}}
-            ></Button>
-            <Button
-                onPress={() => {
-                    navigation.navigate("ChangePassword");
-                }}
-                title="Changer mon mot de passe"
-            ></Button>
-            <Button
-                title="Changer mon adresse mail d'identifiant"
-                onPress={() => {
-                    navigation.navigate("ChangeEmail");
-                }}
-            ></Button>
-            <Button
-                onPress={() => {
-                    Fire.shared.getPromos();
-                }}
-                title="getPromos"
-            ></Button> */}
-
             <TouchableOpacity
                 style={styles.touchable}
                 onPress={() => {
@@ -71,9 +46,7 @@ const ParametersScreen = ({ navigation }: any) => {
                     Fire.shared.getPromos();
                 }}
             >
-                <Text style={styles.buttonText}>
-                    GetPromos (test)
-                </Text>
+                <Text style={styles.buttonText}>GetPromos (test)</Text>
             </TouchableOpacity>
         </View>
     );
@@ -83,12 +56,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: "space-evenly",
-        marginHorizontal: 40,
-        marginTop: statusbar.height,
+        marginHorizontal: 2,
+        marginTop: statusbar.height - 10,
     },
     touchable: {
-        backgroundColor: colors.lilac,
-        // width:"80%",
+        backgroundColor: colors.almostWhite,
+        borderTopWidth:2,
+        borderBottomWidth:2,
         paddingVertical: 20,
         borderRadius: 6,
     },

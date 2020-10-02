@@ -11,27 +11,28 @@ import {
 import Fire from "../../../config/Fire";
 import Input from "../../../components/auth/Input";
 
+import TextButton from "../../../components/auth/TextButton";
+import { colors } from "../../../config/constants";
+
 const ChangeProfile = () => {
     const [prénom, setprénom] = useState("");
     const [nom, setnom] = useState("");
 
     return (
         <View style={styles.container}>
-            <Text>Hello.</Text>
-
             <Input
                 style={styles.input}
                 placeholder={"Nouveau prénom"}
                 value={prénom}
                 onChangeText={setprénom}
             />
-
-            <Button
-                title="Changer le prénom"
+            <TextButton
                 onPress={() => {
                     Fire.shared.changePrenom(prénom);
                 }}
-            ></Button>
+                title="Changer le prénom"
+                style={{ backgroundColor: colors.lightGrey }}
+            ></TextButton>
 
             <Input
                 style={styles.input}
@@ -39,13 +40,13 @@ const ChangeProfile = () => {
                 value={nom}
                 onChangeText={setnom}
             />
-            <Button
+            <TextButton
                 title="Changer le nom"
-                onPress={()=>{
+                onPress={() => {
                     Fire.shared.changeNom(nom);
                 }}
-            ></Button>
-
+                style={{ backgroundColor: colors.lightGrey }}
+            ></TextButton>
         </View>
     );
 };
@@ -56,15 +57,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         // marginHorizontal: 40,
-    },
-    action: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginVertical: 20,
-    },
-    text: {
-        fontSize: 24,
     },
     input: {
         marginVertical: 8,

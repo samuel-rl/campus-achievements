@@ -22,7 +22,7 @@ const RewardsScreen = () => {
       <TouchableOpacity
         style={[
           styles.rewardButton,
-          { backgroundColor: done ? colors.lightBlue : colors.lightGrey },
+          { backgroundColor: done ? colors.lightBlue : colors.lightLilac },
         ]}
       >
         <View style={styles.rewardTextContainer}>

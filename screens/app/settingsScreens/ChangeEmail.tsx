@@ -8,6 +8,8 @@ import {
     ToastAndroid,
 } from "react-native";
 import Input from "../../../components/auth/Input";
+import TextButton from "../../../components/auth/TextButton";
+import { colors } from "../../../config/constants";
 import Fire from "../../../config/Fire";
 
 const ChangeEmail = () => {
@@ -31,8 +33,11 @@ const ChangeEmail = () => {
                 value={mail}
                 onChangeText={setMail}
             />
-            <Button title="Valider la nouvelle adresse mail"
-            onPress={()=>{Fire.shared.changeEmail(currentPassword,mail)}}></Button>
+            <TextButton title="Valider la nouvelle adresse mail"
+            onPress={()=>{Fire.shared.changeEmail(currentPassword,mail)}}
+            style={{ backgroundColor: colors.lightGrey }}
+
+            ></TextButton>
         </View>
     );
 };

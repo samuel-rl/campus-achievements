@@ -10,12 +10,13 @@ import {
 
 import Fire from "../../../config/Fire";
 import Input from "../../../components/auth/Input";
+import TextButton from "../../../components/auth/TextButton";
+import { colors } from "../../../config/constants";
 
 const ChangePassword = () => {
     const [currentPassword, setcurrentPassword] = useState("");
     const [password, setPassword] = useState("");
-    const [confirmPaswword, setconfirmPaswword] = useState("");
-    const [mail, setMail] = useState("");
+
 
     return (
         <View style={styles.container}>
@@ -37,12 +38,14 @@ const ChangePassword = () => {
                 onChangeText={setPassword}
             />
 
-            <Button
+            <TextButton
                 title="Valider le mot de passe"
                 onPress={() => {
                     Fire.shared.changePassword(currentPassword,password);
                 }}
-            ></Button>
+                style={{ backgroundColor: colors.lightGrey }}
+
+            ></TextButton>
         </View>
     );
 };
