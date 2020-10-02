@@ -18,9 +18,13 @@ var firebaseConfig = {
 //   appel   =>   Fire.shared.LE-NOM-DE-LA-METHODE()
 //           =>   FIRE.shared.GETTER
 class Fire {
+
+    student = null;
+
 	//constructeur qui initialise la connexion avec notre config
 	constructor() {
 		firebase.initializeApp(firebaseConfig);
+		this.student = false;
 	}
 
 	//function de connexion de compte sur Firebase avec email et mot de passe
@@ -83,10 +87,10 @@ class Fire {
 					nom: nom,
 					prenom: prenom,
 					mail: mail,
-                    avatar: null,
-                    etudiant: isStudent,
-                    annee: annee,
-                    filliere: filliere
+					avatar: null,
+					etudiant: isStudent,
+					annee: annee,
+					filliere: filliere,
 				});
 
 				//si l'avatar est pas null, on upload la photo et on la rajoute dans ses informations
@@ -113,6 +117,32 @@ class Fire {
 		});
 	};
 
+	/* ******************************
+                 add
+    ****************************** */
+
+	addCourse = async (nom, skills) => {
+		console.log('addCourse...');
+		return new Promise(async (res, rej) => {
+			try {
+				let db = this.firestore.collection('cours');
+                db.doc().set({
+					enseignants: [this.uid],
+					nom: nom,
+					skills: skills,
+                });
+                
+               res(ok)
+			} catch (error) {
+				rej(error);
+			}
+		});
+	};
+
+	/* ******************************
+                 get
+    ****************************** */
+
 	getPromos = async () => {
 		console.log('getPromos...');
 		return new Promise(async (res, rej) => {
@@ -137,7 +167,26 @@ class Fire {
 				rej(error);
 			}
 		});
-	};
+    };
+
+
+    getIsStudent = async () => {
+        console.log('getIsStudent...');
+        return new Promise(async (res, rej) => {
+			try {
+                let db = this.firestore.collection('users').doc(this.uid);
+                db.get().then(querySnapshot => {
+                    console.log(querySnapshot.data())
+                    this.student = querySnapshot.data().etudiant;
+                    res(true);
+                })
+			} catch (error) {
+				rej(error);
+			}
+		});
+    };
+    
+
 
 	//function qui déconnecte l'utilisateur
 	signOut = () => {
@@ -154,7 +203,7 @@ class Fire {
 		db.update({ token: token });
 	};
 
-	updateUser = async mail => {
+	updateMail = async mail => {
 		return new Promise(async (res, rej) => {
 			this.user
 				.updateEmail(mail)
@@ -216,6 +265,11 @@ class Fire {
 	get firebase() {
 		return firebase;
 	}
+
+	/* ******************************
+                 setter
+    ****************************** */
+
 }
 
 //instance de la class Fire :

@@ -10,6 +10,8 @@ import StatsScreen from '../screens/app/StatsScreen';
 import RewardsScreen from '../screens/app/RewardsScreen';
 
 import HeaderAvatar from '../components/app/HeaderAvatar';
+import AddCourseScreen from '../screens/app/AddCourseScreen';
+import { TouchableOpacity } from 'react-native';
 
 const HomeStack = createStackNavigator();
 const RewardsStack = createStackNavigator();
@@ -19,13 +21,27 @@ const HomeStackScreen = ({ navigation }: any) => (
 	<HomeStack.Navigator>
 		<HomeStack.Screen
 			name="Home"
-            component={HomeScreen}
-            
+			component={HomeScreen}
 			options={{
-                title: 'Mes cours',
-                headerTransparent:true,
+				title: 'Mes cours',
+				headerTransparent: true,
+				headerLeft: () => <HeaderAvatar navigation={navigation} />,
+				headerTitleAlign: 'center',
+			}}
+		/>
+		<HomeStack.Screen
+			name="AddCourse"
+			component={AddCourseScreen}
+			options={{
+                title: 'Nouvelle matière',
+				headerTransparent: true,
 				headerLeft: () => (
-                    <HeaderAvatar navigation={navigation}/>
+					<TouchableOpacity
+						style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}
+						onPress={() => navigation.navigate("Home")}
+					>
+						<Feather name="arrow-left-circle" size={25} color="black" />
+					</TouchableOpacity>
 				),
 				headerTitleAlign: 'center',
 			}}
@@ -36,15 +52,12 @@ const HomeStackScreen = ({ navigation }: any) => (
 const RewardsStackScreen = ({ navigation }: any) => (
 	<RewardsStack.Navigator>
 		<RewardsStack.Screen
-			name="Home"
-            component={RewardsScreen}
-            
+			name="Rewards"
+			component={RewardsScreen}
 			options={{
-                title: 'Rewards',
-                headerTransparent:true,
-				headerLeft: () => (
-                    <HeaderAvatar navigation={navigation}/>
-				),
+				title: 'Rewards',
+				headerTransparent: true,
+				headerLeft: () => <HeaderAvatar navigation={navigation} />,
 				headerTitleAlign: 'center',
 			}}
 		/>
@@ -54,15 +67,12 @@ const RewardsStackScreen = ({ navigation }: any) => (
 const StatsStackScreen = ({ navigation }: any) => (
 	<StatsStack.Navigator>
 		<StatsStack.Screen
-			name="Home"
-            component={StatsScreen}
-            
+			name="Stats"
+			component={StatsScreen}
 			options={{
-                title: 'Statistiques',
-                headerTransparent:true,
-				headerLeft: () => (
-                    <HeaderAvatar navigation={navigation}/>
-				),
+				title: 'Statistiques',
+				headerTransparent: true,
+				headerLeft: () => <HeaderAvatar navigation={navigation} />,
 				headerTitleAlign: 'center',
 			}}
 		/>
