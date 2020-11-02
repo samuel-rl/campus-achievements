@@ -88,7 +88,7 @@ const RegisterScreen = ({ navigation, route }: any) => {
                 await Fire.shared.updateToken(token);
 
 				//On affiche un Toast
-				ToastAndroid.show('Inscription réussi', 5000);
+				ToastAndroid.show('Inscription réussie', 5000);
 				//on change de stack
 				navigation.reset({
 					index: 0,

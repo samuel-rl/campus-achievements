@@ -1,15 +1,16 @@
-import firebase from 'firebase';
-import 'firebase/firestore';
+import * as firebase from "firebase";
+import "firebase/firestore";
+import { Alert } from "react-native";
 
 //config pris sur Firebase
 var firebaseConfig = {
-	apiKey: 'AIzaSyC3D8lS7xO1cjw9csov-TRah9XtIWjDuB0',
-	authDomain: 'campus-achievements.firebaseapp.com',
-	databaseURL: 'https://campus-achievements.firebaseio.com',
-	projectId: 'campus-achievements',
-	storageBucket: 'campus-achievements.appspot.com',
-	messagingSenderId: '206721630249',
-	appId: '1:206721630249:web:e5fece1948fc5939995c38',
+    apiKey: "AIzaSyC3D8lS7xO1cjw9csov-TRah9XtIWjDuB0",
+    authDomain: "campus-achievements.firebaseapp.com",
+    databaseURL: "https://campus-achievements.firebaseio.com",
+    projectId: "campus-achievements",
+    storageBucket: "campus-achievements.appspot.com",
+    messagingSenderId: "206721630249",
+    appId: "1:206721630249:web:e5fece1948fc5939995c38",
 };
 
 //class qui va gérer les échanges avec firebase
@@ -53,7 +54,7 @@ class Fire {
 			const response = await fetch(uri);
 			const file = await response.blob();
 
-			let upload = firebase.storage().ref(filename).put(file);
+            let upload = firebase.storage().ref(filename).put(file);
 
 			upload.on(
 				'state_changed',
@@ -169,6 +170,23 @@ class Fire {
 		});
     };
 
+    getPromos = async () => {
+        console.log('getPromos...');
+        let response = [];
+        let db = this.firestore.collection('promos');
+        db.get().then(querySnapshot => {
+            let docs = querySnapshot.docs;
+            for (let doc of docs) {
+                const selectedEvent = {
+                       name: doc.id,
+                       items: doc.data().Matieres
+                    };
+               response.push(selectedEvent);
+            }
+            console.log(response)
+        })
+        return response;
+    }
 
     getIsStudent = async () => {
         console.log('getIsStudent...');
@@ -203,31 +221,91 @@ class Fire {
 		db.update({ token: token });
 	};
 
-	updateMail = async mail => {
-		return new Promise(async (res, rej) => {
-			this.user
-				.updateEmail(mail)
-				.then(() => {
-					res(true);
-				})
-				.catch(error => {
-					rej(error);
-				});
-		});
-	};
+    /**
+     * Allow the user to change his mail adress, in the same time in the data base and also for the
+     * authentication
+     * @param {*} currentPassword
+     * @param {*} mail
+     */
+    changeEmail = (currentPassword, mail) => {
+        console.log("change mail ...");
 
-	updatePassword = async password => {
-		return new Promise(async (res, rej) => {
-			this.user
-				.updatePassword(password)
-				.then(() => {
-					res(true);
-				})
-				.catch(error => {
-					rej(error);
-				});
-		});
-	};
+        this.reauthenticate(currentPassword)
+            .then(() => {
+                var user = firebase.auth().currentUser;
+                user.updateEmail(mail)
+                    .then(() => {
+                        //--- putting the mail in the database
+                        let db = this.firestore
+                            .collection("users")
+                            .doc(this.uid);
+                        db.update({ mail: mail });
+                        //---
+                        Alert.alert("Adresse mail modifiée");
+                    })
+                    .catch((error) => {
+                        Alert.alert(error.message);
+                    });
+            })
+            .catch((error) => {
+                Alert.alert(error.message);
+            });
+    };
+
+    /**
+     * Allows the user to change his first name in the database
+     * @param {string} prénom
+     */
+    changePrenom = (prénom) => {
+        console.log("Change prénom ..." + prénom);
+        let db = this.firestore.collection("users").doc(this.uid);
+        db.update({ prenom: prénom });
+    };
+    /**
+     * Allows the user to change his name in the database
+     * @param {*} nom
+     */
+    changeNom = (nom) => {
+        console.log("change nom ..." + nom);
+        let db = this.firestore.collection("users").doc(this.uid);
+        db.update({ nom: nom });
+    };
+
+    /**
+     * We need to reauthenticate the user when he does something sensitive, like
+     * choosing a new password or login
+     * @param {*} currentPassword
+     */
+    reauthenticate = (currentPassword) => {
+        var user = firebase.auth().currentUser;
+        var cred = firebase.auth.EmailAuthProvider.credential(
+            user.email,
+            currentPassword
+        );
+        return user.reauthenticateWithCredential(cred);
+    };
+
+    /**
+     * Allows the user to change his password for authentification
+     * @param {*} currentPassword
+     * @param {*} password
+     */
+    changePassword = (currentPassword, password) => {
+        this.reauthenticate(currentPassword)
+            .then(() => {
+                var user = firebase.auth().currentUser;
+                user.updatePassword(password)
+                    .then(() => {
+                        Alert.alert("Mot de passe modifié");
+                    })
+                    .catch((error) => {
+                        Alert.alert(error.message);
+                    });
+            })
+            .catch((error) => {
+                Alert.alert(error.message);
+            });
+    };
 
 	/* ******************************
                 delete
@@ -254,22 +332,17 @@ class Fire {
 		return firebase.auth.currentUser() || null;
 	}
 
-	get firestore() {
-		return firebase.firestore();
-	}
+    get firestore() {
+        return firebase.firestore();
+    }
 
-	get uid() {
-		return (firebase.auth().currentUser || {}).uid;
-	}
+    get uid() {
+        return (firebase.auth().currentUser || {}).uid;
+    }
 
-	get firebase() {
-		return firebase;
-	}
-
-	/* ******************************
-                 setter
-    ****************************** */
-
+    get firebase() {
+        return firebase;
+    }
 }
 
 //instance de la class Fire :

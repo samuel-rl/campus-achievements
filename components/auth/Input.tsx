@@ -4,7 +4,7 @@ import { StyleSheet, TextInput } from 'react-native';
 export interface LoginScreenProps {}
 
 const Input = ({ style, ...props }: any) => {
-	return <TextInput {...props} style={[styles.input, style]} />;
+	return <TextInput {...props} style={[styles.input, style]} autoCapitalize="none" />;
 };
 
 const styles = StyleSheet.create({
