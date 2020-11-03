@@ -72,12 +72,16 @@ class Fire {
 
 	//fonction de creation d'utilisateur:
 	createUser = async (mail, password, nom, prenom, avatar, isStudent, annee, filliere) => {
-		console.log('createuser...');
 		return new Promise(async (res, rej) => {
 			let remoteUri = null;
 			try {
 				//creation du compte sur firebase
-				await firebase.auth().createUserWithEmailAndPassword(mail, password);
+				await firebase.auth().createUserWithEmailAndPassword(mail, password).then(res => {
+					const user = firebase.auth().currentUser;
+					user.updateProfile({
+						displayName: prenom + ' ' + nom,
+					});
+				});
 
 				//on rajoute dans la collection Users (l'ID sera son UID)
 				let db = this.firestore.collection('users').doc(this.uid);
@@ -93,11 +97,41 @@ class Fire {
 					filliere: filliere,
 				});
 
+				var urls = [
+					'https://firebasestorage.googleapis.com/v0/b/campus-achievements.appspot.com/o/assets%2F1.png?alt=media&token=00e9fa2f-0eb7-4832-8de2-925142a953ed',
+					'https://firebasestorage.googleapis.com/v0/b/campus-achievements.appspot.com/o/assets%2F2.png?alt=media&token=16d05215-4118-46c3-a016-2e9c90ab98d1',
+					'https://firebasestorage.googleapis.com/v0/b/campus-achievements.appspot.com/o/assets%2F3.png?alt=media&token=a3149d59-49eb-4de9-b7df-e610df96e1e4',
+					'https://firebasestorage.googleapis.com/v0/b/campus-achievements.appspot.com/o/assets%2F4.png?alt=media&token=10504956-d153-4321-950b-52d289536127',
+					'https://firebasestorage.googleapis.com/v0/b/campus-achievements.appspot.com/o/assets%2F5.png?alt=media&token=d3dc2402-cb26-4516-93c6-b2327300c26f',
+					'https://firebasestorage.googleapis.com/v0/b/campus-achievements.appspot.com/o/assets%2F1.png?alt=media&token=00e9fa2f-0eb7-4832-8de2-925142a953ed',
+					'https://firebasestorage.googleapis.com/v0/b/campus-achievements.appspot.com/o/assets%2F7.png?alt=media&token=7f022791-ec69-4718-87c3-8a821e52492c',
+					'https://firebasestorage.googleapis.com/v0/b/campus-achievements.appspot.com/o/assets%2F8.png?alt=media&token=eceab596-7b03-41f5-84a1-5676b075fc6a',
+					'https://firebasestorage.googleapis.com/v0/b/campus-achievements.appspot.com/o/assets%2F9.png?alt=media&token=c7c3d7c7-e4f9-458b-a1a8-eadbc2761d23',
+				];
+
+				if (typeof avatar == "string") {
+                    console.log("else...")
+					remoteUri = await this.uploadPhotoAsync(avatar, `avatars/${this.uid}`);
+                    db.set({ avatar: remoteUri }, { merge: true });
+                    var user = firebase.auth().currentUser;
+					user.updateProfile({
+						photoURL: remoteUri,
+					});
+				} else {
+                    console.log("else...")
+                    db.set({ avatar: urls[avatar-1] }, { merge: true });
+					var user = firebase.auth().currentUser;
+					user.updateProfile({
+						photoURL: urls[avatar-1],
+					});
+				}
 				//si l'avatar est pas null, on upload la photo et on la rajoute dans ses informations
+
+				/*
 				if (avatar) {
 					remoteUri = await this.uploadPhotoAsync(avatar, `avatars/${this.uid}`);
 					db.set({ avatar: remoteUri }, { merge: true });
-				}
+				}*/
 
 				//on le rajoute dans la base de donnée
 				firebase.database().ref().child(`Users/${this.uid}`).set({
@@ -343,6 +377,18 @@ class Fire {
 	/* ******************************
                  getter
     ****************************** */
+
+	get displayName() {
+		return (firebase.auth().currentUser || {}).displayName;
+	}
+
+	get email() {
+		return (firebase.auth().currentUser || {}).email;
+	}
+
+	get photoURL() {
+		return (firebase.auth().currentUser || {}).photoURL;
+	}
 
 	get user() {
 		return firebase.auth.currentUser() || null;

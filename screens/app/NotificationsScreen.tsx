@@ -39,6 +39,7 @@ const NotificationsScreen = () => {
     <View style={styles.container}>
         <TextInput  style={styles.input} placeholder="message..." value={messageContent} onChangeText={setMessageContent}/>
         <Button title="envoyer" onPress={sendNotificationToAllUsers}></Button>
+        <Button title="log" onPress={() => console.log(Fire.shared.firebase.auth().currentUser)}></Button>
     </View>
   );
 };

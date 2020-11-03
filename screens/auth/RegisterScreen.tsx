@@ -75,7 +75,7 @@ const RegisterScreen = ({ navigation, route }: any) => {
       }
 
 	//fonction appeler lorsque il clique sur se connecter
-	const register = (mail: string, password: string, nom: string, prenom: string, avatar: null | string) => {
+	const register = (mail: string, password: string, nom: string, prenom: string, avatar: number | string) => {
 		//On réinitialise l'error
 		setError('');
 		//On lance le loader
@@ -161,7 +161,7 @@ const RegisterScreen = ({ navigation, route }: any) => {
 				title={"s'inscrire"}
 				style={styles.loginButton}
 				onPress={() => {
-					register(mail, password, nom, prenom, avatar);
+					register(mail, password, nom, prenom, avatar ? avatar : random);
 				}}
 				loading={loading}
 			/>

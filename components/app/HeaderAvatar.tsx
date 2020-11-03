@@ -1,10 +1,18 @@
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Image, TouchableOpacity } from 'react-native';
+import Fire from '../../config/Fire';
 
 
 const HeaderAvatar = ({navigation}:any) => {
+    const [avatar, setAvatar] = useState<null | string>(null)
 
+    useEffect(() => {
+        console.log("_____")
+        console.log(Fire.shared.displayName)
+        console.log("_____")
+        setAvatar(Fire.shared.photoURL || null)
+    }, [])
 
 	return (
 		<TouchableOpacity
@@ -13,7 +21,7 @@ const HeaderAvatar = ({navigation}:any) => {
 				navigation.openDrawer()
 			}}
 		>
-			<Image style={styles.avatar} source={require("../../assets/avatars/5.png")} />
+			<Image style={styles.avatar} source={ avatar ? {uri: Fire.shared.photoURL} : require('../../assets/avatars/1.png')} />
 		</TouchableOpacity>
 	);
 };

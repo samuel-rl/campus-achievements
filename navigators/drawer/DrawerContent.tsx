@@ -1,13 +1,22 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, View, Image, Text } from 'react-native';
 import { DrawerItem, DrawerContentScrollView } from '@react-navigation/drawer';
 import { Feather, Entypo } from '@expo/vector-icons';
 import Fire from '../../config/Fire';
 
 const DrawerContent = ({ navigation }: any) => {
+
+
 	return (
 		<View style={styles.container}>
 			<DrawerContentScrollView>
+				<View>
+					<Image
+                        style={{ width: 150, height: 150, alignSelf:"center", borderRadius: 100, marginVertical: 15 }}
+                        source={ Fire.shared.photoURL? {uri: Fire.shared.photoURL} : require('../../assets/avatars/1.png')}
+					/>
+                    <Text style={{fontSize:18, textAlign: "center", fontWeight:"bold", marginVertical: 15}}>{Fire.shared.displayName}</Text>
+				</View>
 				<DrawerItem
 					icon={({ color, size }) => <Feather name="home" color={color} size={size} />}
 					label="Accueil"
