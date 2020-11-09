@@ -70,7 +70,17 @@ class Fire {
 		});
 	};
 
-	//fonction de creation d'utilisateur:
+	/**
+	 * fonction de creation d'utilisateur:
+	 * @param {*} mail 
+	 * @param {*} password 
+	 * @param {*} nom 
+	 * @param {*} prenom 
+	 * @param {*} avatar 
+	 * @param {*} isStudent 
+	 * @param {*} annee 
+	 * @param {*} filliere 
+	 */
 	createUser = async (mail, password, nom, prenom, avatar, isStudent, annee, filliere) => {
 		console.log('createuser...');
 		return new Promise(async (res, rej) => {
@@ -332,6 +342,7 @@ class Fire {
 					const event = {
 						nom: doc.data().nom,
 						description: doc.data().description,
+						ratio: doc.data().ratio, //NEW
 					};
 					response.push(event);
 				}

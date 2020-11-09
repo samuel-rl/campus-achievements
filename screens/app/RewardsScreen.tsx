@@ -14,8 +14,13 @@ import { ScrollView } from "react-native-gesture-handler";
 const RewardsScreen = () => {
     /**
      * The layout for one reward
+     * @param {boolean} done : if a Reward is obtained by the user or not
+     * @param {number} ratio : The percentage of people who obtained this trophy
      */
-    const Reward = ({ name, description, done }: any) => {
+    const Reward = ({ name, description, done, ratio }: any) => {
+
+        var ratioPercentage = ratio.toString() + "%" ;
+
         return (
             <TouchableOpacity
                 style={[
@@ -44,7 +49,9 @@ const RewardsScreen = () => {
                 </View>
                 {/* <View style = {styles.completionContainer}> */}
                 <View style={styles.behindCompletionContainer}>
-                    <View style={styles.completionContainer}>
+                    <View style={[styles.completionContainer,{
+                        width: ratioPercentage,
+                    },] }>
                         <Text
                             numberOfLines={1}
                             style={{
@@ -55,7 +62,6 @@ const RewardsScreen = () => {
                                 // display:"flex",
                             }}
                         >
-                            {/* 50% des joueurs ont eu ce trophée */}
                         </Text>
                     </View>
                 </View>
@@ -67,7 +73,7 @@ const RewardsScreen = () => {
                             color: colors.darkLilac,
                         }}
                     >
-                        50% des joueurs ont eu ce trophée
+                        {ratio}% des joueurs ont eu ce trophée
                     </Text>
                 </View>
                 {/* </View> */}
@@ -115,6 +121,7 @@ const RewardsScreen = () => {
                                   description={res.description}
                                   key={index}
                                   done={index == 2 ? true : false}
+                                  ratio={res.ratio} //NEW
                               ></Reward>
                           );
                       })
@@ -175,7 +182,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignSelf: "flex-start",
         backgroundColor: colors.foam,
-        width: "80%",
+        // width: "80%",
         //   borderBottomEndRadius:8,
         borderBottomStartRadius: 8,
         paddingLeft: 5,
