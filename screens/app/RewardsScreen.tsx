@@ -27,7 +27,7 @@ const RewardsScreen = () => {
                     },
                 ]}
             >
-                <View style={{flexDirection:"row"}}>
+                <View style={{ flexDirection: "row" }}>
                     <View style={styles.rewardTextContainer}>
                         <Text style={styles.rewardName}>{name}</Text>
                         <Text style={styles.rewardDescription}>
@@ -42,9 +42,35 @@ const RewardsScreen = () => {
                         />
                     </View>
                 </View>
-                <View style = {styles.completionContainer}>
-                  <Text style={{color:colors.darkLilac}}>50% des joueurs ont eu ce trophée</Text>
+                {/* <View style = {styles.completionContainer}> */}
+                <View style={styles.behindCompletionContainer}>
+                    <View style={styles.completionContainer}>
+                        <Text
+                            numberOfLines={1}
+                            style={{
+                                color: colors.darkLilac,
+
+                                // flexWrap: "nowrap",
+                                // overflow: "hidden",
+                                // display:"flex",
+                            }}
+                        >
+                            {/* 50% des joueurs ont eu ce trophée */}
+                        </Text>
+                    </View>
                 </View>
+                <View>
+                    <Text
+                        style={{
+                            position: "relative",
+                            top: -20,
+                            color: colors.darkLilac,
+                        }}
+                    >
+                        50% des joueurs ont eu ce trophée
+                    </Text>
+                </View>
+                {/* </View> */}
 
                 {/* <View style={styles.rewardTextContainer}>
           <Text style={styles.rewardName}>{name}</Text>
@@ -123,7 +149,7 @@ const styles = StyleSheet.create({
         flex: 6,
         alignItems: "center",
         flexDirection: "column",
-        height:80,
+        height: 80,
     },
     rewardIconContainer: {
         flex: 1,
@@ -146,12 +172,22 @@ const styles = StyleSheet.create({
         // height:45,
     },
     completionContainer: {
-      flexDirection:"row",
-      backgroundColor:colors.foam,
-      width:"100%",
-      borderBottomEndRadius:8,
-      borderBottomStartRadius:8,
-      paddingLeft:5,
+        flexDirection: "row",
+        alignSelf: "flex-start",
+        backgroundColor: colors.foam,
+        width: "80%",
+        //   borderBottomEndRadius:8,
+        borderBottomStartRadius: 8,
+        paddingLeft: 5,
+        // flexWrap: "nowrap",
+        // overflow: "hidden",
+    },
+    behindCompletionContainer: {
+        position: "relative",
+        backgroundColor: colors.lightLilac,
+        width: "100%",
+        borderBottomEndRadius: 8,
+        borderBottomStartRadius: 8,
     },
 });
 
