@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Switch, ToastAndroid } from 'react-native';
 import { TextInput } from 'react-native-paper';
 
@@ -7,25 +7,15 @@ import { Feather } from '@expo/vector-icons';
 
 import { colors } from '../../config/constants';
 import Fire from '../../config/Fire';
+import { Skill, Quizz, BasicUserInfos, Course } from '../../config/constantType';
 
-export interface AddCourseScreenProps {}
 
-interface Quizz {
-	question: string;
-	propositions: string[];
-	solution: string;
-}
 
-interface Skill {
-	nom: string;
-	autoEvaluate: boolean;
-	isSoftSkill: boolean;
-	quizz: Quizz[] | null;
-}
 
 const AddCourseScreen = ({ navigation, route }: any) => {
 	const [nom, setNom] = useState('');
-	const [skills, setSkills] = useState<Skill[]>([]);
+    const [skills, setSkills] = useState<Skill[]>([]);
+    const [color, setColor] = useState("")
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
@@ -33,7 +23,20 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 				<TouchableOpacity
 					style={styles.headerRight}
 					onPress={() => {
-                        Fire.shared.addCourse(nom, skills)
+                        const userAdd:BasicUserInfos = {
+                            uid: Fire.shared.uid,
+                            avatar: Fire.shared.photoURL,
+                            displayName: Fire.shared.displayName,
+                            token: Fire.shared.token,
+                        };
+                        const course:Course = {
+                            color: color,
+                            enseignants: [userAdd],
+                            etudiants: [],
+                            nom: nom,
+                            skills: skills
+                        }
+                        Fire.shared.addCourse(course)
                         ToastAndroid.show("Ajouté", 2000);
 					}}
 				>
@@ -41,7 +44,24 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 				</TouchableOpacity>
 			),
 		});
-	}, [navigation, nom, skills]);
+    }, [navigation, nom, skills]);
+    
+    useEffect(() => {
+        const rand = Math.floor(Math.random() * Math.floor(3))
+        switch (rand) {
+            case 0:
+                setColor("#fa1616");
+                break;
+            case 1:
+                setColor("#ffdd67");
+                break;
+            case 2:
+                setColor("#7577cd");
+                break;
+            default:
+                break;
+        }
+    }, [])
 
 	return (
 		<View>

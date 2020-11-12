@@ -12,6 +12,10 @@ const colors = {
     "darkLilac":"#898494",
     "goldenHour":"#fca311",
     "lightGrey":"#e8e8e8",
+
+    "background":"#eeeff3",
+    "warning":"#bb2205",
+    "doneGreen": "#28df99"
 };
 
 const statusbar ={

@@ -11,6 +11,7 @@ import RewardsScreen from '../screens/app/RewardsScreen';
 
 import HeaderAvatar from '../components/app/HeaderAvatar';
 import AddCourseScreen from '../screens/app/AddCourseScreen';
+import AddCourseStudentScreen from '../screens/app/student/AddCourseStudentScreen'
 import { TouchableOpacity } from 'react-native';
 
 const HomeStack = createStackNavigator();
@@ -34,6 +35,23 @@ const HomeStackScreen = ({ navigation }: any) => (
 			component={AddCourseScreen}
 			options={{
                 title: 'Nouvelle matière',
+				headerTransparent: true,
+				headerLeft: () => (
+					<TouchableOpacity
+						style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}
+						onPress={() => navigation.navigate("Home")}
+					>
+						<Feather name="arrow-left-circle" size={25} color="black" />
+					</TouchableOpacity>
+				),
+				headerTitleAlign: 'center',
+			}}
+		/>
+        <HomeStack.Screen
+			name="AddCourseStudent"
+			component={AddCourseStudentScreen}
+			options={{
+                title: 'Rejoindre un cours',
 				headerTransparent: true,
 				headerLeft: () => (
 					<TouchableOpacity

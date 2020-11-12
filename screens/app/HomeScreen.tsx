@@ -6,23 +6,6 @@ import { Ionicons } from '@expo/vector-icons';
 
 export interface HomeScreenProps {}
 
-const enseignants = ['AJKSKJDELKNDLZKNDELN'];
-const name = 'MATH202';
-const skills = [
-	{
-		nom: 'Savoir faire une classe',
-		isSoftSkill: false,
-		AutoEvaluate: false,
-		quizz: null,
-	},
-	{
-		nom: "Arriver à l'heure",
-		isSoftSkill: false,
-		AutoEvaluate: false,
-		quizz: null,
-	},
-];
-
 const HomeScreen = ({ navigation }: any) => {
 	useEffect(() => {
 		Fire.shared.getIsStudent();
@@ -34,7 +17,7 @@ const HomeScreen = ({ navigation }: any) => {
 				<TouchableOpacity
                     style={styles.headerRight}
 					onPress={() => {
-						Fire.shared.student == true ? console.log("tu es etudiant"): navigation.navigate("AddCourse")
+						Fire.shared.student == true ? navigation.navigate("AddCourseStudent") : navigation.navigate("AddCourse")
 					}}
 				>
 					<Ionicons name="md-add-circle-outline" size={30} color="black" />

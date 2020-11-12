@@ -19,7 +19,8 @@ var firebaseConfig = {
 //   appel   =>   Fire.shared.LE-NOM-DE-LA-METHODE()
 //           =>   FIRE.shared.GETTER
 class Fire {
-	student = null;
+    student = null;
+    token = null;
 
 	//constructeur qui initialise la connexion avec notre config
 	constructor() {
@@ -72,6 +73,7 @@ class Fire {
 
 	//fonction de creation d'utilisateur:
 	createUser = async (mail, password, nom, prenom, avatar, isStudent, annee, filliere) => {
+        this.student = isStudent;
 		return new Promise(async (res, rej) => {
 			let remoteUri = null;
 			try {
@@ -155,18 +157,14 @@ class Fire {
                  add
     ****************************** */
 
-	addCourse = async (nom, skills) => {
+	addCourse = async (course) => {
 		console.log('addCourse...');
 		return new Promise(async (res, rej) => {
 			try {
 				let db = this.firestore.collection('cours');
-				db.doc().set({
-					enseignants: [this.uid],
-					nom: nom,
-					skills: skills,
-				});
+				db.doc().set(course);
 
-				res(ok);
+				res(true);
 			} catch (error) {
 				rej(error);
 			}
@@ -237,6 +235,29 @@ class Fire {
 		});
 	};
 
+
+	getAllCourses = async () => {
+		console.log('getAllCourses...');
+		return new Promise(async (res, rej) => {
+            let courses = [];
+			try {
+				let db = this.firestore.collection('cours');
+				await db.get().then(querySnapshot => {
+					let docs = querySnapshot.docs;
+				    for (let doc of docs) {
+                        data = doc.data();
+                        data.uid = doc.id;
+                        courses.push(data)
+                    }
+				});
+                res(courses)
+			} catch (error) {
+				rej(error);
+			}
+		});
+	};
+
+
 	//function qui déconnecte l'utilisateur
 	signOut = () => {
 		firebase.auth().signOut();
@@ -247,10 +268,22 @@ class Fire {
     ****************************** */
 
 	updateToken = async token => {
-		console.log('updateToken...');
+        console.log('updateToken...');
+        this.token = token;
 		let db = this.firestore.collection('users').doc(this.uid);
 		db.update({ token: token });
-	};
+    };
+    
+
+
+    enterInCourseStudent = async (userAdd, uidCourse) => {
+        console.log("enterInCourseStudent")
+        console.log(uidCourse)
+        let db = this.firestore.collection('cours').doc(uidCourse);
+        db.update({ 
+            etudiants: firebase.firestore.FieldValue.arrayUnion( userAdd )
+         });
+    }
 
 	/**
      * Allow the user to change his mail adress, in the same time in the data base and also for the
