@@ -1,22 +1,14 @@
 import React, { createRef } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Image, FlatList} from 'react-native';
-import { colors } from '../../config/constants';
-import { BasicUserInfos, Course } from '../../config/constantType';
+import { StyleSheet, View, Image, TouchableOpacity, Text, FlatList } from 'react-native';
+import { Course } from '../../../config/constantType';
 import { SimpleLineIcons } from '@expo/vector-icons'; 
-import Fire from '../../config/Fire';
-import AlertPro from 'react-native-alert-pro';
 
-interface SearchCoursesItemProps {
+export interface CoursesItemProps {
     item: Course;
     navigation: any;
-    deleteItemOnParent: Function
 }
 
-
-
-const SearchCoursesItem = ({ item, navigation, deleteItemOnParent }: SearchCoursesItemProps) => {
-    const alert = createRef<any>();
-
+const CoursesItem = ({ item, navigation}:CoursesItemProps) => {
     const ItemAvatar = ({urlAvatar}:any) => {
         return (
                 <Image
@@ -26,24 +18,13 @@ const SearchCoursesItem = ({ item, navigation, deleteItemOnParent }: SearchCours
         )
     }
 
-    const joinCourse = async () => {
-        alert.current.close()
-        const userAdd:BasicUserInfos = {
-            uid: Fire.shared.uid,
-            avatar: Fire.shared.photoURL,
-            displayName: Fire.shared.displayName,
-            token: Fire.shared.token,
-        };
-        deleteItemOnParent(item)
-        Fire.shared.enterInCourseStudent(userAdd, item).then(() => {
-            navigation.goBack()
-        })
+    const openCourse = () => {
+        console.log("okkkkkkkkkkk")
     }
-    
 
-  return(
+  return (
     <TouchableOpacity style={styles.container} activeOpacity={1} onPress={()=> {
-        alert.current.open()
+        openCourse()
     }}>
         <View style={styles.containerColor}>
             <View style={[styles.color, {backgroundColor:item.color}]}></View>
@@ -62,28 +43,6 @@ const SearchCoursesItem = ({ item, navigation, deleteItemOnParent }: SearchCours
         <View style={styles.containerMore}>
             <SimpleLineIcons name="arrow-right" size={15} color="black" />
         </View>
-        <AlertPro
-          ref={alert}
-          onConfirm={async () => joinCourse()}
-          onCancel={() => alert.current.close()}
-          title={"Rejoindre le cours " + item.nom + "?"}
-          textCancel="Non"
-          textConfirm="Oui"
-          customStyles={{
-            mask: {
-              backgroundColor: "rgba(0, 0, 0, 0.15)"
-            },
-            container:{
-                paddingVertical: 30
-            },
-            buttonCancel: {
-              backgroundColor: colors.warning
-            },
-            buttonConfirm: {
-              backgroundColor: colors.doneGreen
-            },
-          }}
-        />
     </TouchableOpacity>
   );
 };
@@ -131,4 +90,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default SearchCoursesItem;
+export default CoursesItem;

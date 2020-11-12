@@ -109,7 +109,6 @@ const AddCourseStudentScreen = ({ navigation }: any) => {
 			) : (
 				<FlatList
 					extraData={coursesSearch}
-					removeClippedSubviews={false}
 					data={coursesSearch}
 					renderItem={(item) => <SearchCoursesItem deleteItemOnParent={(res:Course) => deleteCourse(res)} item={item.item} navigation={navigation} />}
 					keyExtractor={(item, index) => index.toString()}

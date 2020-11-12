@@ -255,7 +255,45 @@ class Fire {
 				rej(error);
 			}
 		});
-	};
+    };
+    
+    getMyInfos = async () => {
+        console.log('getMyInfos...');
+        return new Promise(async (res, rej) => {
+			try {
+				let db = this.firestore.collection('users').doc(this.uid);
+				await db.get().then(querySnapshot => {
+					const data = querySnapshot.data()
+					res(data);
+				});
+			} catch (error) {
+				rej(error);
+			}
+		});
+    }
+
+    getMyCoursesInformationsByUID = async (arrayUID) => {
+        console.log('getMyCoursesInformationsByUID...');
+        return new Promise(async (res, rej) => {
+            let courses = [];
+			try {
+				let db = this.firestore.collection('cours');
+				await db.get().then(querySnapshot => {
+					let docs = querySnapshot.docs;
+				    for (let doc of docs) {
+                        if(arrayUID.includes(doc.id)){
+                            data = doc.data();
+                            data.uid = doc.id;
+                            courses.push(data)
+                        }
+                    }
+                });
+                res(courses)
+			} catch (error) {
+				rej(error);
+			}
+		});
+    }
 
 
 	//function qui déconnecte l'utilisateur
@@ -276,14 +314,18 @@ class Fire {
     
 
 
-    enterInCourseStudent = async (userAdd, uidCourse) => {
+    enterInCourseStudent = async (userAdd, course) => {
         console.log("enterInCourseStudent")
-        console.log(uidCourse)
-        let db = this.firestore.collection('cours').doc(uidCourse);
-        db.update({ 
+        let dbCours = this.firestore.collection('cours').doc(course.uid);
+        dbCours.update({ 
             etudiants: firebase.firestore.FieldValue.arrayUnion( userAdd )
          });
+        let dbUser = this.firestore.collection('users').doc(this.uid);
+        dbUser.update({ 
+            cours: firebase.firestore.FieldValue.arrayUnion(course)
+         });
     }
+
 
 	/**
      * Allow the user to change his mail adress, in the same time in the data base and also for the
