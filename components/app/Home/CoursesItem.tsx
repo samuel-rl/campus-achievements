@@ -19,7 +19,7 @@ const CoursesItem = ({ item, navigation}:CoursesItemProps) => {
     }
 
     const openCourse = () => {
-        console.log("okkkkkkkkkkk")
+        //TODO
     }
 
   return (
@@ -31,7 +31,7 @@ const CoursesItem = ({ item, navigation}:CoursesItemProps) => {
         </View>
         <View style={styles.containerInfos}>
             <Text style={styles.titre}>{item.nom}</Text>
-            {item.etudiants.length == 0 ? <Text style={styles.lightText}>Encore aucun étudiant</Text> : <Text style={styles.lightText}>{item.etudiants.length} autres étudiants</Text>}
+            {item.etudiants.length == 0 ? <Text style={styles.lightText}>Encore aucun étudiant</Text> : <Text style={styles.lightText}>{item.etudiants.length} étudiants</Text>}
             <FlatList
                 style={styles.listAvatar}
 				data={item.etudiants}

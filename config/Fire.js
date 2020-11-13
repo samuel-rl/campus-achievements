@@ -112,7 +112,6 @@ class Fire {
 				];
 
 				if (typeof avatar == "string") {
-                    console.log("else...")
 					remoteUri = await this.uploadPhotoAsync(avatar, `avatars/${this.uid}`);
                     db.set({ avatar: remoteUri }, { merge: true });
                     var user = firebase.auth().currentUser;
@@ -120,22 +119,12 @@ class Fire {
 						photoURL: remoteUri,
 					});
 				} else {
-                    console.log("else...")
                     db.set({ avatar: urls[avatar-1] }, { merge: true });
 					var user = firebase.auth().currentUser;
 					user.updateProfile({
 						photoURL: urls[avatar-1],
 					});
 				}
-				//si l'avatar est pas null, on upload la photo et on la rajoute dans ses informations
-
-				/*
-				if (avatar) {
-					remoteUri = await this.uploadPhotoAsync(avatar, `avatars/${this.uid}`);
-					db.set({ avatar: remoteUri }, { merge: true });
-				}*/
-
-				//on le rajoute dans la base de donnée
 				firebase.database().ref().child(`Users/${this.uid}`).set({
 					nom: nom,
 					prenom: prenom,
@@ -161,8 +150,19 @@ class Fire {
 		console.log('addCourse...');
 		return new Promise(async (res, rej) => {
 			try {
-				let db = this.firestore.collection('cours');
-				db.doc().set(course);
+				//let courseAdd = await this.firestore.collection('cours').doc().set(course)
+            
+
+                 var newCourseRef = this.firestore.collection('cours').doc();
+                 var id = newCourseRef.id;
+                 newCourseRef.set(course)
+
+                 course.uid = id
+
+                 let dbUser = this.firestore.collection('users').doc(this.uid);
+                 dbUser.update({ 
+                     coursEnseignant: firebase.firestore.FieldValue.arrayUnion(course)
+                  });
 
 				res(true);
 			} catch (error) {
@@ -199,24 +199,6 @@ class Fire {
 				rej(error);
 			}
 		});
-	};
-
-	getPromos = async () => {
-		console.log('getPromos...');
-		let response = [];
-		let db = this.firestore.collection('promos');
-		db.get().then(querySnapshot => {
-			let docs = querySnapshot.docs;
-			for (let doc of docs) {
-				const selectedEvent = {
-					name: doc.id,
-					items: doc.data().Matieres,
-				};
-				response.push(selectedEvent);
-			}
-			console.log(response);
-		});
-		return response;
 	};
 
 	getIsStudent = async () => {
@@ -326,6 +308,17 @@ class Fire {
          });
     }
 
+    enterInCourseTeacher = async (userAdd, course) => {
+        console.log("enterInCourseTeacher")
+        let dbCours = this.firestore.collection('cours').doc(course.uid);
+        dbCours.update({ 
+            enseignants: firebase.firestore.FieldValue.arrayUnion( userAdd )
+         });
+        let dbUser = this.firestore.collection('users').doc(this.uid);
+        dbUser.update({ 
+            coursEnseignant: firebase.firestore.FieldValue.arrayUnion(course)
+         });
+    }
 
 	/**
      * Allow the user to change his mail adress, in the same time in the data base and also for the
@@ -362,7 +355,7 @@ class Fire {
      * @param {string} prénom
      */
 	changePrenom = prénom => {
-		console.log('Change prénom ...' + prénom);
+		console.log('Change prénom ...');
 		let db = this.firestore.collection('users').doc(this.uid);
 		db.update({ prenom: prénom });
 	};
@@ -371,7 +364,7 @@ class Fire {
      * @param {*} nom
      */
 	changeNom = nom => {
-		console.log('change nom ...' + nom);
+		console.log('change nom ...');
 		let db = this.firestore.collection('users').doc(this.uid);
 		db.update({ nom: nom });
 	};

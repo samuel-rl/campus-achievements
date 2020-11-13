@@ -9,7 +9,6 @@ const NotificationsScreen = () => {
     const [messageContent, setMessageContent] = useState('');
     
     const sendNotification = async (token:any) => {
-        console.log("send to ... "+ token);
         const message = {
           to: token,
           sound: 'default',
@@ -39,7 +38,7 @@ const NotificationsScreen = () => {
     <View style={styles.container}>
         <TextInput  style={styles.input} placeholder="message..." value={messageContent} onChangeText={setMessageContent}/>
         <Button title="envoyer" onPress={sendNotificationToAllUsers}></Button>
-        <Button title="log" onPress={() => console.log(Fire.shared.firebase.auth().currentUser)}></Button>
+        <Button title="log" onPress={() => {}}></Button>
     </View>
   );
 };

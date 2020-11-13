@@ -78,7 +78,6 @@ const PromosScreen = ({ navigation }: any) => {
 				setAnnee(titre);
 				promos?.map((item) => {
 					if (item.name == titre) {
-						console.log(item.items);
 						setCurrentList(item.items);
 					}
 				});

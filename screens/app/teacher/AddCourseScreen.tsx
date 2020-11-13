@@ -5,9 +5,9 @@ import { TextInput } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 
-import { colors } from '../../config/constants';
-import Fire from '../../config/Fire';
-import { Skill, Quizz, BasicUserInfos, Course } from '../../config/constantType';
+import { colors } from '../../../config/constants';
+import Fire from '../../../config/Fire';
+import { Skill, Quizz, BasicUserInfos, CourseWithoutUID } from '../../../config/constantType';
 
 
 
@@ -29,12 +29,12 @@ const AddCourseScreen = ({ navigation, route }: any) => {
                             displayName: Fire.shared.displayName,
                             token: Fire.shared.token,
                         };
-                        const course:Course = {
+                        const course:CourseWithoutUID = {
                             color: color,
                             enseignants: [userAdd],
                             etudiants: [],
                             nom: nom,
-                            skills: skills
+                            skills: skills,
                         }
                         Fire.shared.addCourse(course)
                         ToastAndroid.show("Ajouté", 2000);

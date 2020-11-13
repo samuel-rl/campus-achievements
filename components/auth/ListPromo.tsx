@@ -27,7 +27,6 @@ const ListPromo = ({ promos }: ListPromoProps) => {
 		Fire.shared
 			.getPromos()
 			.then((promos) => {
-                console.log(promos);
                 setLoading(false)
 			})
 			.then((error) => {

@@ -70,7 +70,6 @@ const RewardsScreen = () => {
         //When the screen is launched, we get all rewards from our database
         const res = Fire.shared.getAllReward().then((result) => {
             setRewards(result);
-            console.log("done!!!");
         });
     }, []);
 

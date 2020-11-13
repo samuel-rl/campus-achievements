@@ -2,6 +2,14 @@ export interface Course {
     uid: string;
 	enseignants: BasicUserInfos[];
 	nom: string;
+	skills: Skill[] | null;
+    etudiants: BasicUserInfos[];
+    color: string;
+}
+
+export interface CourseWithoutUID {
+	enseignants: BasicUserInfos[];
+	nom: string;
 	skills: any;
     etudiants: BasicUserInfos[];
     color: string;

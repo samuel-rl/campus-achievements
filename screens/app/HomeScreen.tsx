@@ -18,10 +18,27 @@ const HomeScreen = ({ navigation }: any) => {
             Fire.shared.getIsStudent();
             Fire.shared.getMyInfos().then(async (res:any) => {
                 var temp:string[] = [];
-                res.cours.map((x:any) => temp.push(x.uid))
+
+
+                if(Fire.shared.student == true){
+                    console.log("if")
+                    if(res.cours != undefined){
+                        res.cours.map((x:any) => temp.push(x.uid))
+                    } 
+                }else{
+                    console.log("else")
+                    if(res.coursEnseignant != undefined){
+                        res.coursEnseignant.map((x:any) => temp.push(x.uid))
+                    } 
+                    console.log(res.coursEnseignant)
+                }
                 Fire.shared.getMyCoursesInformationsByUID(temp).then((x: Course[]) => {
                     setCourses(x)
                 })
+
+
+
+
             });
           });
 
@@ -34,7 +51,7 @@ const HomeScreen = ({ navigation }: any) => {
 				<TouchableOpacity
                     style={styles.headerRight}
 					onPress={() => {
-						Fire.shared.student == true ? navigation.navigate("AddCourseStudent") : navigation.navigate("AddCourse")
+                        navigation.navigate("JoinCourses")
 					}}
 				>
 					<Ionicons name="md-add-circle-outline" size={30} color="black" />

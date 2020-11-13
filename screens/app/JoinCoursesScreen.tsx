@@ -1,33 +1,49 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, FlatList } from 'react-native';
-import Fire from '../../../config/Fire';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity } from 'react-native';
+import Fire from '../../config/Fire';
 import { useHeaderHeight } from '@react-navigation/stack';
+import { Ionicons } from '@expo/vector-icons'; 
+import { Course } from '../../config/constantType';
+import SearchItems from '../../components/common/SearchItems';
+import SearchCoursesItem from '../../components/common/SearchCoursesItem';
+import { colors } from '../../config/constants';
 
-import { Course } from '../../../config/constantType';
-import SearchItems from '../../../components/common/SearchItems';
-import SearchCoursesItem from '../../../components/common/SearchCoursesItem';
-import { colors } from '../../../config/constants';
-
-const AddCourseStudentScreen = ({ navigation }: any) => {
+const JoinCoursesScreen = ({ navigation }: any) => {
 	const [courses, setCourses] = useState<Course[]>([]);
 	const [search, setSearch] = useState('');
-	const [coursesSearch, setCoursesSearch] = useState<Course[]>([]);
+    const [coursesSearch, setCoursesSearch] = useState<Course[]>([]);
+
 
     const headerHeight = useHeaderHeight();
-    
 
+	React.useLayoutEffect(() => {
+		navigation.setOptions({
+			headerRight: () => (
+				<TouchableOpacity
+                    style={styles.headerRight}
+					onPress={() => {
+                        navigation.navigate("AddCourse")
+					}}
+				>
+					<Ionicons name="md-add-circle-outline" size={30} color="black" />
+				</TouchableOpacity>
+			),
+		});
+	}, [navigation]);
+    
 
 	useEffect(() => {
 		Fire.shared
 			.getAllCourses()
 			.then(async (coursesRes: Course[]) => {
-				const otherCourses = deleteCourseWhereImIn(coursesRes);
+                //const otherCourses = deleteCourseWhereImIn(coursesRes);
+                const otherCourses = Fire.shared.student ? deleteCourseWhereImIn(coursesRes) : deleteCourseITeach(coursesRes);
 				setCourses(deleteCourseWhereImIn(otherCourses));
 				setCoursesSearch(trierListeParNom(otherCourses));
 			})
 			.catch((err) => {
 				alert(err);
-			});
+            });
 	}, []);
 
 	const sanitizeToSort = (str: string) => {
@@ -82,7 +98,15 @@ const AddCourseStudentScreen = ({ navigation }: any) => {
         let newCourses = courses.filter(x => 
             x.etudiants.findIndex(y => y.uid == myUid) === -1)
         return newCourses
-	};
+    };
+
+    const deleteCourseITeach = (courses: Course[]) => {
+        const myUid = Fire.shared.uid;
+        let newCourses = courses.filter(x => 
+            x.enseignants.findIndex(y => y.uid == myUid) === -1)
+        return newCourses
+    };
+
 
 	const onChangeSearch = (newSearch: string) => {
 		setSearch(newSearch);
@@ -132,7 +156,10 @@ const styles = StyleSheet.create({
     warningTextEmpty: {
         alignSelf: "center",
         marginTop: 200
-    }
+    },
+    headerRight: {
+        marginRight: 20,
+    },
 });
 
-export default AddCourseStudentScreen;
+export default JoinCoursesScreen;
