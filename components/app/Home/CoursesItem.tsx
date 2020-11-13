@@ -9,10 +9,10 @@ export interface CoursesItemProps {
 }
 
 const CoursesItem = ({ item, navigation}:CoursesItemProps) => {
-    const ItemAvatar = ({urlAvatar}:any) => {
+    const ItemAvatar = ({urlAvatar, index}:any) => {
         return (
                 <Image
-                    style={{ width: 35, height: 35, borderRadius: 100}}
+                    style={{ width: 35, height: 35, borderRadius: 100, left: index * -15,}}
                     source={{uri: urlAvatar}}
                 />
         )
@@ -21,6 +21,7 @@ const CoursesItem = ({ item, navigation}:CoursesItemProps) => {
     const openCourse = () => {
         //TODO
     }
+
 
   return (
     <TouchableOpacity style={styles.container} activeOpacity={1} onPress={()=> {
@@ -36,7 +37,7 @@ const CoursesItem = ({ item, navigation}:CoursesItemProps) => {
                 style={styles.listAvatar}
 				data={item.etudiants}
 				keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item, index }) => <ItemAvatar urlAvatar={item.avatar} />}
+                renderItem={({ item, index }) => <ItemAvatar index={index} urlAvatar={item.avatar} />}
                 horizontal
 			/>
         </View>

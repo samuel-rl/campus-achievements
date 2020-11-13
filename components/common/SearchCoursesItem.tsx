@@ -15,8 +15,8 @@ interface SearchCoursesItemProps {
 const SearchCoursesItem = ({ item, navigation, deleteItemOnParent }: SearchCoursesItemProps) => {
 	const alert = createRef<any>();
 
-	const ItemAvatar = ({ urlAvatar }: any) => {
-		return <Image style={{ width: 35, height: 35, borderRadius: 100 }} source={{ uri: urlAvatar }} />;
+	const ItemAvatar = ({ urlAvatar, index }: any) => {
+		return <Image style={{ width: 35, height: 35, borderRadius: 100, left: index * -15, }} source={{ uri: urlAvatar }} />;
 	};
 
 	const joinCourse = async () => {
@@ -59,7 +59,7 @@ const SearchCoursesItem = ({ item, navigation, deleteItemOnParent }: SearchCours
 					style={styles.listAvatar}
 					data={item.etudiants}
 					keyExtractor={(item, index) => index.toString()}
-					renderItem={({ item }) => <ItemAvatar urlAvatar={item.avatar} />}
+					renderItem={({ item, index }) => <ItemAvatar index={index} urlAvatar={item.avatar} />}
 					horizontal
 				/>
 			</View>
