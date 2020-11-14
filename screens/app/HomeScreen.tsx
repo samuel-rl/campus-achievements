@@ -21,16 +21,13 @@ const HomeScreen = ({ navigation }: any) => {
 
 
                 if(Fire.shared.student == true){
-                    console.log("if")
                     if(res.cours != undefined){
                         res.cours.map((x:any) => temp.push(x.uid))
                     } 
                 }else{
-                    console.log("else")
                     if(res.coursEnseignant != undefined){
                         res.coursEnseignant.map((x:any) => temp.push(x.uid))
                     } 
-                    console.log(res.coursEnseignant)
                 }
                 Fire.shared.getMyCoursesInformationsByUID(temp).then((x: Course[]) => {
                     setCourses(x)

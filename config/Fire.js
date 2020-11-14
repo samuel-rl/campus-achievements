@@ -1,6 +1,7 @@
 import * as firebase from 'firebase';
 import 'firebase/firestore';
 import { Alert } from 'react-native';
+import initialRewards from './rewards';
 
 //config pris sur Firebase
 var firebaseConfig = {
@@ -86,7 +87,9 @@ class Fire {
 				});
 
 				//on rajoute dans la collection Users (l'ID sera son UID)
-				let db = this.firestore.collection('users').doc(this.uid);
+                let db = this.firestore.collection('users').doc(this.uid);
+                
+
 
 				//On met dans son document ses informations
 				db.set({
@@ -96,7 +99,8 @@ class Fire {
 					avatar: null,
 					etudiant: isStudent,
 					annee: annee,
-					filliere: filliere,
+                    filliere: filliere,
+                    rewards: initialRewards
 				});
 
 				var urls = [
@@ -423,24 +427,19 @@ class Fire {
 	/* ******************************
                  rewards
     ****************************** */
-	getAllReward = async () => {
-		console.log('getAllReward...');
+	getMyRewards = async () => {
+		console.log('getMyRewards...');
 		return new Promise(async (res, rej) => {
-			let response = [];
-			const db = this.firestore.collection('rewards');
-			await db.get().then(querySnapshot => {
-				let docs = querySnapshot.docs;
-				for (let doc of docs) {
-					const event = {
-						nom: doc.data().nom,
-						description: doc.data().description,
-					};
-					response.push(event);
-				}
-			});
-			res(response);
-		});
-	};
+			try {
+				let db = this.firestore.collection('users').doc(this.uid);
+				db.get().then(querySnapshot => {
+					res(querySnapshot.data().rewards);
+				});
+			} catch (error) {
+				rej(error);
+			}
+        });
+    };
 
 	/* ******************************
                  getter

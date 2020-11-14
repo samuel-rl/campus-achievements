@@ -46,3 +46,12 @@ export interface Skill {
 	isSoftSkill: boolean;
 	quizz: Quizz[] | null;
 }
+
+export interface Reward {
+    id: number;
+    src: any;
+    name: string;
+    func: string;
+    done: boolean;
+}
+

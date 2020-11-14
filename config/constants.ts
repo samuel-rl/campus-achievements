@@ -13,7 +13,7 @@ const colors = {
     "goldenHour":"#fca311",
     "lightGrey":"#e8e8e8",
 
-    "background":"#eeeff3",
+    "background":"#d7e5e6",
     "warning":"#bb2205",
     "doneGreen": "#28df99"
 };
