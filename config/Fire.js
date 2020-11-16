@@ -70,6 +70,7 @@ class Fire {
 		});
 	};
 
+
 	/**
 	 * fonction de creation d'utilisateur:
 	 * @param {*} mail 
@@ -342,7 +343,7 @@ class Fire {
 					const event = {
 						nom: doc.data().nom,
 						description: doc.data().description,
-						ratio: doc.data().ratio, //NEW
+						ratio: doc.data().ratio, //NEW - this radio should be calculated
 					};
 					response.push(event);
 				}
