@@ -40,7 +40,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
                         ToastAndroid.show("Ajouté", 2000);
 					}}
 				>
-					<Feather name="plus-circle" size={25} color="black" />
+					<Feather name="plus-circle" size={25} color="#000" />
 				</TouchableOpacity>
 			),
 		});
@@ -209,7 +209,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 											setSkills(newArr);
 										}}
 									>
-										<AntDesign name="pluscircleo" size={20} color="black" />
+										<AntDesign name="pluscircleo" size={20} color="#000" />
 									</TouchableOpacity>
 								</View>
 							) : null}
@@ -230,7 +230,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 						setSkills(newArr);
 					}}
 				>
-					<AntDesign name="pluscircleo" size={30} color="black" />
+					<AntDesign name="pluscircleo" size={30} color="#000" />
 				</TouchableOpacity>
 			</ScrollView>
 		</View>

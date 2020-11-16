@@ -19,7 +19,7 @@ const CoursesItem = ({ item, navigation}:CoursesItemProps) => {
     }
 
     const openCourse = () => {
-        //TODO
+        navigation.push('CourseScreen', {item})
     }
 
 

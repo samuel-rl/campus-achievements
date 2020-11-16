@@ -211,7 +211,6 @@ class Fire {
 			try {
 				let db = this.firestore.collection('users').doc(this.uid);
 				db.get().then(querySnapshot => {
-					console.log(querySnapshot.data());
 					this.student = querySnapshot.data().etudiant;
 					res(true);
 				});

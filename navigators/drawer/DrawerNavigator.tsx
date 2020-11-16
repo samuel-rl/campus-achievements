@@ -84,7 +84,7 @@ const DrawerNavigator = () => {
             drawerStyle={{
                 width: 240,
             }}
-            edgeWidth={400}
+            edgeWidth={100}
             drawerType="front"
             initialRouteName="Accueil"
             drawerContent={DrawerContent}

@@ -13,9 +13,9 @@ const colors = {
     "goldenHour":"#fca311",
     "lightGrey":"#e8e8e8",
 
-    "background":"#d7e5e6",
+    "background":"#f4f4f4",
     "warning":"#bb2205",
-    "doneGreen": "#28df99"
+    "doneGreen": "#28df99",
 };
 
 const statusbar ={

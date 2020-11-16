@@ -6,6 +6,13 @@ import { Reward } from '../../config/constantType';
 import initialRewards from '../../config/rewards';
 import Fire from '../../config/Fire';
 import Toast from 'react-native-toast-message';
+import CustomToast from '../../components/common/CustomToast'
+
+const toastConfig = {
+	any_custom_type: (internalState) => (
+		<CustomToast internalState={internalState}></CustomToast>
+	),
+};
 
 const RewardsScreen = () => {
 	const headerHeight = useHeaderHeight();
@@ -23,14 +30,15 @@ const RewardsScreen = () => {
 		<View style={styles.container}>
 			<ScrollView style={{ marginTop: headerHeight }}>
 				<Button
-					title="press"
+					title="example toast"
 					onPress={() => {
 						toast.current.show({
-                            position: 'bottom',
-                            visibilityTime: 2000,
-                            text1: 'Bravo',
-                            text2: 'Nouveau succes débloqué',
-                        });
+							type: 'any_custom_type',
+							position: 'bottom',
+							visibilityTime: 4000,
+							text1: 'Cheeeese !',
+							text2: 'Bravo. Vous avez débloqué un nouveau succès',
+						});
 					}}
 				></Button>
 				<View style={{ flexWrap: 'wrap', flexDirection: 'row' }}>
@@ -53,7 +61,7 @@ const RewardsScreen = () => {
 					})}
 				</View>
 			</ScrollView>
-			<Toast ref={toast} />
+			<Toast config={toastConfig} ref={toast} />
 		</View>
 	);
 };

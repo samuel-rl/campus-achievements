@@ -6,6 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import PromosScreen from '../screens/auth/PromosScreen';
+import { colors } from '../config/constants';
 
 //creation de la stack
 const AuthStack = createStackNavigator();
@@ -25,7 +26,7 @@ const RegisterStackScreen = ({ navigation }: any) => (
 						style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}
 						onPress={() => navigation.goBack()}
 					>
-						<Feather name="arrow-left-circle" size={25} color="black" />
+						<Feather name="arrow-left" size={25} color="#000" />
 					</TouchableOpacity>
 				),
 				headerTitleAlign: 'center',
@@ -42,7 +43,7 @@ const RegisterStackScreen = ({ navigation }: any) => (
 						style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}
 						onPress={() => navigation.goBack()}
 					>
-						<Feather name="arrow-left-circle" size={25} color="black" />
+						<Feather name="arrow-left" size={25} color="#000" />
 					</TouchableOpacity>
 				),
 				headerTitleAlign: 'center',

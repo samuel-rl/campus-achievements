@@ -10,6 +10,7 @@ import StatsScreen from '../screens/app/StatsScreen';
 import RewardsScreen from '../screens/app/RewardsScreen';
 import JoinCoursesScreen from '../screens/app/JoinCoursesScreen';
 import AddCourseScreen from '../screens/app/teacher/AddCourseScreen'
+import CourseScreen from '../screens/app/CourseScreen'
 
 import HeaderAvatar from '../components/app/HeaderAvatar';
 import { TouchableOpacity } from 'react-native';
@@ -41,10 +42,18 @@ const HomeStackScreen = ({ navigation }: any) => (
 						style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}
 						onPress={() => navigation.navigate("Home")}
 					>
-						<Feather name="arrow-left-circle" size={25} color="black" />
+						<Feather name="arrow-left" size={25} color="#000" />
 					</TouchableOpacity>
 				),
 				headerTitleAlign: 'center',
+			}}
+		/>
+        <HomeStack.Screen
+            name="CourseScreen"
+            
+            component={CourseScreen}
+			options={{
+                headerShown:false
 			}}
 		/>
 		<HomeStack.Screen
@@ -58,7 +67,7 @@ const HomeStackScreen = ({ navigation }: any) => (
 						style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}
 						onPress={() => navigation.navigate("JoinCourses")}
 					>
-						<Feather name="arrow-left-circle" size={25} color="black" />
+						<Feather name="arrow-left" size={25} color="#000" />
 					</TouchableOpacity>
 				),
 				headerTitleAlign: 'center',
