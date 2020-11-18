@@ -10,7 +10,7 @@ import { Skill, Quizz, BasicUserInfos, CourseWithoutUID } from '../../../config/
 import ColorPalette from 'react-native-color-palette';
 import ConnectedView from '../../../components/common/ConnectedView';
 
-const AddCourseScreen = ({ navigation, route }: any) => {
+const AddCourseScreen = ({ navigation}: any) => {
 	const [nom, setNom] = useState('');
 	const [skills, setSkills] = useState<Skill[]>([]);
 	const [color, setColor] = useState(courseColors[0]);
@@ -35,8 +35,9 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 							nom: nom,
 							skills: skills,
 						};
-						Fire.shared.addCourse(course);
-						ToastAndroid.show('Ajouté', 2000);
+						Fire.shared.addCourse(course).then(() => {
+                            navigation.navigate('Home')
+                        })
 					}}
 				>
 					<Feather name="plus" size={25} color="#000" />
@@ -136,7 +137,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 									</View>
 									{skills[index].quizz != null ? (
 										<View>
-											{skills[index].quizz?.map((question: any, indexQuestion: any) => {
+											{skills[index].quizz?.map((quizz: Quizz, indexQuestion: any) => {
 												return (
 													<View key={indexQuestion}>
 														<Text style={styles.questiontitre}>
@@ -147,11 +148,15 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 															theme={{ colors: { text: '#000', primary: colors.blue } }}
 															mode="outlined"
 															label={'Intitulé'}
-															value={skills[index].quizz[indexQuestion].question}
+															value={quizz.question}
 															onChangeText={(text) => {
-																let newArr = [...skills];
-																newArr[index].quizz[indexQuestion].question = text;
-																setSkills(newArr);
+                                                                let tempArrSkill = skills.slice(0, skills.length-1)
+                                                                let temp:Skill = skills[index];
+                                                                if(temp.quizz){
+                                                                    temp.quizz[indexQuestion].question = text;
+                                                                }
+                                                                tempArrSkill = [...tempArrSkill, temp]
+																setSkills(tempArrSkill);
 															}}
 														/>
 														<TextInput
@@ -159,11 +164,15 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 															theme={{ colors: { text: '#000', primary: colors.blue } }}
 															mode="outlined"
 															label={'Solution'}
-															value={skills[index].quizz[indexQuestion].solution}
+															value={quizz.solution}
 															onChangeText={(text) => {
-																let newArr = [...skills];
-																newArr[index].quizz[indexQuestion].solution = text;
-																setSkills(newArr);
+                                                                let tempArrSkill = skills.slice(0, skills.length-1)
+                                                                let temp:Skill = skills[index];
+                                                                if(temp.quizz){
+                                                                    temp.quizz[indexQuestion].solution = text;
+                                                                }
+                                                                tempArrSkill = [...tempArrSkill, temp]
+																setSkills(tempArrSkill);
 															}}
 														/>
 														<TextInput
@@ -171,13 +180,15 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 															theme={{ colors: { text: '#000', primary: colors.blue } }}
 															mode="outlined"
 															label={'Autre choix'}
-															value={skills[index].quizz[indexQuestion].propositions[0]}
+															value={quizz.propositions[0]}
 															onChangeText={(text) => {
-																let newArr = [...skills];
-																newArr[index].quizz[
-																	indexQuestion
-																].propositions[0] = text;
-																setSkills(newArr);
+                                                                let tempArrSkill = skills.slice(0, skills.length-1)
+                                                                let temp:Skill = skills[index];
+                                                                if(temp.quizz){
+                                                                    temp.quizz[indexQuestion].propositions[0] = text;
+                                                                }
+                                                                tempArrSkill = [...tempArrSkill, temp]
+																setSkills(tempArrSkill);
 															}}
 														/>
 														<TextInput
@@ -185,13 +196,15 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 															theme={{ colors: { text: '#000', primary: colors.blue } }}
 															mode="outlined"
 															label={'Autre choix'}
-															value={skills[index].quizz[indexQuestion].propositions[1]}
+															value={quizz.propositions[1]}
 															onChangeText={(text) => {
-																let newArr = [...skills];
-																newArr[index].quizz[
-																	indexQuestion
-																].propositions[1] = text;
-																setSkills(newArr);
+                                                                let tempArrSkill = skills.slice(0, skills.length-1)
+                                                                let temp:Skill = skills[index];
+                                                                if(temp.quizz){
+                                                                    temp.quizz[indexQuestion].propositions[1] = text;
+                                                                }
+                                                                tempArrSkill = [...tempArrSkill, temp]
+																setSkills(tempArrSkill);
 															}}
 														/>
 														<TextInput
@@ -199,13 +212,15 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 															theme={{ colors: { text: '#000', primary: colors.blue } }}
 															mode="outlined"
 															label={'Autre choix'}
-															value={skills[index].quizz[indexQuestion].propositions[2]}
+															value={quizz.propositions[2]}
 															onChangeText={(text) => {
-																let newArr = [...skills];
-																newArr[index].quizz[
-																	indexQuestion
-																].propositions[2] = text;
-																setSkills(newArr);
+                                                                let tempArrSkill = skills.slice(0, skills.length-1)
+                                                                let temp:Skill = skills[index];
+                                                                if(temp.quizz){
+                                                                    temp.quizz[indexQuestion].propositions[2] = text;
+                                                                }
+                                                                tempArrSkill = [...tempArrSkill, temp]
+																setSkills(tempArrSkill);
 															}}
 														/>
 													</View>
