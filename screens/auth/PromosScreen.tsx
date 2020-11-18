@@ -16,7 +16,7 @@ export interface ListItemProps {
 	onPress: Function;
 }
 
-const DURATION = 1600;
+const DURATION = 1000;
 
 const PromosScreen = ({ navigation }: any) => {
 	const animatedValue = React.useRef(new Animated.Value(0)).current;
@@ -104,8 +104,18 @@ const PromosScreen = ({ navigation }: any) => {
 							opacity: animatedValue.interpolate({
 								inputRange: [0, 0.5, 1],
 								outputRange: [0, 0.2, 1],
-							}),
-						},
+                            })
+                        },
+                    {
+                        transform: [
+                            {
+                                scale: animatedValue.interpolate({
+                                    inputRange: [0, 0.5 , 1],
+                                    outputRange: [0, 0.5 ,1],
+                                }),
+                            },
+                        ],
+                    }
 					]}
 				>
 					<Text style={styles.item}>{titre}</Text>

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Switch, ToastAndroid } from 'react-native';
+import React, { ElementRef, useEffect, useRef, useState } from 'react';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Switch, ToastAndroid, Animated } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
@@ -10,11 +10,15 @@ import { Skill, Quizz, BasicUserInfos, CourseWithoutUID } from '../../../config/
 import ColorPalette from 'react-native-color-palette';
 import ConnectedView from '../../../components/common/ConnectedView';
 
-const AddCourseScreen = ({ navigation}: any) => {
+const AddCourseScreen = ({ navigation }: any) => {
 	const [nom, setNom] = useState('');
 	const [skills, setSkills] = useState<Skill[]>([]);
 	const [color, setColor] = useState(courseColors[0]);
 	const headerHeight = useHeaderHeight();
+	const [animation, setAnimation] = useState<Animated.Value[]>([]);
+
+    const scrollViewRef = useRef<ScrollView|null>(null);
+    
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
@@ -36,8 +40,8 @@ const AddCourseScreen = ({ navigation}: any) => {
 							skills: skills,
 						};
 						Fire.shared.addCourse(course).then(() => {
-                            navigation.navigate('Home')
-                        })
+							navigation.navigate('Home');
+						});
 					}}
 				>
 					<Feather name="plus" size={25} color="#000" />
@@ -49,6 +53,10 @@ const AddCourseScreen = ({ navigation}: any) => {
 	return (
 		<View>
 			<ScrollView
+				ref={scrollViewRef}
+				onContentSizeChange={() => {
+					scrollViewRef?.current?.scrollToEnd({ animated: true });
+				}}
 				showsVerticalScrollIndicator={false}
 				contentContainerStyle={{
 					flexGrow: 1,
@@ -94,7 +102,18 @@ const AddCourseScreen = ({ navigation}: any) => {
 							top={false}
 							arrowDown={true}
 							children={
-								<View>
+								<Animated.View
+									style={{
+										transform: [
+											{
+												scale: animation[index].interpolate({
+													inputRange: [0, 1],
+													outputRange: [0, 1],
+												}),
+											},
+										],
+									}}
+								>
 									<TextInput
 										style={styles.input}
 										theme={{ colors: { text: '#000', primary: colors.blue } }}
@@ -150,12 +169,12 @@ const AddCourseScreen = ({ navigation}: any) => {
 															label={'Intitulé'}
 															value={quizz.question}
 															onChangeText={(text) => {
-                                                                let tempArrSkill = skills.slice(0, skills.length-1)
-                                                                let temp:Skill = skills[index];
-                                                                if(temp.quizz){
-                                                                    temp.quizz[indexQuestion].question = text;
-                                                                }
-                                                                tempArrSkill = [...tempArrSkill, temp]
+																let tempArrSkill = skills.slice(0, skills.length - 1);
+																let temp: Skill = skills[index];
+																if (temp.quizz) {
+																	temp.quizz[indexQuestion].question = text;
+																}
+																tempArrSkill = [...tempArrSkill, temp];
 																setSkills(tempArrSkill);
 															}}
 														/>
@@ -166,12 +185,12 @@ const AddCourseScreen = ({ navigation}: any) => {
 															label={'Solution'}
 															value={quizz.solution}
 															onChangeText={(text) => {
-                                                                let tempArrSkill = skills.slice(0, skills.length-1)
-                                                                let temp:Skill = skills[index];
-                                                                if(temp.quizz){
-                                                                    temp.quizz[indexQuestion].solution = text;
-                                                                }
-                                                                tempArrSkill = [...tempArrSkill, temp]
+																let tempArrSkill = skills.slice(0, skills.length - 1);
+																let temp: Skill = skills[index];
+																if (temp.quizz) {
+																	temp.quizz[indexQuestion].solution = text;
+																}
+																tempArrSkill = [...tempArrSkill, temp];
 																setSkills(tempArrSkill);
 															}}
 														/>
@@ -182,12 +201,12 @@ const AddCourseScreen = ({ navigation}: any) => {
 															label={'Autre choix'}
 															value={quizz.propositions[0]}
 															onChangeText={(text) => {
-                                                                let tempArrSkill = skills.slice(0, skills.length-1)
-                                                                let temp:Skill = skills[index];
-                                                                if(temp.quizz){
-                                                                    temp.quizz[indexQuestion].propositions[0] = text;
-                                                                }
-                                                                tempArrSkill = [...tempArrSkill, temp]
+																let tempArrSkill = skills.slice(0, skills.length - 1);
+																let temp: Skill = skills[index];
+																if (temp.quizz) {
+																	temp.quizz[indexQuestion].propositions[0] = text;
+																}
+																tempArrSkill = [...tempArrSkill, temp];
 																setSkills(tempArrSkill);
 															}}
 														/>
@@ -198,12 +217,12 @@ const AddCourseScreen = ({ navigation}: any) => {
 															label={'Autre choix'}
 															value={quizz.propositions[1]}
 															onChangeText={(text) => {
-                                                                let tempArrSkill = skills.slice(0, skills.length-1)
-                                                                let temp:Skill = skills[index];
-                                                                if(temp.quizz){
-                                                                    temp.quizz[indexQuestion].propositions[1] = text;
-                                                                }
-                                                                tempArrSkill = [...tempArrSkill, temp]
+																let tempArrSkill = skills.slice(0, skills.length - 1);
+																let temp: Skill = skills[index];
+																if (temp.quizz) {
+																	temp.quizz[indexQuestion].propositions[1] = text;
+																}
+																tempArrSkill = [...tempArrSkill, temp];
 																setSkills(tempArrSkill);
 															}}
 														/>
@@ -214,12 +233,12 @@ const AddCourseScreen = ({ navigation}: any) => {
 															label={'Autre choix'}
 															value={quizz.propositions[2]}
 															onChangeText={(text) => {
-                                                                let tempArrSkill = skills.slice(0, skills.length-1)
-                                                                let temp:Skill = skills[index];
-                                                                if(temp.quizz){
-                                                                    temp.quizz[indexQuestion].propositions[2] = text;
-                                                                }
-                                                                tempArrSkill = [...tempArrSkill, temp]
+																let tempArrSkill = skills.slice(0, skills.length - 1);
+																let temp: Skill = skills[index];
+																if (temp.quizz) {
+																	temp.quizz[indexQuestion].propositions[2] = text;
+																}
+																tempArrSkill = [...tempArrSkill, temp];
 																setSkills(tempArrSkill);
 															}}
 														/>
@@ -243,7 +262,7 @@ const AddCourseScreen = ({ navigation}: any) => {
 											</TouchableOpacity>
 										</View>
 									) : null}
-								</View>
+								</Animated.View>
 							}
 						/>
 					);
@@ -255,7 +274,7 @@ const AddCourseScreen = ({ navigation}: any) => {
 					children={
 						<View>
 							<TouchableOpacity
-								style={{ alignSelf: 'center', width: "100%", height: 35 }}
+								style={{ alignSelf: 'center', width: '100%', height: 35 }}
 								onPress={() => {
 									let newArr = [...skills];
 									const newObj: Skill = {
@@ -266,6 +285,14 @@ const AddCourseScreen = ({ navigation}: any) => {
 									};
 									newArr.push(newObj);
 									setSkills(newArr);
+
+									const newAnimation = new Animated.Value(0);
+									setAnimation([...animation, newAnimation]);
+									Animated.timing(newAnimation, {
+										toValue: 1,
+										duration: 400,
+										useNativeDriver: true,
+									}).start();
 								}}
 							>
 								<View style={{ alignSelf: 'center' }}>
@@ -289,7 +316,7 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 	},
 	moreQuizz: {
-        marginTop: 10,
+		marginTop: 10,
 		alignSelf: 'center',
 	},
 	headerRight: {
