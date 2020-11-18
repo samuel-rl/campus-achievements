@@ -22,4 +22,19 @@ const statusbar ={
     "height" : 100, 
 };
 
-export {colors, statusbar};
+const courseColors = [
+    '#9d0191',
+    '#fd3a69',
+    '#fecd1a',
+    '#120078',
+    '#2980B9',
+    '#ec524b',
+    '#3ec1d3',
+    '#521262',
+    '#b693fe',
+    '#ff6f3c',
+    '#17b978',
+    '#a7ff83',
+]
+
+export {colors, statusbar, courseColors};
