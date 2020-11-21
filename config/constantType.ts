@@ -1,8 +1,9 @@
+import { number } from 'prop-types';
 export interface Course {
     uid: string;
 	enseignants: BasicUserInfos[];
 	nom: string;
-	skills: Skill[] | null;
+	skills: Skill[];
     etudiants: BasicUserInfos[];
     color: string;
 }
@@ -30,7 +31,7 @@ export interface BasicUserInfos {
     uid: string | null | undefined;
     displayName: string | null | undefined;
     token: string;
-    avatar: string | null | undefined;
+    avatar: string;
 }
 
 
@@ -55,3 +56,15 @@ export interface Reward {
     done: boolean;
 }
 
+export interface CardQuizz{
+    question: string,
+    cards: Card[]
+}
+
+export interface Card{
+    number: string;
+    question: string;
+    value: boolean;
+    revealed: boolean;
+    picked: boolean;
+}

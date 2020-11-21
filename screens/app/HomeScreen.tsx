@@ -32,10 +32,6 @@ const HomeScreen = ({ navigation }: any) => {
                 Fire.shared.getMyCoursesInformationsByUID(temp).then((x: Course[]) => {
                     setCourses(x)
                 })
-
-
-
-
             });
           });
 

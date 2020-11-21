@@ -9,11 +9,12 @@ import HomeScreen from '../screens/app/HomeScreen';
 import StatsScreen from '../screens/app/StatsScreen';
 import RewardsScreen from '../screens/app/RewardsScreen';
 import JoinCoursesScreen from '../screens/app/JoinCoursesScreen';
-import AddCourseScreen from '../screens/app/teacher/AddCourseScreen'
-import CourseScreen from '../screens/app/CourseScreen'
+import AddCourseScreen from '../screens/app/teacher/AddCourseScreen';
+import CourseScreen from '../screens/app/CourseScreen';
+import QuizzScreen from '../screens/app/QuizzScreen';
 
 import HeaderAvatar from '../components/app/HeaderAvatar';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 const HomeStack = createStackNavigator();
 const RewardsStack = createStackNavigator();
@@ -50,11 +51,17 @@ const HomeStackScreen = ({ navigation }: any) => (
 		/>
         <HomeStack.Screen
             name="CourseScreen"
-            
             component={CourseScreen}
 			options={{
                 headerShown:false
 			}}
+		/>
+        <HomeStack.Screen
+            name="QuizzScreen"
+            component={QuizzScreen}
+			options={{
+                headerShown:false
+			}}           
 		/>
 		<HomeStack.Screen
 			name="AddCourse"

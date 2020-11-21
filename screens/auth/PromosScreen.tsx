@@ -45,7 +45,8 @@ const PromosScreen = ({ navigation }: any) => {
 			setPromos(res);
 			setCurrentList(['Etudiant', 'Enseignant']);
 			setLoading(false);
-			animate().start();
+            animate().start();
+            console.log(res)
 		});
 	}, []);
 

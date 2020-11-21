@@ -17,8 +17,10 @@ const AddCourseScreen = ({ navigation }: any) => {
 	const headerHeight = useHeaderHeight();
 	const [animation, setAnimation] = useState<Animated.Value[]>([]);
 
-    const scrollViewRef = useRef<ScrollView|null>(null);
-    
+	const [animationBg, setanimationBg] = useState(new Animated.Value(0));
+	const [backgroundColor, setBackgroundColor] = useState(colors.background);
+
+	const scrollViewRef = useRef<ScrollView | null>(null);
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
@@ -28,7 +30,7 @@ const AddCourseScreen = ({ navigation }: any) => {
 					onPress={() => {
 						const userAdd: BasicUserInfos = {
 							uid: Fire.shared.uid,
-							avatar: Fire.shared.photoURL,
+							avatar: Fire.shared.photoURL ? Fire.shared.photoURL : '',
 							displayName: Fire.shared.displayName,
 							token: Fire.shared.token,
 						};
@@ -50,8 +52,28 @@ const AddCourseScreen = ({ navigation }: any) => {
 		});
 	}, [navigation, nom, skills]);
 
+	const handleAnimation = () => {
+        setBackgroundColor(color)
+		Animated.timing(animationBg, {
+			toValue: 1,
+			duration: 1000,
+			useNativeDriver: false,
+		}).start(() => {
+            setanimationBg(new Animated.Value(0))
+        });
+	};
+
+	const boxInterpolation = animationBg.interpolate({
+		inputRange: [0, 1],
+		outputRange: [backgroundColor, color],
+    });
+    
+	const animatedStyle = {
+		backgroundColor: boxInterpolation,
+	};
+
 	return (
-		<View>
+		<Animated.View style={[{ ...animatedStyle }, {flex: 1}]}>
 			<ScrollView
 				ref={scrollViewRef}
 				onContentSizeChange={() => {
@@ -66,6 +88,7 @@ const AddCourseScreen = ({ navigation }: any) => {
 				}}
 			>
 				<ConnectedView
+                    animatedStyle={animatedStyle}
 					top={true}
 					arrowDown={true}
 					children={
@@ -80,12 +103,14 @@ const AddCourseScreen = ({ navigation }: any) => {
 					}
 				/>
 				<ConnectedView
+                    animatedStyle={animatedStyle}
 					top={false}
 					arrowDown={true}
 					children={
 						<ColorPalette
 							onChange={(color) => {
 								setColor(color);
+								handleAnimation();
 							}}
 							defaultColor={courseColors[0]}
 							colors={courseColors}
@@ -98,6 +123,7 @@ const AddCourseScreen = ({ navigation }: any) => {
 				{skills.map((skill: Skill, index: number) => {
 					return (
 						<ConnectedView
+                            animatedStyle={animatedStyle}
 							key={index}
 							top={false}
 							arrowDown={true}
@@ -269,6 +295,7 @@ const AddCourseScreen = ({ navigation }: any) => {
 				})}
 
 				<ConnectedView
+                    animatedStyle={animatedStyle}
 					top={false}
 					arrowDown={false}
 					children={
@@ -303,7 +330,7 @@ const AddCourseScreen = ({ navigation }: any) => {
 					}
 				/>
 			</ScrollView>
-		</View>
+		</Animated.View>
 	);
 };
 

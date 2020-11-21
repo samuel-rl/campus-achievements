@@ -4,6 +4,9 @@ import { Course } from '../../config/constantType';
 import StickyParallaxHeader from 'react-native-sticky-parallax-header';
 import { Feather } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import Students from '../../components/app/Course/Students';
+import EnseignantsList from '../../components/app/Course/EnseignantsList';
+import ListSkills from '../../components/app/Course/ListSkills';
 
 export interface CourseScreenProps {}
 
@@ -11,7 +14,7 @@ const CourseScreen = ({ navigation, route }) => {
     YellowBox.ignoreWarnings(['Animated: `useNativeDriver` was not specified. This is a required option and must be explicitly set to `true` or `false`', 'Animated.event now requires a second argument for options']);
 
 	const [course, setCourse] = useState<Course>(route.params.item);
-	const [scroll, setScroll] = useState<Animated.Value>(new Animated.Value(0));
+    const [scroll, setScroll] = useState<Animated.Value>(new Animated.Value(0));
 
 	const renderContent = (label) => (
 		<View style={styles.content}>
@@ -53,12 +56,13 @@ const CourseScreen = ({ navigation, route }) => {
 				</Animated.View>
 			</View>
 		);
-	};
+    };
+    
 
 	return (
 		<>
 			<StickyParallaxHeader
-                
+                rememberTabScrollPosition={false}
 				foreground={renderForeground()}
 				header={renderHeader()}
 				parallaxHeight={200}
@@ -72,16 +76,16 @@ const CourseScreen = ({ navigation, route }) => {
 						content: renderContent('SECOND TAB'),
 					},
 					{
-						title: 'Compétence',
-						content: renderContent('THIRD TAB'),
+						title: 'Compétences',
+						content: <ListSkills skills={course.skills} navigation={navigation}/>,
 					},
 					{
 						title: 'Autres élèves',
-						content: renderContent('FOURTH TAB'),
+						content: <Students students={course.etudiants} />,
 					},
 					{
 						title: 'Enseignants',
-						content: renderContent('FIFTH TAB'),
+						content: <EnseignantsList enseignants={course.enseignants} />,
 					},
 				]}
 				tabTextStyle={styles.tabText}

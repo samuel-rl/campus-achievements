@@ -34,6 +34,7 @@ const CoursesItem = ({ item, navigation}:CoursesItemProps) => {
             <Text style={styles.titre}>{item.nom}</Text>
             {item.etudiants.length == 0 ? <Text style={styles.lightText}>Encore aucun étudiant</Text> : <Text style={styles.lightText}>{item.etudiants.length} étudiants</Text>}
             <FlatList
+                showsHorizontalScrollIndicator={false}
                 style={styles.listAvatar}
 				data={item.etudiants}
 				keyExtractor={(item, index) => index.toString()}

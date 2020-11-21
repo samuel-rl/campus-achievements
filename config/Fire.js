@@ -193,7 +193,7 @@ class Fire {
 						for (let doc of docs) {
 							const selectedEvent = {
 								name: doc.id,
-								items: doc.data().Matieres,
+								items: doc.data().matieres,
 							};
 							response.push(selectedEvent);
 						}
