@@ -269,6 +269,9 @@ class Fire {
                         if(arrayUID.includes(doc.id)){
                             data = doc.data();
                             data.uid = doc.id;
+                            data.messages.map((mess) => {
+                                mess.createdAt = new Date(mess.createdAt.seconds * 1000)
+                            })
                             courses.push(data)
                         }
                     }
@@ -322,6 +325,19 @@ class Fire {
             coursEnseignant: firebase.firestore.FieldValue.arrayUnion(course)
          });
     }
+
+    
+	/* ******************************
+                 messages
+    ****************************** */
+
+    sendMessage = async (message, uidCourse) => {
+        let dbCours = this.firestore.collection('cours').doc(uidCourse);
+        dbCours.update({ 
+            messages: firebase.firestore.FieldValue.arrayUnion( message )
+         });
+    }
+
 
 	/**
      * Allow the user to change his mail adress, in the same time in the data base and also for the

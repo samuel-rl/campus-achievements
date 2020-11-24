@@ -5,7 +5,7 @@ export interface ConnectedViewProps {
 	children: JSX.Element;
     arrowDown: boolean;
     top: boolean;
-    animatedStyle : any
+    animatedStyle: any
 }
 
 const ConnectedView = ({ children, arrowDown, top, animatedStyle }: ConnectedViewProps) => {

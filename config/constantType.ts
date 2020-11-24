@@ -1,4 +1,4 @@
-import { number } from 'prop-types';
+import { IMessage } from './../screens/app/StatsScreen';
 export interface Course {
     uid: string;
 	enseignants: BasicUserInfos[];
@@ -6,6 +6,7 @@ export interface Course {
 	skills: Skill[];
     etudiants: BasicUserInfos[];
     color: string;
+    messages: IMessage[]
 }
 
 export interface CourseWithoutUID {
@@ -14,6 +15,7 @@ export interface CourseWithoutUID {
 	skills: any;
     etudiants: BasicUserInfos[];
     color: string;
+    messages: IMessage[]
 }
 
 export interface User {

@@ -19,10 +19,7 @@ const SkillItem = ({ skill, navigation }: SkillItemProps) => {
 				<View style={styles.icons}>
 					{skill.autoEvaluate ? (
 						<Image style={styles.image} source={require('../../../../assets/icons/tick.png')} />
-					) : null}
-					{skill.quizz?.length != 0 ? (
-						<Image style={styles.image} source={require('../../../../assets/icons/question.png')} />
-					) : null}
+                    ) : <Image style={styles.image} source={require('../../../../assets/icons/question.png')} /> }
 				</View>
 			</View>
 			<View style={styles.containerMore}>

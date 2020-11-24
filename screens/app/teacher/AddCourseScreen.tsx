@@ -39,7 +39,8 @@ const AddCourseScreen = ({ navigation }: any) => {
 							enseignants: [userAdd],
 							etudiants: [],
 							nom: nom,
-							skills: skills,
+                            skills: skills,
+                            messages: []
 						};
 						Fire.shared.addCourse(course).then(() => {
 							navigation.navigate('Home');
@@ -50,7 +51,8 @@ const AddCourseScreen = ({ navigation }: any) => {
 				</TouchableOpacity>
 			),
 		});
-	}, [navigation, nom, skills]);
+    }, [navigation, nom, skills]);
+    
 
 	const handleAnimation = () => {
         setBackgroundColor(color)
@@ -63,14 +65,17 @@ const AddCourseScreen = ({ navigation }: any) => {
         });
 	};
 
+    
 	const boxInterpolation = animationBg.interpolate({
 		inputRange: [0, 1],
-		outputRange: [backgroundColor, color],
+        outputRange: [backgroundColor, color],
     });
     
 	const animatedStyle = {
 		backgroundColor: boxInterpolation,
-	};
+    };
+    
+
 
 	return (
 		<Animated.View style={[{ ...animatedStyle }, {flex: 1}]}>
@@ -88,7 +93,7 @@ const AddCourseScreen = ({ navigation }: any) => {
 				}}
 			>
 				<ConnectedView
-                    animatedStyle={animatedStyle}
+                    animatedStyle={{...animatedStyle}}
 					top={true}
 					arrowDown={true}
 					children={
@@ -103,14 +108,14 @@ const AddCourseScreen = ({ navigation }: any) => {
 					}
 				/>
 				<ConnectedView
-                    animatedStyle={animatedStyle}
+                    animatedStyle={{...animatedStyle}}
 					top={false}
 					arrowDown={true}
 					children={
 						<ColorPalette
-							onChange={(color) => {
-								setColor(color);
-								handleAnimation();
+							onChange={(colorValue) => {
+                                setColor(colorValue);
+                                handleAnimation();
 							}}
 							defaultColor={courseColors[0]}
 							colors={courseColors}
@@ -123,7 +128,7 @@ const AddCourseScreen = ({ navigation }: any) => {
 				{skills.map((skill: Skill, index: number) => {
 					return (
 						<ConnectedView
-                            animatedStyle={animatedStyle}
+                        animatedStyle={{...animatedStyle}}
 							key={index}
 							top={false}
 							arrowDown={true}
@@ -158,7 +163,8 @@ const AddCourseScreen = ({ navigation }: any) => {
 											value={skills[index].autoEvaluate}
 											onValueChange={() => {
 												let newArr = [...skills];
-												newArr[index].autoEvaluate = !skills[index].autoEvaluate;
+                                                newArr[index].autoEvaluate = !skills[index].autoEvaluate;
+                                                newArr[index].quizz == null ? newArr[index].quizz=[] : newArr[index].quizz=null; 
 												setSkills(newArr);
 											}}
 										/>
@@ -168,15 +174,10 @@ const AddCourseScreen = ({ navigation }: any) => {
 										<Switch
 											value={skills[index].quizz != null ? true : false}
 											onValueChange={(res) => {
-												if (res == true) {
-													let newArr = [...skills];
-													newArr[index].quizz = [];
-													setSkills(newArr);
-												} else {
-													let newArr = [...skills];
-													newArr[index].quizz = null;
-													setSkills(newArr);
-												}
+                                                let newArr = [...skills];
+                                                res == true ? newArr[index].quizz = [] : newArr[index].quizz = null;
+                                                newArr[index].autoEvaluate = !skills[index].autoEvaluate;
+                                                setSkills(newArr);												
 											}}
 										/>
 									</View>
@@ -295,7 +296,7 @@ const AddCourseScreen = ({ navigation }: any) => {
 				})}
 
 				<ConnectedView
-                    animatedStyle={animatedStyle}
+                    animatedStyle={{...animatedStyle}}
 					top={false}
 					arrowDown={false}
 					children={
@@ -306,7 +307,7 @@ const AddCourseScreen = ({ navigation }: any) => {
 									let newArr = [...skills];
 									const newObj: Skill = {
 										nom: '',
-										autoEvaluate: false,
+										autoEvaluate: true,
 										isSoftSkill: false,
 										quizz: null,
 									};

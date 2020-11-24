@@ -19,6 +19,7 @@ const JoinCoursesScreen = ({ navigation }: any) => {
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
 			headerRight: () => (
+                Fire.shared.student ? null :
 				<TouchableOpacity
                     style={styles.headerRight}
 					onPress={() => {

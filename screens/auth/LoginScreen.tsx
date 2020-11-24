@@ -84,7 +84,7 @@ const LoginScreen = ({ navigation }: any) => {
 				setError(err.toString());
 				//on remet le loader a false
 				setLoading(false);
-			});
+            });
 	};
 
 	return (

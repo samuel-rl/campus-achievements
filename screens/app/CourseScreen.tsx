@@ -7,6 +7,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import Students from '../../components/app/Course/Students';
 import EnseignantsList from '../../components/app/Course/EnseignantsList';
 import ListSkills from '../../components/app/Course/ListSkills';
+import Discussion from '../../components/app/Course/Discussion';
 
 export interface CourseScreenProps {}
 
@@ -62,6 +63,7 @@ const CourseScreen = ({ navigation, route }) => {
 	return (
 		<>
 			<StickyParallaxHeader
+                onChangeTab={(x) => console.log(x)}
                 rememberTabScrollPosition={false}
 				foreground={renderForeground()}
 				header={renderHeader()}
@@ -73,14 +75,22 @@ const CourseScreen = ({ navigation, route }) => {
 				tabs={[
 					{
 						title: 'Cours',
-						content: renderContent('SECOND TAB'),
+						content: renderContent('Infos sur le cours'),
 					},
 					{
 						title: 'Compétences',
 						content: <ListSkills skills={course.skills} navigation={navigation}/>,
+                    },
+					{
+						title: 'Discussion',
+						content: <Discussion messagesProps={course.messages} uidCourse={course.uid}/>,
+                    },
+                    {
+						title: 'Documents',
+						content: renderContent('Liste des documents à télécharger'),
 					},
 					{
-						title: 'Autres élèves',
+						title: 'Élèves',
 						content: <Students students={course.etudiants} />,
 					},
 					{
@@ -91,9 +101,7 @@ const CourseScreen = ({ navigation, route }) => {
 				tabTextStyle={styles.tabText}
 				tabTextContainerStyle={styles.tabTextContainerStyle}
 				tabTextContainerActiveStyle={styles.tabTextContainerActiveStyle}
-				tabsContainerBackgroundColor={course.color}
-                bounces={true}
-
+                tabsContainerBackgroundColor={course.color}
 			/>
 			<StatusBar barStyle="dark-content" backgroundColor={course.color} />
 		</>
@@ -102,8 +110,10 @@ const CourseScreen = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
 	content: {
-		height: 1000,
-		marginTop: 50,
+        marginTop: 50,
+        justifyContent:"center",
+        alignContent:"center"
+        
 	},
 	foreground: {
 		flex: 1,

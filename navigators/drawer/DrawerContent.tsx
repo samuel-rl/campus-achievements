@@ -16,6 +16,7 @@ const DrawerContent = ({ navigation }: any) => {
                         source={ Fire.shared.photoURL? {uri: Fire.shared.photoURL} : require('../../assets/avatars/1.png')}
 					/>
                     <Text style={{fontSize:18, textAlign: "center", fontWeight:"bold", marginVertical: 15}}>{Fire.shared.displayName}</Text>
+                    <Text style={{fontSize:15, textAlign: "center", marginBottom: 15}}>{Fire.shared.student ? "étudiant" : "Enseignant"}</Text>
 				</View>
 				<DrawerItem
 					icon={({ color, size }) => <Feather name="home" color={color} size={size} />}
