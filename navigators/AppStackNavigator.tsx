@@ -13,6 +13,9 @@ import AddCourseScreen from '../screens/app/teacher/AddCourseScreen';
 import CourseScreen from '../screens/app/CourseScreen';
 import QuizzScreen from '../screens/app/QuizzScreen';
 
+//Temporary
+import QuizzAnswerScreen from '../screens/app/QuizzAnswerScreen';
+
 import HeaderAvatar from '../components/app/HeaderAvatar';
 import { TouchableOpacity, View } from 'react-native';
 
@@ -80,6 +83,17 @@ const HomeStackScreen = ({ navigation }: any) => (
 				headerTitleAlign: 'center',
 			}}
 		/>
+
+		{/* ===== Temporary for Quizz answer ===== */}
+		<HomeStack.Screen
+			name="QuizzAnswer"
+			component={QuizzAnswerScreen}
+			options={{
+				title: 'réponse quizz',
+			}}
+
+		/>
+		{/* ===== ===== */}
 	</HomeStack.Navigator>
 );
 

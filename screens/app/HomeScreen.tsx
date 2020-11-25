@@ -61,7 +61,11 @@ const HomeScreen = ({ navigation }: any) => {
                 Fire.shared.signOut();
             }}></Button>
 
-            
+            <Button title="QuizzAnswer" onPress={()=>{
+                navigation.navigate("QuizzAnswer");
+            }}></Button>
+
+
                 {courses.length == 0 ? (
 				        <Text style={styles.warningTextEmpty}>Vous êtes dans aucun cours</Text>
 			        ) : (

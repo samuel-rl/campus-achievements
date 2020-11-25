@@ -29,6 +29,12 @@ class Fire {
 		this.student = false;
 	}
 
+	/**
+	 * Function allowing us to change password of an user
+	 * @param {} email the mail of the person which we want to change the password
+	 */
+	passwordReset = email => firebase.auth().sendPasswordResetEmail(email)
+
 	//function de connexion de compte sur Firebase avec email et mot de passe
 	connect = async (mail, password) => {
 		console.log('connect...');
