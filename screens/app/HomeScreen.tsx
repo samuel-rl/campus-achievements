@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, FlatList, Button } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList} from 'react-native';
 import Fire from '../../config/Fire';
 import { Ionicons } from '@expo/vector-icons'; 
 import { colors } from '../../config/constants';
@@ -56,16 +56,6 @@ const HomeScreen = ({ navigation }: any) => {
 	return (
         <View style={styles.container}>
             <View style={{ marginTop: headerHeight }}>
-            
-            <Button title="deco" onPress={()=>{
-                Fire.shared.signOut();
-            }}></Button>
-
-            <Button title="QuizzAnswer" onPress={()=>{
-                navigation.navigate("QuizzAnswer");
-            }}></Button>
-
-
                 {courses.length == 0 ? (
 				        <Text style={styles.warningTextEmpty}>Vous êtes dans aucun cours</Text>
 			        ) : (
