@@ -33,9 +33,9 @@ const QuizCard = ({ data: { question, cards }, num, cardsAmount, respond }) => {
       <View>
         <Text style={styles.mainText}>{question}</Text>
       </View>
-      {cards.map((card) => (
+      {cards.map((card, index) => (
         <QuizOption
-          key={card.question}
+          key={index.toString()}
           reveal={() => {
             setRevealed(true);
           }}

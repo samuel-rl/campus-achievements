@@ -83,7 +83,7 @@ const CourseScreen = ({ navigation, route }) => {
                     },
 					{
 						title: 'Discussion',
-						content: <Discussion messagesProps={course.messages} uidCourse={course.uid}/>,
+						content: <Discussion messagesProps={course.messages} uidCourse={course.uid} enseignants={course.enseignants}/>,
                     },
                     {
 						title: 'Documents',

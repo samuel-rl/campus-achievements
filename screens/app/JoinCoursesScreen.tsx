@@ -133,6 +133,7 @@ const JoinCoursesScreen = ({ navigation }: any) => {
 				<Text style={styles.warningText}>Aucun résultat...</Text>
 			) : (
 				<FlatList
+                showsHorizontalScrollIndicator={false}
 					extraData={coursesSearch}
 					data={coursesSearch}
 					renderItem={(item) => <SearchCoursesItem deleteItemOnParent={(res:Course) => deleteCourse(res)} item={item.item} navigation={navigation} />}

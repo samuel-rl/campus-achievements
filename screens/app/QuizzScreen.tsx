@@ -82,7 +82,7 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 								style={[
 									styles.headerContentBar,
 									{
-										width: (width - 50 - 10) / cardsQuizz.length - cardsQuizz.length * 2,
+										width: ((width - 50 - 10) / cardsQuizz.length) - 5,
 										backgroundColor: '#bbbbbb',
 									},
 								]}

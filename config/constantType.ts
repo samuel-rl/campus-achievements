@@ -1,6 +1,7 @@
-import { IMessage } from './../screens/app/StatsScreen';
+import { IMessage } from "react-native-gifted-chat/lib/GiftedChat";
+
 export interface Course {
-    uid: string;
+    uid?: string;
 	enseignants: BasicUserInfos[];
 	nom: string;
 	skills: Skill[];

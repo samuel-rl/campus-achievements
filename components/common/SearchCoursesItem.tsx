@@ -49,7 +49,7 @@ const SearchCoursesItem = ({ item, navigation, deleteItemOnParent }: SearchCours
 				<View style={[styles.color, { backgroundColor: item.color }]}></View>
 			</View>
 			<View style={styles.containerInfos}>
-				<Text style={styles.titre}>{item.nom}</Text>
+				<Text numberOfLines={1} style={styles.titre}>{item.nom}</Text>
 				{item.etudiants.length == 0 ? (
 					<Text style={styles.lightText}>Encore aucun étudiant</Text>
 				) : (

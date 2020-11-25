@@ -1,19 +1,31 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View, Keyboard, FlatList, Text } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { GiftedChat, IMessage, Message, Send } from 'react-native-gifted-chat';
+import { Bubble, GiftedChat, IMessage, Message, Send } from 'react-native-gifted-chat';
 import Fire from '../../../config/Fire';
+import { BasicUserInfos } from '../../../config/constantType';
+import fr from 'dayjs/locale/fr';
 
 export interface DiscussionProps {
 	messagesProps: IMessage[];
-	uidCourse: string;
+    uidCourse: string;
+    enseignants: BasicUserInfos[];
 }
 
-const Discussion = ({ messagesProps, uidCourse }: DiscussionProps) => {
+const Discussion = ({ messagesProps, uidCourse, enseignants }: DiscussionProps) => {
 	const [messages, setMessages] = useState<IMessage[]>(messagesProps.reverse());
 	const [minInputToolbarHeight, setMinInputToolbarHeight] = useState(45);
 
 	useEffect(() => {
+
+        var messTemp = messages;
+        messTemp.sort(function(a, b) {
+            var c:any = new Date(a.createdAt);
+            var d:any = new Date(b.createdAt);
+            return d-c;
+        });
+        setMessages(messTemp)
+
 		let keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
 		let keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
 
@@ -38,7 +50,8 @@ const Discussion = ({ messagesProps, uidCourse }: DiscussionProps) => {
     }, []);
     */
 	const onSend = async (message: IMessage[]) => {
-		setMessages((previousMessages) => GiftedChat.append(previousMessages, message));
+        setMessages((previousMessages) => GiftedChat.append(previousMessages, message));
+        console.log(message[0])
 		Fire.shared.sendMessage(message[0], uidCourse);
 	};
 
@@ -56,6 +69,22 @@ const Discussion = ({ messagesProps, uidCourse }: DiscussionProps) => {
 			</Send>
 		);
     };
+
+    const renderBubble = (props) => {
+        return (
+            <Bubble 
+                {...props}
+                wrapperStyle={{
+                    left: {
+                        backgroundColor : "#fff"
+                    },
+                    right:{
+                        backgroundColor : "#4A5AAB"
+                    }
+                }}
+            />
+        )
+    }
 
 	return (
 		<View style={{ height: '100%'}}>
@@ -88,6 +117,9 @@ const Discussion = ({ messagesProps, uidCourse }: DiscussionProps) => {
                       listViewProps={{
                         nestedScrollEnabled: true
                       }}
+                      renderBubble={renderBubble}
+                      dateFormat={'dddd DD. MMMM'}
+                      locale={fr}
 				/>
 		</View>
 	);
