@@ -119,6 +119,13 @@ const LoginScreen = ({ navigation }: any) => {
 					navigation.navigate('Register');
 				}}
 			/>
+			<TextButton
+				title="Mot de passe oublié ?"
+				onPress={() => {
+					console.log("mot de passe oublié log");
+					navigation.navigate('ForgottenPassword');
+				}}
+			/>
 		</View>
 	);
 };
@@ -139,6 +146,7 @@ const styles = StyleSheet.create({
 	loginButton: {
 		marginVertical: 32,
 	},
+
 });
 
 export default LoginScreen;

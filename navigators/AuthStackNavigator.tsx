@@ -7,6 +7,7 @@ import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import PromosScreen from '../screens/auth/PromosScreen';
 import { colors } from '../config/constants';
+import ForgottenPasswordScreen from '../screens/auth/ForgottenPasswordScreen.tsx';
 
 //creation de la stack
 const AuthStack = createStackNavigator();
@@ -49,6 +50,7 @@ const RegisterStackScreen = ({ navigation }: any) => (
 				headerTitleAlign: 'center',
 			}}
 		/>
+		
 	</RegisterStack.Navigator>
 );
 
@@ -68,6 +70,7 @@ export default function AuthStackNavigator() {
 		>
 			<AuthStack.Screen name={'Login'} component={LoginScreen} />
 			<AuthStack.Screen name={'Register'} component={RegisterStackScreen} />
+			<AuthStack.Screen name={'ForgottenPassword'} component={ForgottenPasswordScreen} />
 		</AuthStack.Navigator>
 	);
 }
