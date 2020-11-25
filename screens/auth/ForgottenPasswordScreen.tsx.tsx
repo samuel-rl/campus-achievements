@@ -6,7 +6,7 @@ import Input from "../../components/auth/Input";
 import { colors } from "../../config/constants";
 import Fire from "../../config/Fire";
 
-const ForgottenPasswordScreen = () => {
+const ForgottenPasswordScreen = ({ navigation }: any) => {
   const [loading, setLoading] = useState(false);
   const [mail, setMail] = useState('');
 
@@ -17,6 +17,7 @@ const ForgottenPasswordScreen = () => {
       await Fire.shared.passwordReset(mail);
       setLoading(false);
       alert("Le mail de mot de passe a été envoyé.");
+      navigation.navigate('Login');
       
     } catch (error) {
       setLoading(false);
