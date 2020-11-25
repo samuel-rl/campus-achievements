@@ -4,15 +4,26 @@ import FilledButton from "../../components/auth/FilledButton";
 import Heading from "../../components/auth/Heading";
 import Input from "../../components/auth/Input";
 import { colors } from "../../config/constants";
+import Fire from "../../config/Fire";
 
 const ForgottenPasswordScreen = () => {
+  const [loading, setLoading] = useState(false);
+  const [mail, setMail] = useState('');
 
-  const sendMailWithNewPassword = () => {
-    console.log("valider id mdp oublié");
+  const sendMailWithNewPassword = async(mail) => {
+    console.log("valider id mdp oublié " + mail);
+    setLoading(true);
+    try {
+      await Fire.shared.passwordReset(mail);
+      setLoading(false);
+      alert("Le mail de mot de passe a été envoyé.");
+      
+    } catch (error) {
+      setLoading(false);
+      alert("Cela n'a pas fonctionné, êtes-vous sûr d'avoir indiqué le bon identifiant ?");
+    }
   };
 
-
-  const [loading, setLoading] = useState(false);
   return (
     <View style={styles.container}>
       <Heading style={styles.title}>Mot de passe oublié</Heading>
@@ -24,14 +35,14 @@ const ForgottenPasswordScreen = () => {
         style={styles.input}
         placeholder={"Mail"}
         keyboardType={"email-address"}
-        // value={mail}
-        // onChangeText={setMail}
+        value={mail}
+        onChangeText={setMail}
       />
       <FilledButton
         title={"Envoyer nouveau mot de passe"}
         style={styles.loginButton}
         onPress={() => {
-          sendMailWithNewPassword();
+          sendMailWithNewPassword(mail);
         }}
         loading={loading}
       />
