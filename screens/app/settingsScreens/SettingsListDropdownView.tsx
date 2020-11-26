@@ -11,7 +11,7 @@ export interface SettingsListProps {}
 // const SettingsList = ({ user }: SettingsListProps) => {
 const SettingsListDropdownView = ({ navigation, route }: any) => {
   const [course, setCourse] = useState(route.params.course);
-  // const user = Fire.shared.etudiant();
+
   return (
     <View style={styles.container}>
       <View style={styles.scrollView}>
@@ -20,12 +20,25 @@ const SettingsListDropdownView = ({ navigation, route }: any) => {
         <TouchableOpacity
           onPress={() => {
             console.log("ceci est le premier param" + course.nom);
-            Fire.shared.deleteCourse(course);
+            if (Fire.shared.student == true) {
+              console.log("je suis un étudiant");
+            } else {
+              console.log("je suis un enseignant");
+              Fire.shared.deleteCourse(course);
+            }
           }}
         >
-          <View style={styles.textContainer}>
+          {Fire.shared.student == true ? (
+            <Text></Text>
+          ) : (
+            <View style={styles.textContainer}>
+              <Text style={styles.text}>Supprimer un cours</Text>
+            </View>
+          )}
+
+          {/* <View style={styles.textContainer}>
             <Text style={styles.text}>Supprimer un cours</Text>
-          </View>
+          </View> */}
         </TouchableOpacity>
 
         {/*=== Bouton de suppression d'un cours ===*/}
