@@ -1,23 +1,43 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Image, Text } from 'react-native';
 import { DrawerItem, DrawerContentScrollView } from '@react-navigation/drawer';
 import { Feather, Entypo } from '@expo/vector-icons';
 import Fire from '../../config/Fire';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import * as Permissions from 'expo-permissions';
+import * as ImagePicker from 'expo-image-picker';
 
 
 const DrawerContent = ({ navigation }: any) => {
 
-    const updateAvatar = () => {
-        
-    }
+    const handlePickAvatar = async () => {
+		getCameraPermission();
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [1, 1],
+		});
+		if (!result.cancelled) {
+            Fire.shared.updatePhotoAsync(result.uri)
+		}
+	};
+
+	//function qui demande la permission d'acceder aux photos
+	const getCameraPermission = async () => {
+		const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+
+		//si il refuse on lui met une alerte
+		if (status != 'granted') {
+			alert('Il besoin de la camera');
+		}
+    };
 
 	return (
 		<View style={styles.container}>
 			<DrawerContentScrollView>
 				<View>
-                    <TouchableOpacity onPress={() => updateAvatar()}>
+                    <TouchableOpacity onPress={handlePickAvatar}>
                         <Image
                             style={{ width: 150, height: 150, alignSelf:"center", borderRadius: 100, marginVertical: 15 }}
                             source={ Fire.shared.photoURL? {uri: Fire.shared.photoURL} : require('../../assets/avatars/1.png')}
