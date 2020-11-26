@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, FlatList} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList, Button} from 'react-native';
 import Fire from '../../config/Fire';
 import { Ionicons } from '@expo/vector-icons'; 
 import { colors } from '../../config/constants';
 import { useHeaderHeight } from '@react-navigation/stack';
 import { Course } from '../../config/constantType';
 import CoursesItem from '../../components/app/Home/CoursesItem';
+// import { Button } from 'react-native-paper';
 
 export interface HomeScreenProps {}
 
@@ -56,6 +57,13 @@ const HomeScreen = ({ navigation }: any) => {
 	return (
         <View style={styles.container}>
             <View style={{ marginTop: headerHeight }}>
+                <Button
+                    title="Se déconnecter"
+                    onPress={()=>{
+                        Fire.shared.signOut();
+                    }}
+                ></Button>
+
                 {courses.length == 0 ? (
 				        <Text style={styles.warningTextEmpty}>Vous êtes dans aucun cours</Text>
 			        ) : (
