@@ -22,6 +22,7 @@ var firebaseConfig = {
 class Fire {
     student = null;
     token = null;
+    connectedToInternet = false;
 
 	//constructeur qui initialise la connexion avec notre config
 	constructor() {

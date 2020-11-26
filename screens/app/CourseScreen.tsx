@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Text, StyleSheet, View, Animated, Image, StatusBar, YellowBox } from 'react-native';
+import React, { useState } from 'react';
+import { Text, StyleSheet, View, Animated, StatusBar, YellowBox } from 'react-native';
 import { Course } from '../../config/constantType';
 import StickyParallaxHeader from 'react-native-sticky-parallax-header';
 import { Feather } from '@expo/vector-icons';
@@ -83,7 +83,7 @@ const CourseScreen = ({ navigation, route }) => {
                     },
 					{
 						title: 'Discussion',
-						content: <Discussion messagesProps={course.messages} uidCourse={course.uid} enseignants={course.enseignants}/>,
+						content: <Discussion messagesProps={course.messages} uidCourse={course.uid} />,
                     },
                     {
 						title: 'Documents',

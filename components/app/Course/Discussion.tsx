@@ -1,20 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View, Keyboard, FlatList, Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, FlatList } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { Bubble, GiftedChat, IMessage, Message, Send } from 'react-native-gifted-chat';
 import Fire from '../../../config/Fire';
-import { BasicUserInfos } from '../../../config/constantType';
-import fr from 'dayjs/locale/fr';
+import 'dayjs/locale/fr';
 
 export interface DiscussionProps {
 	messagesProps: IMessage[];
     uidCourse: string | undefined;
-    enseignants: BasicUserInfos[];
 }
 
-const Discussion = ({ messagesProps, uidCourse, enseignants }: DiscussionProps) => {
+const Discussion = ({ messagesProps, uidCourse }: DiscussionProps) => {
 	const [messages, setMessages] = useState<IMessage[]>(messagesProps.reverse());
-	const [minInputToolbarHeight, setMinInputToolbarHeight] = useState(45);
 
 	useEffect(() => {
 
@@ -25,33 +22,10 @@ const Discussion = ({ messagesProps, uidCourse, enseignants }: DiscussionProps) 
             return d-c;
         });
         setMessages(messTemp)
-
-		let keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
-		let keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
-
-		return () => {
-			keyboardDidShowListener;
-			keyboardDidHideListener;
-		};
 	}, []);
 
-	const _keyboardDidShow = (e) => {
-		let keyboardHeight = e.endCoordinates.height;
-		setMinInputToolbarHeight(45 + keyboardHeight);
-	};
-
-	const _keyboardDidHide = () => {
-		setMinInputToolbarHeight(45);
-	};
-
-	/*
-	const onSend = useCallback((messages = []) => {
-		setMessages((previousMessages) => GiftedChat.append(previousMessages, messages));
-    }, []);
-    */
 	const onSend = async (message: IMessage[]) => {
         setMessages((previousMessages) => GiftedChat.append(previousMessages, message));
-        console.log(message[0])
 		Fire.shared.sendMessage(message[0], uidCourse);
 	};
 
@@ -119,7 +93,7 @@ const Discussion = ({ messagesProps, uidCourse, enseignants }: DiscussionProps) 
                       }}
                       renderBubble={renderBubble}
                       dateFormat={'dddd DD. MMMM'}
-                      locale={fr}
+                      locale={'fr'}
 				/>
 		</View>
 	);

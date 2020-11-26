@@ -24,7 +24,8 @@ const ListSkills = ({ skills, navigation }: ListSkillsProps) => {
 };
 
 const styles = StyleSheet.create({
-	container: {},
+	container: {
+    },
 	warningText: {
         color: 'red',
         marginTop: 30,
@@ -34,3 +35,11 @@ const styles = StyleSheet.create({
 });
 
 export default ListSkills;
+
+
+/*
+style={[
+										{ width: 70, height: 70 },
+										item.done ? null : { tintColor: 'gray', opacity: 0.1 },
+									]}
+*/

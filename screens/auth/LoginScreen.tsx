@@ -30,7 +30,7 @@ const LoginScreen = ({ navigation }: any) => {
 	const [loadingBDD, setLoadingBDD] = useState<boolean>(false);
 
 	useEffect(() => {
-		// registerForPushNotificationsAsync();
+        registerForPushNotificationsAsync();
 	});
 
 	async function registerForPushNotificationsAsync() {
