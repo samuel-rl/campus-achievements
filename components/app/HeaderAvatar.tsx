@@ -1,7 +1,8 @@
-import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Fire from '../../config/Fire';
+
+
 
 
 const HeaderAvatar = ({navigation}:any) => {
@@ -29,7 +30,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
         alignItems: 'center',
         marginHorizontal: 20
-	},
+    }
 });
 
 export default HeaderAvatar;

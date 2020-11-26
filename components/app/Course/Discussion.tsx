@@ -8,7 +8,7 @@ import fr from 'dayjs/locale/fr';
 
 export interface DiscussionProps {
 	messagesProps: IMessage[];
-    uidCourse: string;
+    uidCourse: string | undefined;
     enseignants: BasicUserInfos[];
 }
 

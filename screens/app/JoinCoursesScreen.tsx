@@ -43,7 +43,7 @@ const JoinCoursesScreen = ({ navigation }: any) => {
 				setCoursesSearch(trierListeParNom(otherCourses));
 			})
 			.catch((err) => {
-				alert(err);
+				console.log(err)
             });
 	}, []);
 

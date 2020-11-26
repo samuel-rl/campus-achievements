@@ -44,7 +44,7 @@ const RewardsScreen = () => {
 						});
 					}}
 				></Button>
-				<View style={{ flexWrap: 'wrap', flexDirection: 'row' }}>
+				<View style={{ flexWrap: 'wrap', flexDirection: 'row', justifyContent:"center" }}>
 					{rewards.map((item: Reward, index: any) => {
 						return (
 							<View

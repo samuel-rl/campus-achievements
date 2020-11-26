@@ -23,7 +23,7 @@ const SearchCoursesItem = ({ item, navigation, deleteItemOnParent }: SearchCours
 		alert.current.close();
 		const userAdd: BasicUserInfos = {
 			uid: Fire.shared.uid,
-			avatar: Fire.shared.photoURL,
+			avatar: Fire.shared.photoURL ? Fire.shared.photoURL : "",
 			displayName: Fire.shared.displayName,
 			token: Fire.shared.token,
 		};

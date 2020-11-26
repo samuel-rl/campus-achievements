@@ -20,6 +20,7 @@ const SkillItem = ({ skill, navigation }: SkillItemProps) => {
 					{skill.autoEvaluate ? (
 						<Image style={styles.image} source={require('../../../../assets/icons/tick.png')} />
                     ) : <Image style={styles.image} source={require('../../../../assets/icons/question.png')} /> }
+                    {skill.isSoftSkill ? <Image style={styles.image} source={require('../../../../assets/icons/bear.png')} /> : null}
 				</View>
 			</View>
 			<View style={styles.containerMore}>

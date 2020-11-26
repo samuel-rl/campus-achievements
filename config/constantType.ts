@@ -13,7 +13,7 @@ export interface Course {
 export interface CourseWithoutUID {
 	enseignants: BasicUserInfos[];
 	nom: string;
-	skills: any;
+	skills: Skill[];
     etudiants: BasicUserInfos[];
     color: string;
     messages: IMessage[]

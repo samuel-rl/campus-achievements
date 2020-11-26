@@ -170,6 +170,17 @@ const AddCourseScreen = ({ navigation }: any) => {
 										/>
 									</View>
 									<View style={styles.containerSwitch}>
+										<Text>SoftSkill : </Text>
+										<Switch
+											value={skills[index].isSoftSkill}
+											onValueChange={() => {
+                                                let newArr = [...skills];
+                                                newArr[index].isSoftSkill = !skills[index].isSoftSkill;
+												setSkills(newArr);												
+											}}
+										/>
+									</View>
+                                    <View style={styles.containerSwitch}>
 										<Text>Quizz : </Text>
 										<Switch
 											value={skills[index].quizz != null ? true : false}
