@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Animated, StatusBar, ScrollView, Dimensions } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { CardQuizz, Quizz } from '../../config/constantType';
 import QuizCard from '../../components/app/Course/Quizz/QuizCard';
 import { colors } from '../../config/constants';
@@ -67,7 +67,7 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 		<View style={styles.container}>
 			<View style={styles.header}>
 				<TouchableOpacity
-					style={styles.icon}
+					style={styles.iconLeft}
 					onPress={() => {
 						navigation.goBack();
 					}}
@@ -82,7 +82,7 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 								style={[
 									styles.headerContentBar,
 									{
-										width: ((width - 50 - 10) / cardsQuizz.length) - 5,
+										width: ((width - 50 * 2) / cardsQuizz.length) -4,
 										backgroundColor: '#bbbbbb',
 									},
 								]}
@@ -92,14 +92,14 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 										{
 											height: '100%',
 											backgroundColor: x == 0 ? 'red' : x == 1 ? '#1da75d' : '#ff5e6b',
-                                            borderRadius: 3,
+											borderRadius: 3,
 										},
 										{
 											transform: [
 												{
-													scaleX : animations[index].interpolate({
+													scaleX: animations[index].interpolate({
 														inputRange: [0, 0.5, 1],
-														outputRange: [0, .8 ,1],
+														outputRange: [0, 0.8, 1],
 													}),
 												},
 											],
@@ -110,8 +110,16 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 						);
 					})}
 				</View>
+				<TouchableOpacity
+					style={styles.iconRight}
+					onPress={() => {
+						
+					}}
+				>
+					<MaterialIcons name="navigate-next" size={32} color="black" />
+				</TouchableOpacity>
 			</View>
-			<ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+			<ScrollView showsVerticalScrollIndicator={false}>
 				{cardsQuizz.map((data, index: number, arr) => (
 					<QuizCard
 						data={data}
@@ -129,8 +137,8 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 								toValue: 1,
 								duration: 500,
 								useNativeDriver: true,
-                            }).start();
-                            setAnimations(newarrA);
+							}).start();
+							setAnimations(newarrA);
 						}}
 					/>
 				))}
@@ -148,21 +156,23 @@ const styles = StyleSheet.create({
 		height: 50,
 		flexDirection: 'row',
 	},
-	icon: {
-		flex: 1,
+	iconLeft: {
 		height: 50,
 		width: 50,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
-	content: {},
+	iconRight: {
+		height: 50,
+		width: 50,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
 	headerContent: {
-		flex: 9,
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
 	headerContentBar: {
-		width: '100%',
 		height: 10,
 		marginHorizontal: 2,
 		borderRadius: 3,
