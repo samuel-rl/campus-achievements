@@ -58,12 +58,10 @@ const CourseScreen = ({ navigation, route }) => {
 			</View>
 		);
     };
-    
 
 	return (
 		<>
-			<StickyParallaxHeader
-                onChangeTab={(x) => console.log(x)}
+            <StickyParallaxHeader
                 rememberTabScrollPosition={false}
 				foreground={renderForeground()}
 				header={renderHeader()}
@@ -149,58 +147,10 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 12,
 		paddingVertical: 8,
 		color: 'white',
-	},
+    },
+    tabsWrapper: {
+        paddingVertical: 12
+    }
 });
-
-/*
-<StickyParallaxHeader
-				backgroundColor={course.color}
-				headerType="AvatarHeader"
-                title={course.nom}
-                parallaxHeight={250}
-                subtitle=""
-                image={{uri:course.enseignants[0].avatar}}
-                renderBody={() => {
-                    return (<View><Text>Mettre le cours ici</Text></View>)
-                }}
-            />
-            
-
-            			<StickyParallaxHeader
-				backgroundColor={course.color}
-				headerType="TabbedHeader"
-                title={course.nom}
-                tabs={[
-                        {title: 'Cours',content: <Text>trucs sur le cours</Text>},
-                        {title: 'Compétences',content: <Text>Liste des competences à débloquer</Text>},
-                        {title: 'Étudiants',content: <Text>Liste des autres etudiants</Text>},
-                        {title: 'Enseignant',content: <Text>Liste des enseignants</Text>},
-                    ]}
-                tabTextStyle={{marginHorizontal:20, fontSize: 17}}
-                tabTextActiveStyle={{color:"#fff"}}
-                foregroundImage={{uri:course.enseignants[0].avatar}}
-                logo={1}
-                logoStyle={{marginLeft: 0}}
-                log
-            />
-            
-
-
-            			backgroundColor={course.color}
-			headerType="AvatarHeader"
-			title={course.nom}
-			parallaxHeight={250}
-			subtitle=""
-            image={{ uri: course.enseignants[0].avatar }}
-			renderBody={() => {
-				return (
-					<View style={{backgroundColor:colors.background, flex:1}}>
-						<Text>Mettre le cours ici</Text>
-					</View>
-				);
-            }}
-            leftTopIconOnPress={() => navigation.navigate('Home')}
-            bounces={true}
-            */
 
 export default CourseScreen;
