@@ -48,7 +48,8 @@ export interface Skill {
 	nom: string;
 	autoEvaluate: boolean;
 	isSoftSkill: boolean;
-	quizz: Quizz[] | null;
+    quizz: Quizz[] | null;
+    check: string[];
 }
 
 export interface Reward {

@@ -188,9 +188,6 @@ class Fire {
 		console.log('addCourse...');
 		return new Promise(async (res, rej) => {
 			try {
-				//let courseAdd = await this.firestore.collection('cours').doc().set(course)
-            
-
                  var newCourseRef = this.firestore.collection('cours').doc();
                  var id = newCourseRef.id;
                  newCourseRef.set(course)
@@ -275,6 +272,22 @@ class Fire {
 			}
 		});
     };
+
+    getCoursesByUID = async (uidCourse) => {
+        console.log('getCoursesByUID...');
+		return new Promise(async (res, rej) => {
+			try {
+				let db = this.firestore.collection('cours').doc(uidCourse);
+				await db.get().then(querySnapshot => {
+                    const data = querySnapshot.data();
+                    data.uid = querySnapshot.id;
+                    res(data);
+                });
+			} catch (error) {
+				rej(error);
+			}
+		});
+    }
     
     getMyInfos = async () => {
         console.log('getMyInfos...');
@@ -334,6 +347,34 @@ class Fire {
 		db.update({ token: token });
     };
     
+    updateSkillBySkillName = async (skillName, uidCourse) => {
+        console.log("updateSkillBySkillName...")
+        let dbCours = this.firestore.collection('cours').doc(uidCourse);
+        dbCours.get().then((querySnapshot) => {
+            const data = querySnapshot.data()
+            let skills = data.skills;
+            skills.map((skill) => {
+                if(skill.nom == skillName){
+                    skill.check.push(this.uid)
+                }
+            })
+            console.log(skills)
+            dbCours.set(
+                {
+                    skills : skills
+                },
+                { merge: true }
+            )
+        })
+    }
+
+
+
+
+
+
+
+
 
 
     enterInCourseStudent = async (userAdd, course) => {
@@ -366,6 +407,8 @@ class Fire {
     ****************************** */
 
     sendMessage = async (message, uidCourse) => {
+        console.log("sendMessage...");
+        console.log(uidCourse)
         let dbCours = this.firestore.collection('cours').doc(uidCourse);
         dbCours.update({ 
             messages: firebase.firestore.FieldValue.arrayUnion( message )

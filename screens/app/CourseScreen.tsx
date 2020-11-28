@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, StyleSheet, View, Animated, StatusBar, YellowBox } from 'react-native';
 import { Course } from '../../config/constantType';
 import StickyParallaxHeader from 'react-native-sticky-parallax-header';
@@ -8,6 +8,7 @@ import Students from '../../components/app/Course/Students';
 import EnseignantsList from '../../components/app/Course/EnseignantsList';
 import ListSkills from '../../components/app/Course/ListSkills';
 import Discussion from '../../components/app/Course/Discussion';
+import Fire from '../../config/Fire';
 
 export interface CourseScreenProps {}
 
@@ -21,7 +22,17 @@ const CourseScreen = ({ navigation, route }) => {
 		<View style={styles.content}>
 			<Text>{label}</Text>
 		</View>
-	);
+    );
+    
+	useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            Fire.shared.getCoursesByUID(course.uid).then((c:Course) => {
+                setCourse(c)
+            })
+        })
+        return unsubscribe;
+    }, [navigation]);
+
 
 	const renderHeader = () => {
 		const opacity = scroll.interpolate({
@@ -59,6 +70,8 @@ const CourseScreen = ({ navigation, route }) => {
 		);
     };
 
+
+
 	return (
 		<>
             <StickyParallaxHeader
@@ -77,7 +90,7 @@ const CourseScreen = ({ navigation, route }) => {
 					},
 					{
 						title: 'Compétences',
-						content: <ListSkills skills={course.skills} navigation={navigation}/>,
+						content: <ListSkills skills={course.skills} navigation={navigation} uidCourse={course.uid}/>,
                     },
 					{
 						title: 'Discussion',

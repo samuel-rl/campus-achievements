@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { createRef, useEffect, useState } from 'react';
 import { StyleSheet, View, Animated, StatusBar, ScrollView, Dimensions } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { CardQuizz, Quizz } from '../../config/constantType';
 import QuizCard from '../../components/app/Course/Quizz/QuizCard';
 import { colors } from '../../config/constants';
+import Toast from 'react-native-toast-message';
+import Fire from '../../config/Fire';
 
 const { width } = Dimensions.get('window');
 
@@ -17,12 +19,14 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 	const [cardsQuizz, setCardsQuizz] = useState<CardQuizz[]>([]);
 	const [headerResponse, setHeaderResponse] = useState<number[]>([]);
 	const [animations, setAnimations] = useState<Animated.Value[]>([]);
+	const [nbResponse, setNbResponse] = useState<number>(0);
+	const toast = createRef<any>();
 
 	React.useLayoutEffect(() => {}, [navigation]);
 
 	useEffect(() => {
 		var tempArr: CardQuizz[] = [];
-		route.params.quizz?.map((q: Quizz) => {
+		route.params.skill.quizz?.map((q: Quizz) => {
 			var temp: CardQuizz = {
 				question: q.question,
 				cards: [
@@ -42,9 +46,9 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 		shuffle(tempArr);
 		setCardsQuizz(tempArr);
 
-		var arr = Array(route.params.quizz.length).fill(0);
+		var arr = Array(route.params.skill.quizz.length).fill(0);
 		setHeaderResponse(arr);
-		var arrAnim = Array(route.params.quizz.length).fill(new Animated.Value(0));
+		var arrAnim = Array(route.params.skill.quizz.length).fill(new Animated.Value(0));
 		setAnimations(arrAnim);
 	}, []);
 
@@ -82,7 +86,7 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 								style={[
 									styles.headerContentBar,
 									{
-										width: ((width - 50 * 2) / cardsQuizz.length) -4,
+										width: (width - 50 * 2) / cardsQuizz.length - 4,
 										backgroundColor: '#bbbbbb',
 									},
 								]}
@@ -113,7 +117,25 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 				<TouchableOpacity
 					style={styles.iconRight}
 					onPress={() => {
-						
+						if (nbResponse == route.params.skill.quizz.length) {
+                            //il y a des erreurs
+                            if(headerResponse.includes(2)){
+                                navigation.navigate('CourseScreen');
+                            }else{
+                                Fire.shared.updateSkillBySkillName(route.params.skill.nom, route.params.uidCourse).then(() => {
+                                    navigation.navigate('CourseScreen');
+                                })
+                            }
+                            
+						} else {
+							toast.current.show({
+								type: 'error',
+								position: 'top',
+								text1: 'Pas si vite...',
+                                text2: "Tu n'as pas terminé de remlir le quiz",
+                                topOffset: 60,
+							});
+						}
 					}}
 				>
 					<MaterialIcons name="navigate-next" size={32} color="black" />
@@ -139,11 +161,13 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 								useNativeDriver: true,
 							}).start();
 							setAnimations(newarrA);
+							setNbResponse(nbResponse + 1);
 						}}
 					/>
 				))}
 			</ScrollView>
 			<StatusBar backgroundColor={colors.background}></StatusBar>
+			<Toast ref={toast} />
 		</View>
 	);
 };

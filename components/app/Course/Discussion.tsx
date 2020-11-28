@@ -11,10 +11,9 @@ export interface DiscussionProps {
 }
 
 const Discussion = ({ messagesProps, uidCourse }: DiscussionProps) => {
-	const [messages, setMessages] = useState<IMessage[]>(messagesProps.reverse());
-
+    const [messages, setMessages] = useState<IMessage[]>(messagesProps.reverse());
+    
 	useEffect(() => {
-
         var messTemp = messages;
         messTemp.sort(function(a, b) {
             var c:any = new Date(a.createdAt);

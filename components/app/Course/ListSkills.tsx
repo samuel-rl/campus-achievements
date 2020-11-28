@@ -1,22 +1,24 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Skill } from '../../../config/constantType';
+import Fire from '../../../config/Fire';
 import SkillItem from './components/SkillItem';
 
 export interface ListSkillsProps {
     skills: Skill[];
-    navigation: any
+    navigation: any,
+    uidCourse: string | undefined;
 }
 
-const ListSkills = ({ skills, navigation }: ListSkillsProps) => {
-
+const ListSkills = ({ skills, navigation, uidCourse }: ListSkillsProps) => {
 	return (
 		<View style={styles.container}>
 			{skills.length == 0 ? (
 				<Text style={styles.warningText}>Aucune compétences à débloquer</Text>
 			) : (
 				skills.map((skill: Skill, index: number) => {
-					return <SkillItem key={index.toString()} done={false} skill={skill} navigation={navigation}/>;
+                    var done = Fire.shared.uid ? skill.check.includes(Fire.shared.uid) : false;
+					return <SkillItem key={index.toString()} done={done} skill={skill} navigation={navigation} uidCourse={uidCourse}/>;
 				})
 			)}
 		</View>
@@ -35,11 +37,3 @@ const styles = StyleSheet.create({
 });
 
 export default ListSkills;
-
-
-/*
-style={[
-										{ width: 70, height: 70 },
-										item.done ? null : { tintColor: 'gray', opacity: 0.1 },
-									]}
-*/

@@ -6,13 +6,16 @@ import { SimpleLineIcons } from '@expo/vector-icons';
 export interface SkillItemProps {
 	skill: Skill;
     done: boolean;
-    navigation: any
+    navigation: any;
+    uidCourse: string | undefined;
 }
 
-const SkillItem = ({ skill, navigation }: SkillItemProps) => {
+const SkillItem = ({ skill, navigation, uidCourse, done }: SkillItemProps) => {
+    console.log(done)
+
 	return (
-		<TouchableOpacity style={styles.container} activeOpacity={1} onPress={() => {
-            navigation.navigate('QuizzScreen', skill)
+		<TouchableOpacity style={[styles.container, {backgroundColor : done ? "#99f3bd" : "#fff"}]} activeOpacity={1} onPress={() => {
+            navigation.navigate('QuizzScreen', {skill : skill, uidCourse: uidCourse})
         }}>
 			<View style={styles.containerInfos}>
 				<Text style={styles.titre}>{skill.nom}</Text>
@@ -32,7 +35,6 @@ const SkillItem = ({ skill, navigation }: SkillItemProps) => {
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: '#fff',
 		marginHorizontal: 20,
 		height: 80,
 		marginVertical: 10,

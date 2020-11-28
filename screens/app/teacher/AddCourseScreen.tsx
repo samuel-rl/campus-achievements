@@ -320,7 +320,8 @@ const AddCourseScreen = ({ navigation }: any) => {
 										nom: '',
 										autoEvaluate: true,
 										isSoftSkill: false,
-										quizz: null,
+                                        quizz: null,
+                                        check: []
 									};
 									newArr.push(newObj);
 									setSkills(newArr);
