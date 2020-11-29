@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { createRef, useEffect, useState } from 'react';
 import { Text, StyleSheet, View, Animated, StatusBar, YellowBox } from 'react-native';
 import { Course } from '../../config/constantType';
 import StickyParallaxHeader from 'react-native-sticky-parallax-header';
@@ -9,12 +9,21 @@ import EnseignantsList from '../../components/app/Course/EnseignantsList';
 import ListSkills from '../../components/app/Course/ListSkills';
 import Discussion from '../../components/app/Course/Discussion';
 import Fire from '../../config/Fire';
+import Toast from 'react-native-toast-message';
+import CustomToastCourse from '../../components/app/Course/components/CustomToastCourse';
 
 export interface CourseScreenProps {}
 
+const toastConfig = {
+    un: (internalState) => <CustomToastCourse internalState={internalState} status={1}></CustomToastCourse>,
+    deux: (internalState) => <CustomToastCourse internalState={internalState} status={2}></CustomToastCourse>,
+    trois: (internalState) => <CustomToastCourse internalState={internalState} status={3}></CustomToastCourse>,
+};
+
 const CourseScreen = ({ navigation, route }) => {
     YellowBox.ignoreWarnings(['Animated: `useNativeDriver` was not specified. This is a required option and must be explicitly set to `true` or `false`', 'Animated.event now requires a second argument for options']);
-
+    const toast = createRef<any>();
+    
 	const [course, setCourse] = useState<Course>(route.params.item);
     const [scroll, setScroll] = useState<Animated.Value>(new Animated.Value(0));
 
@@ -26,9 +35,7 @@ const CourseScreen = ({ navigation, route }) => {
     
 	useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
-            console.log("ok")
             Fire.shared.getCoursesByUID(course.uid).then((c:Course) => {
-                console.log(c)
                 setCourse(c)
             })
         })
@@ -72,7 +79,27 @@ const CourseScreen = ({ navigation, route }) => {
 		);
     };
 
-
+    const updateAutoEvaluateSkill = async (skillName:string) =>{
+        const rand = Math.floor(Math.random() * 3) + 1;
+        let type:string;
+        let titre:string;
+        if(rand == 1){
+            type = "un";
+            titre = "Quel boss";
+        }else if (rand == 2){
+            type = "deux";
+            titre = "Whoua !!";
+        }else{
+            type = "trois";
+            titre = "En route vers le succès";
+        }
+        toast.current.show({
+            type: type,
+            position: 'bottom',
+            text1: titre,
+            text2: 'Tu as acquis "' + skillName + '"',
+        });
+    }
 
 	return (
 		<>
@@ -92,7 +119,7 @@ const CourseScreen = ({ navigation, route }) => {
 					},
 					{
 						title: 'Compétences',
-						content: <ListSkills skills={course.skills} navigation={navigation} uidCourse={course.uid}/>,
+						content: <ListSkills updateAutoEvaluateSkill={(skillName:string) => updateAutoEvaluateSkill(skillName)} skills={course.skills} navigation={navigation} uidCourse={course.uid}/>,
                     },
 					{
 						title: 'Discussion',
@@ -117,6 +144,7 @@ const CourseScreen = ({ navigation, route }) => {
                 tabsContainerBackgroundColor={course.color}
 			/>
 			<StatusBar barStyle="dark-content" backgroundColor={course.color} />
+            <Toast ref={toast} config={toastConfig} />
 		</>
 	);
 };

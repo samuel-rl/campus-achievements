@@ -128,10 +128,12 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 					style={styles.iconRight}
 					onPress={() => {
 						if (nbResponse == route.params.skill.quizz.length) {
-                            //il y a des erreurs
+                            //si il y a des erreurs
                             if(headerResponse.includes(2)){
                                 navigation.navigate('CourseScreen');
-                            }else{
+                            }
+                            //si il y a pas d'erreurs
+                            else{
                                 Fire.shared.updateSkillBySkillName(route.params.skill.nom, route.params.uidCourse).then(() => {
                                     navigation.navigate('CourseScreen');
                                 })

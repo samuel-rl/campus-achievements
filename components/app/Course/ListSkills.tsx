@@ -8,9 +8,10 @@ export interface ListSkillsProps {
     skills: Skill[];
     navigation: any,
     uidCourse: string | undefined;
+    updateAutoEvaluateSkill: Function;
 }
 
-const ListSkills = ({ skills, navigation, uidCourse }: ListSkillsProps) => {
+const ListSkills = ({ skills, navigation, uidCourse, updateAutoEvaluateSkill }: ListSkillsProps) => {
 	return (
 		<View style={styles.container}>
 			{skills.length == 0 ? (
@@ -18,7 +19,7 @@ const ListSkills = ({ skills, navigation, uidCourse }: ListSkillsProps) => {
 			) : (
 				skills.map((skill: Skill, index: number) => {
                     var done = Fire.shared.uid ? skill.check.includes(Fire.shared.uid) : false;
-					return <SkillItem key={index.toString()} done={done} skill={skill} navigation={navigation} uidCourse={uidCourse}/>;
+					return <SkillItem key={index.toString()} done={done} skill={skill} navigation={navigation} uidCourse={uidCourse} updateAutoEvaluateSkill={(skillName:string) => updateAutoEvaluateSkill(skillName)} />;
 				})
 			)}
 		</View>

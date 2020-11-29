@@ -1,24 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import { Skill } from '../../../../config/constantType';
 import { SimpleLineIcons } from '@expo/vector-icons';
+import { ActivityIndicator } from 'react-native-paper';
 
 export interface SkillItemProps {
 	skill: Skill;
     done: boolean;
     navigation: any;
     uidCourse: string | undefined;
+    updateAutoEvaluateSkill: Function;
 }
 
-const SkillItem = ({ skill, navigation, uidCourse, done }: SkillItemProps) => {
+const SkillItem = ({ skill, navigation, uidCourse, done, updateAutoEvaluateSkill }: SkillItemProps) => {
+
+    const [loading, setLoading] = useState<boolean>(false);
+    const [isDone, setIsDone] = useState<boolean>(done);
+
 
 	return (
-		<TouchableOpacity style={[styles.container, {backgroundColor : done ? "#99f3bd" : "#fff"}]} activeOpacity={1} onPress={() => {
-            if(!done){
+		<TouchableOpacity style={[styles.container, {backgroundColor : isDone ? "#99f3bd" : "#fff"}]} activeOpacity={1} onPress={() => {
+            if(!isDone){
                 if(skill.quizz != null){
                     navigation.navigate('QuizzScreen', {skill : skill, uidCourse: uidCourse})
                 }else{
-                    console.log("valider le skill")
+                    setLoading(true)
+                    updateAutoEvaluateSkill(skill.nom).then(() => {
+                        setIsDone(true);
+                        setLoading(false)
+                    })
                 }
             } 
         }}>
@@ -32,7 +42,8 @@ const SkillItem = ({ skill, navigation, uidCourse, done }: SkillItemProps) => {
 				</View>
 			</View>
 			<View style={styles.containerMore}>
-				{done ? <View></View> : <SimpleLineIcons name="arrow-right" size={15} color="black" />}
+                {loading ? <ActivityIndicator /> : isDone ? <View></View> : <SimpleLineIcons name="arrow-right" size={15} color="black" />}
+				{}
 			</View>
 		</TouchableOpacity>
 	);
