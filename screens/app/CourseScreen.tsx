@@ -99,6 +99,7 @@ const CourseScreen = ({ navigation, route }) => {
             text1: titre,
             text2: 'Tu as acquis "' + skillName + '"',
         });
+        await Fire.shared.updateSkillBySkillName(skillName, course.uid);
     }
 
 	return (
