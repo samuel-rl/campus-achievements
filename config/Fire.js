@@ -350,7 +350,7 @@ class Fire {
     updateSkillBySkillName = async (skillName, uidCourse) => {
         console.log("updateSkillBySkillName...")
         let dbCours = this.firestore.collection('cours').doc(uidCourse);
-        dbCours.get().then((querySnapshot) => {
+        await dbCours.get().then(async (querySnapshot) => {
             const data = querySnapshot.data()
             let skills = data.skills;
             skills.map((skill) => {
@@ -358,8 +358,7 @@ class Fire {
                     skill.check.push(this.uid)
                 }
             })
-            console.log(skills)
-            dbCours.set(
+            await dbCours.set(
                 {
                     skills : skills
                 },
@@ -367,15 +366,6 @@ class Fire {
             )
         })
     }
-
-
-
-
-
-
-
-
-
 
     enterInCourseStudent = async (userAdd, course) => {
         console.log("enterInCourseStudent")

@@ -11,11 +11,16 @@ export interface SkillItemProps {
 }
 
 const SkillItem = ({ skill, navigation, uidCourse, done }: SkillItemProps) => {
-    console.log(done)
 
 	return (
 		<TouchableOpacity style={[styles.container, {backgroundColor : done ? "#99f3bd" : "#fff"}]} activeOpacity={1} onPress={() => {
-            navigation.navigate('QuizzScreen', {skill : skill, uidCourse: uidCourse})
+            if(!done){
+                if(skill.quizz != null){
+                    navigation.navigate('QuizzScreen', {skill : skill, uidCourse: uidCourse})
+                }else{
+                    console.log("valider le skill")
+                }
+            } 
         }}>
 			<View style={styles.containerInfos}>
 				<Text style={styles.titre}>{skill.nom}</Text>
@@ -27,7 +32,7 @@ const SkillItem = ({ skill, navigation, uidCourse, done }: SkillItemProps) => {
 				</View>
 			</View>
 			<View style={styles.containerMore}>
-				<SimpleLineIcons name="arrow-right" size={15} color="black" />
+				{done ? <View></View> : <SimpleLineIcons name="arrow-right" size={15} color="black" />}
 			</View>
 		</TouchableOpacity>
 	);

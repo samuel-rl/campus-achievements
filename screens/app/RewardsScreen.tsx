@@ -12,11 +12,6 @@ const toastConfig = {
 	any_custom_type: (internalState) => <CustomToast internalState={internalState}></CustomToast>,
 };
 
-interface p {
-	animatedValue: Animated.Value;
-	str: string;
-}
-
 const RewardsScreen = () => {
 	const headerHeight = useHeaderHeight();
 	const toast = createRef<any>();

@@ -7,6 +7,7 @@ import QuizCard from '../../components/app/Course/Quizz/QuizCard';
 import { colors } from '../../config/constants';
 import Toast from 'react-native-toast-message';
 import Fire from '../../config/Fire';
+import CustomToastQuizz from '../../components/app/Course/Quizz/CustomToastQuizz';
 
 const { width } = Dimensions.get('window');
 
@@ -15,12 +16,21 @@ export interface QuizzScreenProps {
 	route: any;
 }
 
+
+const toastConfig = {
+    good: (internalState) => <CustomToastQuizz internalState={internalState} status={'good'}></CustomToastQuizz>,
+    bad: (internalState) => <CustomToastQuizz internalState={internalState} status={'bad'}></CustomToastQuizz>,
+    wait: (internalState) => <CustomToastQuizz internalState={internalState} status={'wait'}></CustomToastQuizz>,
+};
+
+
 const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 	const [cardsQuizz, setCardsQuizz] = useState<CardQuizz[]>([]);
 	const [headerResponse, setHeaderResponse] = useState<number[]>([]);
 	const [animations, setAnimations] = useState<Animated.Value[]>([]);
 	const [nbResponse, setNbResponse] = useState<number>(0);
-	const toast = createRef<any>();
+    const toast = createRef<any>();
+
 
 	React.useLayoutEffect(() => {}, [navigation]);
 
@@ -129,11 +139,10 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
                             
 						} else {
 							toast.current.show({
-								type: 'error',
-								position: 'top',
+								type: 'wait',
+								position: 'bottom',
 								text1: 'Pas si vite...',
-                                text2: "Tu n'as pas terminé de remlir le quiz",
-                                topOffset: 60,
+                                text2: "Tu n'as pas terminé de remplir le quiz",
 							});
 						}
 					}}
@@ -161,13 +170,32 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 								useNativeDriver: true,
 							}).start();
 							setAnimations(newarrA);
-							setNbResponse(nbResponse + 1);
+                            setNbResponse(nbResponse + 1);
+
+                            //moins un parce que le state c'est pas encore à jours ?
+                            if(nbResponse == route.params.skill.quizz.length - 1){
+                                if(headerResponse.includes(2)){
+                                    toast.current.show({
+                                        type: 'bad',
+                                        position: 'bottom',
+                                        text1: 'Aïe aïe aïe...',
+                                        text2: "Tu as encore des choses à revoir...",
+                                    });
+                                }else{
+                                    toast.current.show({
+                                        type: 'good',
+                                        position: 'bottom',
+                                        text1: 'Hip hip hip',
+                                        text2: "Houra !! Tu peux passer à la suite maintenant",
+                                    });
+                                }
+                            }
 						}}
 					/>
 				))}
 			</ScrollView>
 			<StatusBar backgroundColor={colors.background}></StatusBar>
-			<Toast ref={toast} />
+			<Toast ref={toast} config={toastConfig} />
 		</View>
 	);
 };

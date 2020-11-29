@@ -26,7 +26,9 @@ const CourseScreen = ({ navigation, route }) => {
     
 	useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
+            console.log("ok")
             Fire.shared.getCoursesByUID(course.uid).then((c:Course) => {
+                console.log(c)
                 setCourse(c)
             })
         })
