@@ -12,6 +12,13 @@ export interface SettingsListProps {}
 const SettingsListDropdownView = ({ navigation, route }: any) => {
   const [course, setCourse] = useState(route.params.course);
 
+  const userAdd: BasicUserInfos = {
+    uid: Fire.shared.uid,
+    avatar: Fire.shared.photoURL,
+    displayName: Fire.shared.displayName,
+    token: Fire.shared.token,
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.scrollView}>
@@ -20,12 +27,14 @@ const SettingsListDropdownView = ({ navigation, route }: any) => {
         <TouchableOpacity
           onPress={() => {
             console.log("ceci est le premier param" + course.nom);
-            if (Fire.shared.student == true) {
-              console.log("je suis un étudiant");
-            } else {
+            if (Fire.shared.student == false) {
               console.log("je suis un enseignant");
-              Fire.shared.deleteCourse(course);
-            }
+              Fire.shared.deleteCourse(course).then(()=>{
+                navigation.navigate("Home");
+              }).catch((err)=>{
+                console.log(err);
+              });
+            } 
           }}
         >
           {Fire.shared.student == true ? (
@@ -35,10 +44,23 @@ const SettingsListDropdownView = ({ navigation, route }: any) => {
               <Text style={styles.text}>Supprimer un cours</Text>
             </View>
           )}
+        </TouchableOpacity>
 
-          {/* <View style={styles.textContainer}>
-            <Text style={styles.text}>Supprimer un cours</Text>
-          </View> */}
+        <TouchableOpacity onPress={() => {
+          if(Fire.shared.student == false){
+            Fire.shared.leaveCourseTeacher(userAdd,course).then(()=>{
+              navigation.navigate("Home");
+            });
+          }
+          else {
+            Fire.shared.leaveCourseStudent(userAdd,course).then(()=>{
+              navigation.navigate("Home");
+            });
+          }
+        }}>
+          <View style={styles.textContainer}>
+            <Text style={styles.text}>Quitter le cours</Text>
+          </View>
         </TouchableOpacity>
 
         {/*=== Bouton de suppression d'un cours ===*/}

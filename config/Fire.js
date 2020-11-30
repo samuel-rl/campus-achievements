@@ -337,7 +337,47 @@ class Fire {
     dbUser.update({
       coursEnseignant: firebase.firestore.FieldValue.arrayUnion(course),
     });
+	};
+	
+	/**
+	 * Allows a teacher to leave a course.
+	 * @param {*} user 
+	 * @param {*} course 
+	 */
+	leaveCourseTeacher = async (user, course) => {
+    console.log("leaveCourseAsTeacher");
+		let dbCours = this.firestore.collection("cours").doc(course.uid);
+		let dbUser = this.firestore.collection("users").doc(this.uid);
+
+    dbCours.update({
+      enseignants: firebase.firestore.FieldValue.arrayRemove(user),
+    })
+
+    //this part doesn't work yet
+		dbUser.update({
+			coursEnseignant: firebase.firestore.FieldValue.arrayRemove(course),
+    });
   };
+  
+	/**
+	 * Allows a student to leave a course.
+	 * @param {*} user 
+	 * @param {*} course 
+	 */
+	leaveCourseStudent = async (user, course) => {
+    console.log("leaveCourseAsStudent");
+		let dbCours = this.firestore.collection("cours").doc(course.uid);
+		let dbUser = this.firestore.collection("users").doc(this.uid);
+
+    dbCours.update({
+      etudiants: firebase.firestore.FieldValue.arrayRemove(user),
+    })
+
+    //this part doesn't work yet
+		dbUser.update({
+			cours: firebase.firestore.FieldValue.arrayRemove(course),
+    });
+	};
 
   /* ******************************
                  messages
@@ -356,7 +396,7 @@ class Fire {
    * @param {*} currentPassword
    * @param {*} mail
    */
-  changeEmail = (currentPassword, mail) => {
+  changeEmail = async(currentPassword, mail) => {
     console.log("change mail ...");
 
     this.reauthenticate(currentPassword)
@@ -369,10 +409,10 @@ class Fire {
             let db = this.firestore.collection("users").doc(this.uid);
             db.update({ mail: mail });
             //---
-            Alert.alert("Adresse mail modifiée");
+            // Alert.alert("Adresse mail modifiée");
           })
           .catch((error) => {
-            Alert.alert(error.message);
+            // Alert.alert(error.message);
           });
       })
       .catch((error) => {
@@ -457,15 +497,43 @@ class Fire {
 	 * Deletes the course from the firebase
 	 * @param {*} course 
 	 */
-  deleteCourse = (course) => {
-		console.log("Deleting course...");
+  deleteCourse = async(course) => {
+    console.log("Deleting course...");
+    //delete course from the course collection
     this.firestore.collection("cours").doc(course.uid).delete().then(
 			()=>{
 				console.log("Course succesfully deleted.");
 			}
 		).catch((err)=>{
 			console.log("Error removing course : ",err);
-		});
+    });
+    
+    //delete course from all its students/teachers
+    // let dbUsers = this.firestore.collection("users");
+    // console.log("dbUsers : "+dbUsers);
+    // await dbUsers.get().then((querySnapshot)=>{
+    //   var batch = this.firestore.batch();
+    //   console.log("batch : " + batch);
+
+    //   querySnapshot.forEach((doc)=>{
+    //     let docCours = doc.get("cours");
+    //     console.log("docCours : " + docCours);
+    //     console.log("doc.get('cours') : " + doc.get("cours").uid );
+    //     if (doc.get("cours").uid) {
+          
+    //     }
+    //   })
+    //   if (querySnapshot.empty() == false) {
+    //     let docs = querySnapshot.docs;
+  
+    //     for(let doc of docs){
+    //       if (doc.cours.uid == cours.uid) {
+
+    //       }
+    //     }
+        
+    //   }
+    // });
   };
 
   /* ******************************

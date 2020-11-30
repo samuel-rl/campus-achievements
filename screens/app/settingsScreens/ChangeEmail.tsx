@@ -6,6 +6,7 @@ import {
     Button,
     TouchableOpacity,
     ToastAndroid,
+    Alert,
 } from "react-native";
 import Input from "../../../components/auth/Input";
 import TextButton from "../../../components/auth/TextButton";
@@ -34,7 +35,11 @@ const ChangeEmail = () => {
                 onChangeText={setMail}
             />
             <TextButton title="Valider la nouvelle adresse mail"
-            onPress={()=>{Fire.shared.changeEmail(currentPassword,mail)}}
+            onPress={()=>{Fire.shared.changeEmail(currentPassword,mail).then(()=>{
+                Alert.alert("Adresse mail modifiée");
+            }).catch((err)=>{
+                Alert.alert(err.message);
+            })}}
             style={{ backgroundColor: colors.lightGrey }}
 
             ></TextButton>
