@@ -18,7 +18,7 @@ import { ActivityIndicator } from 'react-native-paper';
 
 import faker from 'faker';
 import initialRewards from '../../config/rewards';
-import { BasicUserInfos, Course, Skill } from '../../config/constantType';
+import { BasicUserInfos, Course, Quizz, Skill } from '../../config/constantType';
 import { IMessage } from 'react-native-gifted-chat';
 
 const LoginScreen = ({ navigation }: any) => {
@@ -175,14 +175,37 @@ const LoginScreen = ({ navigation }: any) => {
 
 				const nbCourseCreate = Math.floor(Math.random() * Math.floor(5));
 				for (var j = 0; j < nbCourseCreate; ++j) {
-					const nbSkill = Math.floor(Math.random() * Math.floor(8));
+                    let nbSkill = Math.floor(Math.random() * Math.floor(15));
+                    
 					var skills: Skill[] = [];
 					for (var k = 0; k < nbSkill; ++k) {
+                        let isSoftSkill = (Math.random() < 0.2);
+                        let autoEvaluate = (Math.random() < 0.7);
+    
+                        var quizzes:Quizz[] = []
+    
+                        if(autoEvaluate == false){
+                            let nbQuestion = Math.floor(Math.random() * Math.floor(10));
+    
+                            for(var l=0; l<nbQuestion; l++){
+                                let quizz:Quizz = {
+                                    question: "Question numéro " + l,
+                                    solution: "solution",
+                                    propositions: [
+                                        'réponse 1',
+                                        'réponse 2',
+                                        'réponse 3',
+                                    ]
+                                }
+                                quizzes.push(quizz);
+                            }
+                        }
+
 						let sk: Skill = {
-							autoEvaluate: true,
-							isSoftSkill: true,
+							autoEvaluate: autoEvaluate,
+							isSoftSkill: isSoftSkill,
 							nom: faker.company.catchPhraseNoun(),
-                            quizz: [],
+                            quizz: autoEvaluate==true ? null : quizzes,
                             check: []
 						};
 						skills.push(sk);
@@ -208,7 +231,7 @@ const LoginScreen = ({ navigation }: any) => {
 					arrOfCourse.push(course);
 				}
 			} else {
-				const nbCourseEnter = Math.floor(Math.random() * Math.floor(arrOfCourse.length / 2));
+				const nbCourseEnter = Math.floor(Math.random() * Math.floor(arrOfCourse.length));
 
 				var arr:number[] = [];
 				while (arr.length < nbCourseEnter) {
