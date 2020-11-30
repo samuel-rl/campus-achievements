@@ -30,8 +30,11 @@ const LoginScreen = ({ navigation }: any) => {
 	const [loadingBDD, setLoadingBDD] = useState<boolean>(false);
 
 	useEffect(() => {
-        registerForPushNotificationsAsync();
-	});
+        const unsubscribe = registerForPushNotificationsAsync();
+        return () => {
+			unsubscribe;
+		};
+	}, []);
 
 	async function registerForPushNotificationsAsync() {
 		console.log('registerForPushNotificationsAsync...');
@@ -179,7 +182,8 @@ const LoginScreen = ({ navigation }: any) => {
 							autoEvaluate: true,
 							isSoftSkill: true,
 							nom: faker.company.catchPhraseNoun(),
-							quizz: [],
+                            quizz: [],
+                            check: []
 						};
 						skills.push(sk);
 					}

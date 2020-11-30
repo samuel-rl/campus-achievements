@@ -21,7 +21,6 @@ var firebaseConfig = {
 //           =>   FIRE.shared.GETTER
 class Fire {
     student = null;
-    token = null;
     connectedToInternet = false;
 
 	//constructeur qui initialise la connexion avec notre config
@@ -342,7 +341,6 @@ class Fire {
 
 	updateToken = async token => {
         console.log('updateToken...');
-        this.token = token;
 		let db = this.firestore.collection('users').doc(this.uid);
 		db.update({ token: token });
     };

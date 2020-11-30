@@ -16,37 +16,41 @@ import Fire from './config/Fire';
 const RootStack = createStackNavigator();
 
 export default function App() {
-	const [token, setToken] = useState<null | string | undefined>(null);
 	const [firstLaunch, setFirstLaunch] = useState(true);
-    const [loading, setLoading] = useState(true);
-    const [connected, setConnected] = useState(false);
+	const [loading, setLoading] = useState(true);
+	const [connected, setConnected] = useState(true);
 
 	useEffect(() => {
 		const unsubscribe = NetInfo.addEventListener(async (state) => {
 			if (firstLaunch == true) {
 				setFirstLaunch(false);
 				if (state.isConnected == true) {
-                    Fire.shared.firebase.auth().onAuthStateChanged((user) => {
-                        user ? setConnected(true) : setConnected(false)
-                    });
-					if (Fire.shared.uid != undefined) {
-                        await getTokenAndUpdate();
-                    }
-                    setLoading(false);
+					Fire.shared.firebase.auth().onAuthStateChanged(async (user) => {                        
+                        if(user){
+                            setConnected(true)
+                            if (Fire.shared.uid != undefined) {
+                                await getTokenAndUpdate();
+                                setLoading(false);
+                            }
+                        }else{
+                            setConnected(false);
+                            setLoading(false);
+                        }
+					});
+					
 				}
 			}
-
 			Fire.shared.connectedToInternet = state.isConnected;
 		});
 		return () => {
-			unsubscribe();
+			unsubscribe;
 		};
-    }, []);
+	}, []);
 
 	const getTokenAndUpdate = async () => {
-		registerForPushNotificationsAsync().then(() => {
-			Fire.shared.updateToken(token);
-		});
+		await registerForPushNotificationsAsync().then((token) => {
+            Fire.shared.updateToken(token);
+        });
 	};
 
 	const registerForPushNotificationsAsync = async () => {
@@ -67,7 +71,6 @@ export default function App() {
 		} else {
 			alert('Must use physical device for Push Notifications');
 		}
-		setToken(token);
 		if (Platform.OS === 'android') {
 			Notifications.setNotificationChannelAsync('default', {
 				name: 'default',
@@ -76,7 +79,6 @@ export default function App() {
 				lightColor: '#FF231F7C',
 			});
 		}
-
 		return token;
 	};
 
