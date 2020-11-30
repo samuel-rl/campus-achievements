@@ -40,7 +40,8 @@ const AddCourseScreen = ({ navigation }: any) => {
 							etudiants: [],
 							nom: nom,
                             skills: skills,
-                            messages: []
+                            messages: [],
+                            tokens: [],
 						};
 						Fire.shared.addCourse(course).then(() => {
 							navigation.navigate('Home');

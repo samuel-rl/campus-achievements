@@ -194,7 +194,8 @@ const LoginScreen = ({ navigation }: any) => {
 						etudiants: [],
 						nom: faker.commerce.productName(),
 						skills: skills,
-						messages: [],
+                        messages: [],
+                        token: []
 					};
 
 					var newCourseRef = Fire.shared.firestore.collection('cours').doc();

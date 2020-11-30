@@ -8,9 +8,10 @@ import 'dayjs/locale/fr';
 export interface DiscussionProps {
 	messagesProps: IMessage[];
     uidCourse: string | undefined;
+    onSendParent: Function;
 }
 
-const Discussion = ({ messagesProps, uidCourse }: DiscussionProps) => {
+const Discussion = ({ messagesProps, uidCourse, onSendParent }: DiscussionProps) => {
     const [messages, setMessages] = useState<IMessage[]>(messagesProps.reverse());
     
 	useEffect(() => {
@@ -25,7 +26,8 @@ const Discussion = ({ messagesProps, uidCourse }: DiscussionProps) => {
 
 	const onSend = async (message: IMessage[]) => {
         setMessages((previousMessages) => GiftedChat.append(previousMessages, message));
-		Fire.shared.sendMessage(message[0], uidCourse);
+        Fire.shared.sendMessage(message[0], uidCourse);
+        onSendParent(message[0].text)
 	};
 
 	const renderSendButton = (props) => {

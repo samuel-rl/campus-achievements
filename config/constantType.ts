@@ -7,7 +7,8 @@ export interface Course {
 	skills: Skill[];
     etudiants: BasicUserInfos[];
     color: string;
-    messages: IMessage[]
+    messages: IMessage[],
+    tokens: [],
 }
 
 export interface CourseWithoutUID {
@@ -16,7 +17,8 @@ export interface CourseWithoutUID {
 	skills: Skill[];
     etudiants: BasicUserInfos[];
     color: string;
-    messages: IMessage[]
+    messages: IMessage[],
+    tokens: []
 }
 
 export interface User {

@@ -102,6 +102,34 @@ const CourseScreen = ({ navigation, route }) => {
         await Fire.shared.updateSkillBySkillName(skillName, course.uid);
     }
 
+    const sendNotification = async (token:string,  messageContent:string) => {
+        const message = {
+          to: token,
+          sound: 'default',
+          title: course.nom + ' - ' + Fire.shared.displayName,
+          body: messageContent,
+          data: { data: 'goes here' },
+        };
+      
+        await fetch('https://exp.host/--/api/v2/push/send', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Accept-encoding': 'gzip, deflate',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(message),
+        });
+      }
+
+    const sendNotificationsMessageToAll = async (message:string) => {
+        course.tokens.map(async (token:string) => {
+            if(token != Fire.shared.token){
+                sendNotification(token, message)
+            }
+        })
+    }
+
 	return (
 		<>
             <StickyParallaxHeader
@@ -124,7 +152,7 @@ const CourseScreen = ({ navigation, route }) => {
                     },
 					{
 						title: 'Discussion',
-						content: <Discussion messagesProps={course.messages} uidCourse={course.uid} />,
+						content: <Discussion messagesProps={course.messages} uidCourse={course.uid} onSendParent={(message:string) => sendNotificationsMessageToAll(message)}/>,
                     },
                     {
 						title: 'Documents',
