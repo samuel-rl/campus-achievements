@@ -7,16 +7,12 @@ import {
 	StatusBar,
 	YellowBox,
 	Modal,
-	Dimensions,
-	Button,
-	TouchableWithoutFeedback,
-	ScrollView,
-	TouchableHighlight,
+    TouchableHighlight,
+    TouchableOpacity
 } from 'react-native';
 import { Course } from '../../config/constantType';
 import StickyParallaxHeader from 'react-native-sticky-parallax-header';
 import { Feather } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import Students from '../../components/app/Course/Students';
 import EnseignantsList from '../../components/app/Course/EnseignantsList';
 import ListSkills from '../../components/app/Course/ListSkills';
@@ -31,8 +27,6 @@ const toastConfig = {
 	deux: (internalState) => <CustomToastCourse internalState={internalState} status={2}></CustomToastCourse>,
 	trois: (internalState) => <CustomToastCourse internalState={internalState} status={3}></CustomToastCourse>,
 };
-
-const { width, height } = Dimensions.get('window');
 
 const CourseScreen = ({ navigation, route }) => {
 	YellowBox.ignoreWarnings([
@@ -162,6 +156,43 @@ const CourseScreen = ({ navigation, route }) => {
 		});
 	};
 
+	const renderModalStudent = () => {
+		return (
+			<View style={styles.optionModal}>
+				<Feather name="log-out" size={24} color="black" />
+				<Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Quitter le cours</Text>
+			</View>
+		);
+    };
+    
+    const renderModalTeacher = () => {
+        return (
+            <>
+                <TouchableOpacity style={styles.optionModal} onPress={() => {
+                    console.log("ok")
+                }}>
+                    <Feather name="log-out" size={24} color="black" />
+                    <Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Quitter le cours</Text>
+                </TouchableOpacity>
+                <View style={styles.optionModalSeparator}/>
+                <TouchableOpacity style={styles.optionModal} onPress={() => {
+                    setModalVisible(false);
+                    navigation.push('AddCourse', course);
+                }}>
+                    <Feather name="edit" size={24} color="black" />
+                    <Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Modifier le cours</Text>
+                </TouchableOpacity>
+                <View style={styles.optionModalSeparator}/>
+                <TouchableOpacity style={styles.optionModal} onPress={() => {
+                    console.log("TODO")
+                }}>
+                    <Feather name="file" size={24} color="black" />
+                    <Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Ajouter un Document</Text>
+                </TouchableOpacity>
+            </>
+		);
+    }
+
 	return (
 		<>
 			<StickyParallaxHeader
@@ -233,13 +264,7 @@ const CourseScreen = ({ navigation, route }) => {
 				</TouchableHighlight>
 				<View style={styles.outerContainerModal}>
 					<View style={styles.containerModal}>
-						<View style={styles.optionModal}>
-							<Feather name="log-out" size={24} color="black" />
-							<Text style={{textAlignVertical:"center", marginLeft: 15}}>Quitter le cours</Text>
-						</View>
-                        {
-                        //<View style={styles.optionModalSeparator}/>
-                        }
+						{Fire.shared.student ? renderModalStudent() : renderModalTeacher()}
 					</View>
 				</View>
 			</Modal>
@@ -309,14 +334,14 @@ const styles = StyleSheet.create({
 		bottom: 0,
 	},
 	optionModal: {
-        flexDirection: "row",
-        padding: 10,
-    },
-    optionModalSeparator: {
-        backgroundColor: '#edeef2',
-        width: "100%",
-        height: 1
-    }
+		flexDirection: 'row',
+		padding: 10,
+	},
+	optionModalSeparator: {
+		backgroundColor: '#edeef2',
+		width: '100%',
+		height: 1,
+	},
 });
 
 export default CourseScreen;

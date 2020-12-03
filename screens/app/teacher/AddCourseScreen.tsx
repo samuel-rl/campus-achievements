@@ -6,11 +6,11 @@ import { Feather } from '@expo/vector-icons';
 import { useHeaderHeight } from '@react-navigation/stack';
 import { colors, courseColors } from '../../../config/constants';
 import Fire from '../../../config/Fire';
-import { Skill, Quizz, BasicUserInfos, CourseWithoutUID } from '../../../config/constantType';
+import { Skill, Quizz, BasicUserInfos, CourseWithoutUID, Course } from '../../../config/constantType';
 import ColorPalette from 'react-native-color-palette';
 import ConnectedView from '../../../components/common/ConnectedView';
 
-const AddCourseScreen = ({ navigation }: any) => {
+const AddCourseScreen = ({ navigation, route }: any) => {
 	const [nom, setNom] = useState('');
 	const [skills, setSkills] = useState<Skill[]>([]);
 	const [color, setColor] = useState(courseColors[0]);
@@ -18,7 +18,7 @@ const AddCourseScreen = ({ navigation }: any) => {
 	const [animation, setAnimation] = useState<Animated.Value[]>([]);
 
 	const [animationBg, setanimationBg] = useState(new Animated.Value(0));
-	const [backgroundColor, setBackgroundColor] = useState(colors.background);
+	const [backgroundColor, setBackgroundColor] = useState(courseColors[0]);
 
 	const scrollViewRef = useRef<ScrollView | null>(null);
 
@@ -50,9 +50,20 @@ const AddCourseScreen = ({ navigation }: any) => {
 				>
 					<Feather name="plus" size={25} color="#000" />
 				</TouchableOpacity>
-			),
+            ),
 		});
     }, [navigation, nom, skills]);
+
+    useEffect(() => {
+        if(route.params){
+            const c:Course = route.params;
+            setNom(c.nom);
+            setSkills(c.skills);
+            setBackgroundColor(c.color);
+            setColor(c.color);
+            setAnimation(new Array(c.skills.length).fill(new Animated.Value(1)))
+        }
+    }, [route])
     
 
 	const handleAnimation = () => {
