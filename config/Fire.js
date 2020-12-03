@@ -279,7 +279,10 @@ class Fire {
 				let db = this.firestore.collection('cours').doc(uidCourse);
 				await db.get().then(querySnapshot => {
 					const data = querySnapshot.data();
-					data.uid = querySnapshot.id;
+                    data.uid = querySnapshot.id;
+                    data.messages.map(mess => {
+                        mess.createdAt = new Date(mess.createdAt.seconds * 1000);
+                    });
 					res(data);
 				});
 			} catch (error) {
@@ -316,8 +319,8 @@ class Fire {
 							data = doc.data();
 							data.uid = doc.id;
 							data.messages.map(mess => {
-								mess.createdAt = new Date(mess.createdAt.seconds * 1000);
-							});
+                                mess.createdAt = new Date(mess.createdAt.seconds * 1000);
+                            });
 							courses.push(data);
 						}
 					}

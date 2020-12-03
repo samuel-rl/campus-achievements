@@ -10,7 +10,7 @@ import {
     TouchableHighlight,
     TouchableOpacity
 } from 'react-native';
-import { Course } from '../../config/constantType';
+import { BasicUserInfos, Course } from '../../config/constantType';
 import StickyParallaxHeader from 'react-native-sticky-parallax-header';
 import { Feather, AntDesign } from '@expo/vector-icons';
 import Students from '../../components/app/Course/Students';
@@ -125,14 +125,15 @@ const CourseScreen = ({ navigation, route }) => {
 			text1: titre,
 			text2: 'Tu as acquis "' + skillName + '"',
 		});
-		await Fire.shared.updateSkillBySkillName(skillName, course.uid);
+        await Fire.shared.updateSkillBySkillName(skillName, course.uid);
+        await sendNotificationToAllTeacher(skillName);
 	};
 
-	const sendNotification = async (token: string, messageContent: string) => {
+	const sendNotification = async (token: string, messageContent: string, title: string) => {
 		const message = {
 			to: token,
 			sound: 'default',
-			title: course.nom + ' - ' + Fire.shared.displayName,
+			title: title,
 			body: messageContent,
 			data: { data: 'goes here' },
 		};
@@ -151,9 +152,18 @@ const CourseScreen = ({ navigation, route }) => {
 	const sendNotificationsMessageToAll = async (message: string) => {
 		course.tokens.map(async (token: string) => {
 			if (token != Fire.shared.token) {
-				sendNotification(token, message);
+				sendNotification(token, message, course.nom + ' - ' + Fire.shared.displayName);
 			}
 		});
+    };
+    
+    const sendNotificationToAllTeacher = async (skillName: string) => {
+        const title = course.nom;
+        const message = Fire.shared.displayName + " a débloqué " + skillName + " dans " + course.nom + "!";
+		course.enseignants.map((enseignant:BasicUserInfos) => {
+            const token = enseignant.token;
+                    sendNotification(token, message, title);
+        })
 	};
 
 	const renderModalStudent = () => {
@@ -207,7 +217,7 @@ const CourseScreen = ({ navigation, route }) => {
 				foreground={renderForeground()}
 				header={renderHeader()}
 				parallaxHeight={150}
-				headerSize={(x) => {console.log(x)}}
+				headerSize={() => {}}
 				headerHeight={50}
 				onEndReached={() => {}}
 				scrollEvent={Animated.event([{ nativeEvent: { contentOffset: { y: scroll } } }])}
