@@ -101,7 +101,7 @@ const LoginScreen = ({ navigation }: any) => {
     const addTobdd = async () => {
 		setLoadingBDD(true);
 		let arrOfCourse: Course[] = [];
-		for (var i = 0; i < 100; i++) {
+		for (var i = 0; i < 30; i++) {
 			var x = faker.random.uuid();
 			let db = Fire.shared.firestore.collection('users').doc(x);
 			const randomStud = Math.floor(Math.random() * Math.floor(10));
@@ -173,7 +173,7 @@ const LoginScreen = ({ navigation }: any) => {
 
 				}
 
-				const nbCourseCreate = Math.floor(Math.random() * Math.floor(5));
+				const nbCourseCreate = Math.floor(Math.random() * Math.floor(4));
 				for (var j = 0; j < nbCourseCreate; ++j) {
                     let nbSkill = Math.floor(Math.random() * Math.floor(15));
                     

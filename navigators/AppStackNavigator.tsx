@@ -68,15 +68,8 @@ const HomeStackScreen = ({ navigation }: any) => (
 			options={{
                 title: 'Ajouter un cours',
 				headerTransparent: true,
-				headerLeft: () => (
-					<TouchableOpacity
-						style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}
-						onPress={() => navigation.navigate("JoinCourses")}
-					>
-						<Feather name="arrow-left" size={25} color="#000" />
-					</TouchableOpacity>
-				),
-				headerTitleAlign: 'center',
+                headerTitleAlign: 'center',
+                headerTintColor: "#fff"
 			}}
 		/>
 	</HomeStack.Navigator>

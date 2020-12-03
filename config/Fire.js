@@ -368,12 +368,12 @@ class Fire {
 	enterInCourseStudent = async (userAdd, course) => {
 		console.log('enterInCourseStudent');
 		let dbCours = this.firestore.collection('cours').doc(course.uid);
-		dbCours.update({
+		await dbCours.update({
             etudiants: firebase.firestore.FieldValue.arrayUnion(userAdd),
             tokens: firebase.firestore.FieldValue.arrayUnion(this.token),
 		});
 		let dbUser = this.firestore.collection('users').doc(this.uid);
-		dbUser.update({
+		await dbUser.update({
 			cours: firebase.firestore.FieldValue.arrayUnion(course),
 		});
 	};
@@ -381,15 +381,22 @@ class Fire {
 	enterInCourseTeacher = async (userAdd, course) => {
 		console.log('enterInCourseTeacher');
 		let dbCours = this.firestore.collection('cours').doc(course.uid);
-		dbCours.update({
+		await dbCours.update({
             enseignants: firebase.firestore.FieldValue.arrayUnion(userAdd),
             tokens: firebase.firestore.FieldValue.arrayUnion(this.token),
 		});
 		let dbUser = this.firestore.collection('users').doc(this.uid);
-		dbUser.update({
+		await dbUser.update({
 			coursEnseignant: firebase.firestore.FieldValue.arrayUnion(course),
 		});
-	};
+    };
+    
+
+    updateCourseByUID = async (course, uidCourse) => {
+        console.log('updateCourseByUID');
+        let dbCours = this.firestore.collection('cours').doc(uidCourse);
+		await dbCours.set(course)
+    }
 
 	/* ******************************
                  messages

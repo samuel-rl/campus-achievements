@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { Course } from '../../config/constantType';
 import StickyParallaxHeader from 'react-native-sticky-parallax-header';
-import { Feather } from '@expo/vector-icons';
+import { Feather, AntDesign } from '@expo/vector-icons';
 import Students from '../../components/app/Course/Students';
 import EnseignantsList from '../../components/app/Course/EnseignantsList';
 import ListSkills from '../../components/app/Course/ListSkills';
@@ -169,7 +169,7 @@ const CourseScreen = ({ navigation, route }) => {
         return (
             <>
                 <TouchableOpacity style={styles.optionModal} onPress={() => {
-                    console.log("ok")
+                    console.log("TODO")
                 }}>
                     <Feather name="log-out" size={24} color="black" />
                     <Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Quitter le cours</Text>
@@ -189,6 +189,13 @@ const CourseScreen = ({ navigation, route }) => {
                     <Feather name="file" size={24} color="black" />
                     <Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Ajouter un Document</Text>
                 </TouchableOpacity>
+                <View style={styles.optionModalSeparator}/>
+                <TouchableOpacity style={styles.optionModal} onPress={() => {
+                    console.log("TODO")
+                }}>
+                    <AntDesign name="delete" size={24} color="black" />
+                    <Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Supprimer le cours</Text>
+                </TouchableOpacity>
             </>
 		);
     }
@@ -199,8 +206,8 @@ const CourseScreen = ({ navigation, route }) => {
 				rememberTabScrollPosition={false}
 				foreground={renderForeground()}
 				header={renderHeader()}
-				parallaxHeight={200}
-				headerSize={() => {}}
+				parallaxHeight={150}
+				headerSize={(x) => {console.log(x)}}
 				headerHeight={50}
 				onEndReached={() => {}}
 				scrollEvent={Animated.event([{ nativeEvent: { contentOffset: { y: scroll } } }])}
