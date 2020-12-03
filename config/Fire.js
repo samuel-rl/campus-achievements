@@ -528,7 +528,37 @@ class Fire {
 				rej(error);
 			}
 		});
-	};
+    };
+    
+    /* ******************************
+                 Storage
+    ****************************** */
+
+    uplaodFileAsync = async (uri, filename) => {
+        console.log("uplaodFile");
+        return new Promise(async (res, rej) => {
+			const response = await fetch(uri);
+			const file = await response.blob();
+			let upload = firebase.storage().ref(filename).put(file);
+			upload.on(
+				'state_changed',
+				snapshot => {},
+				err => {
+					//on renvoie l'erreur si il y en a une
+					rej(err);
+				},
+				async () => {
+					const url = await upload.snapshot.ref.getDownloadURL();
+					res(url);
+				}
+			);
+		});
+    }
+
+    postPdfToCourse = async (courseUID, pdf) => {
+        remoteUri = await this.uplaodFileAsync(pdf.uri, `courses/${courseUID}/${pdf.name}`);
+    }
+
 
 	/* ******************************
                  getter

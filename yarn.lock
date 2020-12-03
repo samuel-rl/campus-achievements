@@ -2948,6 +2948,13 @@ expo-constants@9.1.1, expo-constants@~9.1.1:
     fbjs "1.0.0"
     uuid "^3.3.2"
 
+expo-document-picker@~8.2.1:
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/expo-document-picker/-/expo-document-picker-8.2.1.tgz#8363078274b5f86b25812ae3ecc2677ee42b3cfb"
+  integrity sha512-U7bow5hPpiiwppil7LFwdAW/bf0DIf5GX781gRReWLbizULq1p6njcMdMxYC5p8osDhYal+DAhzT7VB5i1ucsA==
+  dependencies:
+    uuid "^3.3.2"
+
 expo-error-recovery@~1.2.1:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/expo-error-recovery/-/expo-error-recovery-1.2.2.tgz#512a92610c267201eae2a8c5e9e744aa34400e5f"
@@ -5343,11 +5350,6 @@ react-native-parsed-text@0.0.22:
   integrity sha512-hfD83RDXZf9Fvth3DowR7j65fMnlqM9PpxZBGWkzVcUTFtqe6/yPcIoIAgrJbKn6YmtzkivmhWE2MCE4JKBXrQ==
   dependencies:
     prop-types "^15.7.x"
-
-react-native-popup-menu@^0.15.9:
-  version "0.15.9"
-  resolved "https://registry.yarnpkg.com/react-native-popup-menu/-/react-native-popup-menu-0.15.9.tgz#75bccf71ff4627cb302d871a28be84a91eb2f8d9"
-  integrity sha512-PO99dptMocEfUSS3SM7gY6UqophaBxizKjnZ7FcEwa+H4ONVxTk310/JCXJ9vdNunomgpxHluKRXnApfm9Md1w==
 
 react-native-reanimated@~1.9.0:
   version "1.9.0"

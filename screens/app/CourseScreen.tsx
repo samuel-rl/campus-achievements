@@ -7,8 +7,9 @@ import {
 	StatusBar,
 	YellowBox,
 	Modal,
-    TouchableHighlight,
-    TouchableOpacity
+	TouchableHighlight,
+	TouchableOpacity,
+	ActivityIndicator,
 } from 'react-native';
 import { BasicUserInfos, Course } from '../../config/constantType';
 import StickyParallaxHeader from 'react-native-sticky-parallax-header';
@@ -20,6 +21,8 @@ import Discussion from '../../components/app/Course/Discussion';
 import Fire from '../../config/Fire';
 import Toast from 'react-native-toast-message';
 import CustomToastCourse from '../../components/app/Course/components/CustomToastCourse';
+import * as DocumentPicker from 'expo-document-picker';
+
 export interface CourseScreenProps {}
 
 const toastConfig = {
@@ -38,6 +41,7 @@ const CourseScreen = ({ navigation, route }) => {
 	const [course, setCourse] = useState<Course>(route.params.item);
 	const [scroll, setScroll] = useState<Animated.Value>(new Animated.Value(0));
 	const [modalVisible, setModalVisible] = useState(false);
+	const [loading, setLoading] = useState(false);
 
 	const renderContent = (label) => (
 		<View style={styles.content}>
@@ -125,8 +129,8 @@ const CourseScreen = ({ navigation, route }) => {
 			text1: titre,
 			text2: 'Tu as acquis "' + skillName + '"',
 		});
-        await Fire.shared.updateSkillBySkillName(skillName, course.uid);
-        await sendNotificationToAllTeacher(skillName);
+		await Fire.shared.updateSkillBySkillName(skillName, course.uid);
+		await sendNotificationToAllTeacher(skillName);
 	};
 
 	const sendNotification = async (token: string, messageContent: string, title: string) => {
@@ -155,15 +159,15 @@ const CourseScreen = ({ navigation, route }) => {
 				sendNotification(token, message, course.nom + ' - ' + Fire.shared.displayName);
 			}
 		});
-    };
-    
-    const sendNotificationToAllTeacher = async (skillName: string) => {
-        const title = course.nom;
-        const message = Fire.shared.displayName + " a débloqué " + skillName + " dans " + course.nom + "!";
-		course.enseignants.map((enseignant:BasicUserInfos) => {
-            const token = enseignant.token;
-                    sendNotification(token, message, title);
-        })
+	};
+
+	const sendNotificationToAllTeacher = async (skillName: string) => {
+		const title = course.nom;
+		const message = Fire.shared.displayName + ' a débloqué ' + skillName + ' dans ' + course.nom + '!';
+		course.enseignants.map((enseignant: BasicUserInfos) => {
+			const token = enseignant.token;
+			sendNotification(token, message, title);
+		});
 	};
 
 	const renderModalStudent = () => {
@@ -173,42 +177,75 @@ const CourseScreen = ({ navigation, route }) => {
 				<Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Quitter le cours</Text>
 			</View>
 		);
-    };
-    
-    const renderModalTeacher = () => {
-        return (
-            <>
-                <TouchableOpacity style={styles.optionModal} onPress={() => {
-                    console.log("TODO")
-                }}>
-                    <Feather name="log-out" size={24} color="black" />
-                    <Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Quitter le cours</Text>
-                </TouchableOpacity>
-                <View style={styles.optionModalSeparator}/>
-                <TouchableOpacity style={styles.optionModal} onPress={() => {
-                    setModalVisible(false);
-                    navigation.push('AddCourse', course);
-                }}>
-                    <Feather name="edit" size={24} color="black" />
-                    <Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Modifier le cours</Text>
-                </TouchableOpacity>
-                <View style={styles.optionModalSeparator}/>
-                <TouchableOpacity style={styles.optionModal} onPress={() => {
-                    console.log("TODO")
-                }}>
-                    <Feather name="file" size={24} color="black" />
-                    <Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Ajouter un Document</Text>
-                </TouchableOpacity>
-                <View style={styles.optionModalSeparator}/>
-                <TouchableOpacity style={styles.optionModal} onPress={() => {
-                    console.log("TODO")
-                }}>
-                    <AntDesign name="delete" size={24} color="black" />
-                    <Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Supprimer le cours</Text>
-                </TouchableOpacity>
-            </>
+	};
+
+	const renderModalTeacher = () => {
+		return (
+			<>
+				<TouchableOpacity
+					style={styles.optionModal}
+					onPress={() => {
+						console.log('TODO');
+					}}
+				>
+					<Feather name="log-out" size={24} color="black" />
+					<Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Quitter le cours</Text>
+				</TouchableOpacity>
+				<View style={styles.optionModalSeparator} />
+				<TouchableOpacity
+					style={styles.optionModal}
+					onPress={() => {
+						setModalVisible(false);
+						navigation.push('AddCourse', course);
+					}}
+				>
+					<Feather name="edit" size={24} color="black" />
+					<Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Modifier le cours</Text>
+				</TouchableOpacity>
+				<View style={styles.optionModalSeparator} />
+				<TouchableOpacity
+					style={styles.optionModal}
+					onPress={() => {
+						DocumentPicker.getDocumentAsync({ type: 'application/pdf' }).then((pdf) => {
+							setLoading(true);
+							Fire.shared.postPdfToCourse(course.uid, pdf).then(() => {
+								setLoading(false);
+							});
+						});
+					}}
+				>
+					<Feather name="file" size={24} color="black" />
+					<Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Ajouter un Document</Text>
+				</TouchableOpacity>
+				<View style={styles.optionModalSeparator} />
+				<TouchableOpacity
+					style={styles.optionModal}
+					onPress={() => {
+						console.log('TODO');
+					}}
+				>
+					<AntDesign name="delete" size={24} color="black" />
+					<Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Supprimer le cours</Text>
+				</TouchableOpacity>
+			</>
 		);
-    }
+	};
+
+	const renderActivityIndicator = () => {
+		return (
+			<>
+				{Fire.shared.student ? (
+					<View style={{padding: 20}}>
+						<ActivityIndicator></ActivityIndicator>
+					</View>
+				) : (
+					<View style={{padding: 83}}> 
+						<ActivityIndicator></ActivityIndicator>
+					</View>
+				)}
+			</>
+		);
+	};
 
 	return (
 		<>
@@ -274,14 +311,18 @@ const CourseScreen = ({ navigation, route }) => {
 			>
 				<TouchableHighlight
 					style={styles.backgroundModal}
-					onPress={() => setModalVisible(false)}
+					onPress={() => (loading ? console.log('...') : setModalVisible(false))}
 					underlayColor={'transparent'}
 				>
 					<View />
 				</TouchableHighlight>
 				<View style={styles.outerContainerModal}>
 					<View style={styles.containerModal}>
-						{Fire.shared.student ? renderModalStudent() : renderModalTeacher()}
+						{loading
+							? renderActivityIndicator()
+							: Fire.shared.student
+							? renderModalStudent()
+							: renderModalTeacher()}
 					</View>
 				</View>
 			</Modal>
