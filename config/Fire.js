@@ -184,21 +184,20 @@ class Fire {
 		console.log('addCourse...');
 		return new Promise(async (res, rej) => {
 			try {
-                var newCourseRef = this.firestore.collection('cours').doc();
-                
+				var newCourseRef = this.firestore.collection('cours').doc();
+
 				var id = newCourseRef.id;
-                await newCourseRef.set(course);
-                await newCourseRef.update({
-                    tokens: firebase.firestore.FieldValue.arrayUnion(this.token),
-                });
+				await newCourseRef.set(course);
+				await newCourseRef.update({
+					tokens: firebase.firestore.FieldValue.arrayUnion(this.token),
+				});
 
 				course.uid = id;
 
 				let dbUser = this.firestore.collection('users').doc(this.uid);
 				await dbUser.update({
-                    coursEnseignant: firebase.firestore.FieldValue.arrayUnion(course),
-                    
-                });
+					coursEnseignant: firebase.firestore.FieldValue.arrayUnion(course),
+				});
 				res(true);
 			} catch (error) {
 				rej(error);
@@ -279,10 +278,10 @@ class Fire {
 				let db = this.firestore.collection('cours').doc(uidCourse);
 				await db.get().then(querySnapshot => {
 					const data = querySnapshot.data();
-                    data.uid = querySnapshot.id;
-                    data.messages.map(mess => {
-                        mess.createdAt = new Date(mess.createdAt.seconds * 1000);
-                    });
+					data.uid = querySnapshot.id;
+					data.messages.map(mess => {
+						mess.createdAt = new Date(mess.createdAt.seconds * 1000);
+					});
 					res(data);
 				});
 			} catch (error) {
@@ -319,8 +318,8 @@ class Fire {
 							data = doc.data();
 							data.uid = doc.id;
 							data.messages.map(mess => {
-                                mess.createdAt = new Date(mess.createdAt.seconds * 1000);
-                            });
+								mess.createdAt = new Date(mess.createdAt.seconds * 1000);
+							});
 							courses.push(data);
 						}
 					}
@@ -372,8 +371,8 @@ class Fire {
 		console.log('enterInCourseStudent');
 		let dbCours = this.firestore.collection('cours').doc(course.uid);
 		await dbCours.update({
-            etudiants: firebase.firestore.FieldValue.arrayUnion(userAdd),
-            tokens: firebase.firestore.FieldValue.arrayUnion(this.token),
+			etudiants: firebase.firestore.FieldValue.arrayUnion(userAdd),
+			tokens: firebase.firestore.FieldValue.arrayUnion(this.token),
 		});
 		let dbUser = this.firestore.collection('users').doc(this.uid);
 		await dbUser.update({
@@ -385,21 +384,20 @@ class Fire {
 		console.log('enterInCourseTeacher');
 		let dbCours = this.firestore.collection('cours').doc(course.uid);
 		await dbCours.update({
-            enseignants: firebase.firestore.FieldValue.arrayUnion(userAdd),
-            tokens: firebase.firestore.FieldValue.arrayUnion(this.token),
+			enseignants: firebase.firestore.FieldValue.arrayUnion(userAdd),
+			tokens: firebase.firestore.FieldValue.arrayUnion(this.token),
 		});
 		let dbUser = this.firestore.collection('users').doc(this.uid);
 		await dbUser.update({
 			coursEnseignant: firebase.firestore.FieldValue.arrayUnion(course),
 		});
-    };
-    
+	};
 
-    updateCourseByUID = async (course, uidCourse) => {
-        console.log('updateCourseByUID');
-        let dbCours = this.firestore.collection('cours').doc(uidCourse);
-		await dbCours.set(course)
-    }
+	updateCourseByUID = async (course, uidCourse) => {
+		console.log('updateCourseByUID');
+		let dbCours = this.firestore.collection('cours').doc(uidCourse);
+		await dbCours.set(course);
+	};
 
 	/* ******************************
                  messages
@@ -528,15 +526,15 @@ class Fire {
 				rej(error);
 			}
 		});
-    };
-    
-    /* ******************************
+	};
+
+	/* ******************************
                  Storage
     ****************************** */
 
-    uplaodFileAsync = async (uri, filename) => {
-        console.log("uplaodFile");
-        return new Promise(async (res, rej) => {
+	uplaodFileAsync = async (uri, filename) => {
+		console.log('uplaodFile');
+		return new Promise(async (res, rej) => {
 			const response = await fetch(uri);
 			const file = await response.blob();
 			let upload = firebase.storage().ref(filename).put(file);
@@ -553,12 +551,22 @@ class Fire {
 				}
 			);
 		});
-    }
+	};
 
-    postPdfToCourse = async (courseUID, pdf) => {
-        remoteUri = await this.uplaodFileAsync(pdf.uri, `courses/${courseUID}/${pdf.name}`);
-    }
-
+	postPdfToCourse = async (courseUID, pdf) => {
+		return new Promise(async res => {
+			remoteUri = await this.uplaodFileAsync(pdf.uri, `courses/${courseUID}/${pdf.name}`);
+			let dbCours = this.firestore.collection('cours').doc(courseUID);
+			const document = {
+				titre: pdf.name,
+				url: remoteUri,
+			};
+			await dbCours.update({
+				documents: firebase.firestore.FieldValue.arrayUnion(document),
+			});
+			res(document);
+		});
+	};
 
 	/* ******************************
                  getter

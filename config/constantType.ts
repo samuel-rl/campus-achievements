@@ -8,7 +8,8 @@ export interface Course {
     etudiants: BasicUserInfos[];
     color: string;
     messages: IMessage[],
-    tokens: [],
+    tokens: string[],
+    documents: Document[];
 }
 
 export interface CourseWithoutUID {
@@ -18,7 +19,8 @@ export interface CourseWithoutUID {
     etudiants: BasicUserInfos[];
     color: string;
     messages: IMessage[],
-    tokens: []
+    tokens: string[];
+    documents: Document[];
 }
 
 export interface User {
@@ -73,4 +75,9 @@ export interface Card{
     value: boolean;
     revealed: boolean;
     picked: boolean;
+}
+
+export interface Document{
+    titre:string;
+    url:string;
 }

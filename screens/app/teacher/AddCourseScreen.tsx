@@ -46,7 +46,8 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 								nom: nom,
 								skills: skills,
 								messages: route.params.messages,
-								tokens: route.params.tokens,
+                                tokens: route.params.tokens,
+                                documents: [],
 							};
 							Fire.shared.updateCourseByUID(course, route.params.uid).then(() => {
 								navigation.goBack();
@@ -65,7 +66,8 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 								nom: nom,
 								skills: skills,
 								messages: [],
-								tokens: [],
+                                tokens: [],
+                                documents: [],
 							};
 							Fire.shared.addCourse(course).then(() => {
 								navigation.navigate('Home');

@@ -11,7 +11,7 @@ import {
 	TouchableOpacity,
 	ActivityIndicator,
 } from 'react-native';
-import { BasicUserInfos, Course } from '../../config/constantType';
+import { BasicUserInfos, Course, Document } from '../../config/constantType';
 import StickyParallaxHeader from 'react-native-sticky-parallax-header';
 import { Feather, AntDesign } from '@expo/vector-icons';
 import Students from '../../components/app/Course/Students';
@@ -22,6 +22,7 @@ import Fire from '../../config/Fire';
 import Toast from 'react-native-toast-message';
 import CustomToastCourse from '../../components/app/Course/components/CustomToastCourse';
 import * as DocumentPicker from 'expo-document-picker';
+import ListDocument from '../../components/app/Course/ListDocument';
 
 export interface CourseScreenProps {}
 
@@ -208,8 +209,11 @@ const CourseScreen = ({ navigation, route }) => {
 					onPress={() => {
 						DocumentPicker.getDocumentAsync({ type: 'application/pdf' }).then((pdf) => {
 							setLoading(true);
-							Fire.shared.postPdfToCourse(course.uid, pdf).then(() => {
-								setLoading(false);
+							Fire.shared.postPdfToCourse(course.uid, pdf).then((res:Document) => {
+                                let temp = course;
+                                temp.documents.push(res)
+                                setCourse(temp)
+                                setLoading(false);
 							});
 						});
 					}}
@@ -286,7 +290,7 @@ const CourseScreen = ({ navigation, route }) => {
 					},
 					{
 						title: 'Documents',
-						content: renderContent('Documents'),
+						content: <ListDocument documents={course.documents}/>,
 					},
 					{
 						title: 'Élèves',
