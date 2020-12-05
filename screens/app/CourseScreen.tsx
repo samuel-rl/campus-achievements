@@ -173,10 +173,17 @@ const CourseScreen = ({ navigation, route }) => {
 
 	const renderModalStudent = () => {
 		return (
-			<View style={styles.optionModal}>
+			<TouchableOpacity style={styles.optionModal} onPress={() => {
+                setLoading(true);
+                Fire.shared.deleteCourseIntoStudent(course.uid, Fire.shared.uid).then(async () => {
+                    await Fire.shared.deleteStudentIntoCourse(course.uid, Fire.shared.uid);
+                    setLoading(false);
+                    navigation.navigate('Home');
+                })
+            }}>
 				<Feather name="log-out" size={24} color="black" />
 				<Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Quitter le cours</Text>
-			</View>
+			</TouchableOpacity>
 		);
 	};
 
@@ -186,7 +193,12 @@ const CourseScreen = ({ navigation, route }) => {
 				<TouchableOpacity
 					style={styles.optionModal}
 					onPress={() => {
-						console.log('TODO');
+                        setLoading(true);
+                        Fire.shared.deleteCourseIntoTeacher(course.uid, Fire.shared.uid).then(async() => {
+                            await Fire.shared.deleteTeacherIntoCourse(course.uid, Fire.shared.uid);
+                            setLoading(false);
+                            navigation.navigate('Home');
+                        })
 					}}
 				>
 					<Feather name="log-out" size={24} color="black" />
@@ -225,7 +237,11 @@ const CourseScreen = ({ navigation, route }) => {
 				<TouchableOpacity
 					style={styles.optionModal}
 					onPress={() => {
-						console.log('TODO');
+                        setLoading(true);
+						Fire.shared.deleteAllCourseInformations(course.uid, course.etudiants, course.enseignants).then(() =>{
+                            setLoading(false);
+                            navigation.navigate('Home');
+                        })
 					}}
 				>
 					<AntDesign name="delete" size={24} color="black" />

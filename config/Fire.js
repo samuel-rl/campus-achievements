@@ -511,6 +511,92 @@ class Fire {
 		});
 	};
 
+	deleteCourseIntoStudent = async (uidCourse, uidUser) => {
+		console.log('deleteCourseIntoStudent...');
+		let dbUser = this.firestore.collection('users').doc(uidUser);
+		await dbUser.get().then(async querySnapshot => {
+			let allcourses = querySnapshot.data().cours;
+			allcourses = allcourses.filter(course => {
+				return course.uid !== uidCourse;
+			});
+			await dbUser.set(
+				{
+					cours: allcourses,
+				},
+				{ merge: true }
+			);
+        });
+    };
+    
+    deleteStudentIntoCourse = async (uidCourse, uidUser) => {
+		console.log('deleteStudentIntoCourse...');
+		let db = this.firestore.collection('cours').doc(uidCourse);
+		await db.get().then(async querySnapshot => {
+			let allStudents = querySnapshot.data().etudiants;
+			allStudents = allStudents.filter(student => {
+				return student.uid !== uidUser;
+			});
+			await db.set(
+				{
+					etudiants: allStudents,
+				},
+				{ merge: true }
+			);
+		});
+    };
+
+    deleteCourseIntoTeacher = async (uidCourse, uidUser) => {
+		console.log('deleteCourseIntoTeacher...');
+		let dbUser = this.firestore.collection('users').doc(uidUser);
+		await dbUser.get().then(async querySnapshot => {
+			let allcourses = querySnapshot.data().coursEnseignant;
+			allcourses = allcourses.filter(course => {
+				return course.uid !== uidCourse;
+			});
+			await dbUser.set(
+				{
+					coursEnseignant: allcourses,
+				},
+				{ merge: true }
+			);
+        });
+    };
+    
+    deleteTeacherIntoCourse = async (uidCourse, uidUser) => {
+		console.log('deleteTeacherIntoCourse...');
+		let db = this.firestore.collection('cours').doc(uidCourse);
+		await db.get().then(async querySnapshot => {
+			let allTeacher = querySnapshot.data().enseignants;
+			allTeacher = allTeacher.filter(teacher => {
+				return teacher.uid !== uidUser;
+			});
+			await db.set(
+				{
+					enseignants: allTeacher,
+				},
+				{ merge: true }
+			);
+		});
+    };
+
+    deleteAllCourseInformations = async (uidCourse, arrStudent, arrTeacher) => {
+        console.log(arrStudent)
+        console.log("deleteAllCourseInformations...");
+        await this.firestore.collection('cours').doc(uidCourse).delete().then(async () => {
+            arrStudent.map(async (student) => {
+                await this.deleteCourseIntoStudent(uidCourse, student.uid)
+            })
+            arrTeacher.map(async (teacher) => {
+                await this.deleteCourseIntoTeacher(uidCourse, teacher.uid)
+            })
+        })
+
+    }
+
+
+    
+
+
 	/* ******************************
                  rewards
     ****************************** */

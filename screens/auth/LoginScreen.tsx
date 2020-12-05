@@ -18,7 +18,7 @@ import { ActivityIndicator } from 'react-native-paper';
 
 import faker from 'faker';
 import initialRewards from '../../config/rewards';
-import { BasicUserInfos, Course, Quizz, Skill } from '../../config/constantType';
+import { BasicUserInfos, Course, Quizz, Skill, Document } from '../../config/constantType';
 import { IMessage } from 'react-native-gifted-chat';
 
 const LoginScreen = ({ navigation }: any) => {
@@ -218,7 +218,8 @@ const LoginScreen = ({ navigation }: any) => {
 						nom: faker.commerce.productName(),
 						skills: skills,
                         messages: [],
-                        token: []
+                        token: [],
+                        documents: []
 					};
 
 					var newCourseRef = Fire.shared.firestore.collection('cours').doc();

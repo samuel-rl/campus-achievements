@@ -6,7 +6,6 @@ import { colors } from '../../config/constants';
 import { useHeaderHeight } from '@react-navigation/stack';
 import { Course } from '../../config/constantType';
 import CoursesItem from '../../components/app/Home/CoursesItem';
-import { Notifications } from 'expo';
 
 export interface HomeScreenProps {}
 
@@ -30,7 +29,7 @@ const HomeScreen = ({ navigation }: any) => {
 					}
 				}
 				Fire.shared.getMyCoursesInformationsByUID(temp).then((x: Course[]) => {
-					setCourses(x);
+                    setCourses(x);
 				});
 			});
 		});
