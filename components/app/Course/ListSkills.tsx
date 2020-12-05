@@ -1,22 +1,25 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Skill } from '../../../config/constantType';
+import Fire from '../../../config/Fire';
 import SkillItem from './components/SkillItem';
 
 export interface ListSkillsProps {
     skills: Skill[];
-    navigation: any
+    navigation: any,
+    uidCourse: string | undefined;
+    updateAutoEvaluateSkill: Function;
 }
 
-const ListSkills = ({ skills, navigation }: ListSkillsProps) => {
-
+const ListSkills = ({ skills, navigation, uidCourse, updateAutoEvaluateSkill }: ListSkillsProps) => {
 	return (
 		<View style={styles.container}>
 			{skills.length == 0 ? (
 				<Text style={styles.warningText}>Aucune compétences à débloquer</Text>
 			) : (
 				skills.map((skill: Skill, index: number) => {
-					return <SkillItem key={index.toString()} done={false} skill={skill} navigation={navigation}/>;
+                    var done = Fire.shared.uid ? skill.check.includes(Fire.shared.uid) : false;
+					return <SkillItem key={index.toString()} done={done} skill={skill} navigation={navigation} uidCourse={uidCourse} updateAutoEvaluateSkill={(skillName:string) => updateAutoEvaluateSkill(skillName)} />;
 				})
 			)}
 		</View>
@@ -24,7 +27,8 @@ const ListSkills = ({ skills, navigation }: ListSkillsProps) => {
 };
 
 const styles = StyleSheet.create({
-	container: {},
+	container: {
+    },
 	warningText: {
         color: 'red',
         marginTop: 30,

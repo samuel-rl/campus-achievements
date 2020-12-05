@@ -12,11 +12,6 @@ const toastConfig = {
 	any_custom_type: (internalState) => <CustomToast internalState={internalState}></CustomToast>,
 };
 
-interface p {
-	animatedValue: Animated.Value;
-	str: string;
-}
-
 const RewardsScreen = () => {
 	const headerHeight = useHeaderHeight();
 	const toast = createRef<any>();
@@ -44,7 +39,7 @@ const RewardsScreen = () => {
 						});
 					}}
 				></Button>
-				<View style={{ flexWrap: 'wrap', flexDirection: 'row' }}>
+				<View style={{ flexWrap: 'wrap', flexDirection: 'row', justifyContent:"center" }}>
 					{rewards.map((item: Reward, index: any) => {
 						return (
 							<View

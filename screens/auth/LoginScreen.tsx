@@ -18,7 +18,7 @@ import { ActivityIndicator } from 'react-native-paper';
 
 import faker from 'faker';
 import initialRewards from '../../config/rewards';
-import { BasicUserInfos, Course, Skill } from '../../config/constantType';
+import { BasicUserInfos, Course, Quizz, Skill, Document } from '../../config/constantType';
 import { IMessage } from 'react-native-gifted-chat';
 
 const LoginScreen = ({ navigation }: any) => {
@@ -30,8 +30,11 @@ const LoginScreen = ({ navigation }: any) => {
 	const [loadingBDD, setLoadingBDD] = useState<boolean>(false);
 
 	useEffect(() => {
-		// registerForPushNotificationsAsync();
-	});
+        const unsubscribe = registerForPushNotificationsAsync();
+        return () => {
+			unsubscribe;
+		};
+	}, []);
 
 	async function registerForPushNotificationsAsync() {
 		console.log('registerForPushNotificationsAsync...');
@@ -98,7 +101,7 @@ const LoginScreen = ({ navigation }: any) => {
     const addTobdd = async () => {
 		setLoadingBDD(true);
 		let arrOfCourse: Course[] = [];
-		for (var i = 0; i < 40; i++) {
+		for (var i = 0; i < 30; i++) {
 			var x = faker.random.uuid();
 			let db = Fire.shared.firestore.collection('users').doc(x);
 			const randomStud = Math.floor(Math.random() * Math.floor(10));
@@ -170,16 +173,40 @@ const LoginScreen = ({ navigation }: any) => {
 
 				}
 
-				const nbCourseCreate = Math.floor(Math.random() * Math.floor(5));
+				const nbCourseCreate = Math.floor(Math.random() * Math.floor(4));
 				for (var j = 0; j < nbCourseCreate; ++j) {
-					const nbSkill = Math.floor(Math.random() * Math.floor(8));
+                    let nbSkill = Math.floor(Math.random() * Math.floor(15));
+                    
 					var skills: Skill[] = [];
 					for (var k = 0; k < nbSkill; ++k) {
+                        let isSoftSkill = (Math.random() < 0.2);
+                        let autoEvaluate = (Math.random() < 0.7);
+    
+                        var quizzes:Quizz[] = []
+    
+                        if(autoEvaluate == false){
+                            let nbQuestion = Math.floor(Math.random() * Math.floor(10));
+    
+                            for(var l=0; l<nbQuestion; l++){
+                                let quizz:Quizz = {
+                                    question: "Question numéro " + l,
+                                    solution: "solution",
+                                    propositions: [
+                                        'réponse 1',
+                                        'réponse 2',
+                                        'réponse 3',
+                                    ]
+                                }
+                                quizzes.push(quizz);
+                            }
+                        }
+
 						let sk: Skill = {
-							autoEvaluate: true,
-							isSoftSkill: true,
+							autoEvaluate: autoEvaluate,
+							isSoftSkill: isSoftSkill,
 							nom: faker.company.catchPhraseNoun(),
-							quizz: [],
+                            quizz: autoEvaluate==true ? null : quizzes,
+                            check: []
 						};
 						skills.push(sk);
 					}
@@ -190,7 +217,9 @@ const LoginScreen = ({ navigation }: any) => {
 						etudiants: [],
 						nom: faker.commerce.productName(),
 						skills: skills,
-						messages: [],
+                        messages: [],
+                        token: [],
+                        documents: []
 					};
 
 					var newCourseRef = Fire.shared.firestore.collection('cours').doc();
@@ -203,7 +232,7 @@ const LoginScreen = ({ navigation }: any) => {
 					arrOfCourse.push(course);
 				}
 			} else {
-				const nbCourseEnter = Math.floor(Math.random() * Math.floor(arrOfCourse.length / 2));
+				const nbCourseEnter = Math.floor(Math.random() * Math.floor(arrOfCourse.length));
 
 				var arr:number[] = [];
 				while (arr.length < nbCourseEnter) {

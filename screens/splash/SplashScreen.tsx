@@ -16,12 +16,6 @@ const SplashScreen = ({ navigation }: any) => {
 		useNativeDriver: false,
 	})).start();
 
-	useEffect(() => {
-		Fire.shared.firebase.auth().onAuthStateChanged((user) => {
-			navigation.navigate(user ? "AppStack" : "AuthStack");
-		});
-	}, []);
-
 	const dot1 = animatedValue.interpolate({
 		inputRange: [0, 0.1, 0.2, 0.3, 0.4, 0.4, 0.6, 0.7, 0.8, 0.9, 1],
 		outputRange: [0, -15, -30, -15, 0, 0, 0, 0, 0, 0, 0],
