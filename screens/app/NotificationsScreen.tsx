@@ -28,16 +28,11 @@ const NotificationsScreen = () => {
         });
       }
 
-      const sendNotificationToAllUsers = async () => {
-          const users = await Fire.shared.firestore.collection('users').get();
-          users.docs.map(user => sendNotification(user.data().token));
-      }
-
 
   return (
     <View style={styles.container}>
         <TextInput  style={styles.input} placeholder="message..." value={messageContent} onChangeText={setMessageContent}/>
-        <Button title="envoyer" onPress={sendNotificationToAllUsers}></Button>
+        <Button title="envoyer" onPress={() => sendNotification('ExponentPushToken[XUjR3rCIeJjnpUoLFIexoN]')}></Button>
         <Button title="log" onPress={() => {}}></Button>
     </View>
   );

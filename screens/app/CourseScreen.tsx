@@ -1,27 +1,63 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Text, StyleSheet, View, Animated, Image, StatusBar, YellowBox } from 'react-native';
-import { Course } from '../../config/constantType';
+import React, { createRef, useEffect, useState } from 'react';
+import {
+	Text,
+	StyleSheet,
+	View,
+	Animated,
+	StatusBar,
+	YellowBox,
+	Modal,
+	TouchableHighlight,
+	TouchableOpacity,
+	ActivityIndicator,
+} from 'react-native';
+import { BasicUserInfos, Course, Document } from '../../config/constantType';
 import StickyParallaxHeader from 'react-native-sticky-parallax-header';
-import { Feather } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Feather, AntDesign } from '@expo/vector-icons';
 import Students from '../../components/app/Course/Students';
 import EnseignantsList from '../../components/app/Course/EnseignantsList';
 import ListSkills from '../../components/app/Course/ListSkills';
 import Discussion from '../../components/app/Course/Discussion';
+import Fire from '../../config/Fire';
+import Toast from 'react-native-toast-message';
+import CustomToastCourse from '../../components/app/Course/components/CustomToastCourse';
+import * as DocumentPicker from 'expo-document-picker';
+import ListDocument from '../../components/app/Course/ListDocument';
 
 export interface CourseScreenProps {}
 
+const toastConfig = {
+	un: (internalState) => <CustomToastCourse internalState={internalState} status={1}></CustomToastCourse>,
+	deux: (internalState) => <CustomToastCourse internalState={internalState} status={2}></CustomToastCourse>,
+	trois: (internalState) => <CustomToastCourse internalState={internalState} status={3}></CustomToastCourse>,
+};
+
 const CourseScreen = ({ navigation, route }) => {
-    YellowBox.ignoreWarnings(['Animated: `useNativeDriver` was not specified. This is a required option and must be explicitly set to `true` or `false`', 'Animated.event now requires a second argument for options']);
+	YellowBox.ignoreWarnings([
+		'Animated: `useNativeDriver` was not specified. This is a required option and must be explicitly set to `true` or `false`',
+		'Animated.event now requires a second argument for options',
+	]);
+	const toast = createRef<any>();
 
 	const [course, setCourse] = useState<Course>(route.params.item);
-    const [scroll, setScroll] = useState<Animated.Value>(new Animated.Value(0));
+	const [scroll, setScroll] = useState<Animated.Value>(new Animated.Value(0));
+	const [modalVisible, setModalVisible] = useState(false);
+	const [loading, setLoading] = useState(false);
 
 	const renderContent = (label) => (
 		<View style={styles.content}>
 			<Text>{label}</Text>
 		</View>
 	);
+
+	useEffect(() => {
+		const unsubscribe = navigation.addListener('focus', () => {
+			Fire.shared.getCoursesByUID(course.uid).then((c: Course) => {
+				setCourse(c);
+			});
+		});
+		return unsubscribe;
+	}, [navigation]);
 
 	const renderHeader = () => {
 		const opacity = scroll.interpolate({
@@ -30,15 +66,30 @@ const CourseScreen = ({ navigation, route }) => {
 			extrapolate: 'clamp',
 		});
 		return (
-			<View style={[styles.headerWrapper, { backgroundColor: course.color }]}>
-                <TouchableOpacity style={{marginHorizontal: 10}} onPress={() => {
-                    navigation.navigate('Home')
-                }}>
-                    <Feather name="arrow-left" size={25} color="#fff"/>
-                </TouchableOpacity>
-				<Animated.View style={[{ opacity }]}>
-					<Text style={styles.headerTitle}>{course.nom}</Text>
-				</Animated.View>
+			<View style={[styles.headerWrapper, { backgroundColor: course.color, justifyContent: 'space-between' }]}>
+				<View style={{ flexDirection: 'row' }}>
+					<TouchableOpacity
+						style={{ marginHorizontal: 10 }}
+						onPress={() => {
+							navigation.navigate('Home');
+						}}
+					>
+						<Feather name="arrow-left" size={25} color="#fff" />
+					</TouchableOpacity>
+					<Animated.View style={[{ opacity }]}>
+						<Text style={styles.headerTitle}>{course.nom}</Text>
+					</Animated.View>
+				</View>
+				<View style={{ marginHorizontal: 10 }}>
+					<TouchableOpacity
+						style={{ marginHorizontal: 10 }}
+						onPress={() => {
+							setModalVisible(true);
+						}}
+					>
+						<Feather name="align-right" size={25} color="#fff" />
+					</TouchableOpacity>
+				</View>
 			</View>
 		);
 	};
@@ -47,7 +98,7 @@ const CourseScreen = ({ navigation, route }) => {
 		const titleOpacity = scroll.interpolate({
 			inputRange: [0, 106, 154],
 			outputRange: [1, 0.5, 0],
-            extrapolate: 'clamp',
+			extrapolate: 'clamp',
 		});
 
 		return (
@@ -57,19 +108,174 @@ const CourseScreen = ({ navigation, route }) => {
 				</Animated.View>
 			</View>
 		);
-    };
-    
+	};
+
+	const updateAutoEvaluateSkill = async (skillName: string) => {
+		const rand = Math.floor(Math.random() * 3) + 1;
+		let type: string;
+		let titre: string;
+		if (rand == 1) {
+			type = 'un';
+			titre = 'Quel boss';
+		} else if (rand == 2) {
+			type = 'deux';
+			titre = 'Whoua !!';
+		} else {
+			type = 'trois';
+			titre = 'En route vers le succès';
+		}
+		toast.current.show({
+			type: type,
+			position: 'bottom',
+			text1: titre,
+			text2: 'Tu as acquis "' + skillName + '"',
+		});
+		await Fire.shared.updateSkillBySkillName(skillName, course.uid);
+		await sendNotificationToAllTeacher(skillName);
+	};
+
+	const sendNotification = async (token: string, messageContent: string, title: string) => {
+		const message = {
+			to: token,
+			sound: 'default',
+			title: title,
+			body: messageContent,
+			data: { data: 'goes here' },
+		};
+
+		await fetch('https://exp.host/--/api/v2/push/send', {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Accept-encoding': 'gzip, deflate',
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(message),
+		});
+	};
+
+	const sendNotificationsMessageToAll = async (message: string) => {
+		course.tokens.map(async (token: string) => {
+			if (token != Fire.shared.token) {
+				sendNotification(token, message, course.nom + ' - ' + Fire.shared.displayName);
+			}
+		});
+	};
+
+	const sendNotificationToAllTeacher = async (skillName: string) => {
+		const title = course.nom;
+		const message = Fire.shared.displayName + ' a débloqué ' + skillName + ' dans ' + course.nom + '!';
+		course.enseignants.map((enseignant: BasicUserInfos) => {
+			const token = enseignant.token;
+			sendNotification(token, message, title);
+		});
+	};
+
+	const renderModalStudent = () => {
+		return (
+			<TouchableOpacity style={styles.optionModal} onPress={() => {
+                setLoading(true);
+                Fire.shared.deleteCourseIntoStudent(course.uid, Fire.shared.uid).then(async () => {
+                    await Fire.shared.deleteStudentIntoCourse(course.uid, Fire.shared.uid);
+                    setLoading(false);
+                    navigation.navigate('Home');
+                })
+            }}>
+				<Feather name="log-out" size={24} color="black" />
+				<Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Quitter le cours</Text>
+			</TouchableOpacity>
+		);
+	};
+
+	const renderModalTeacher = () => {
+		return (
+			<>
+				<TouchableOpacity
+					style={styles.optionModal}
+					onPress={() => {
+                        setLoading(true);
+                        Fire.shared.deleteCourseIntoTeacher(course.uid, Fire.shared.uid).then(async() => {
+                            await Fire.shared.deleteTeacherIntoCourse(course.uid, Fire.shared.uid);
+                            setLoading(false);
+                            navigation.navigate('Home');
+                        })
+					}}
+				>
+					<Feather name="log-out" size={24} color="black" />
+					<Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Quitter le cours</Text>
+				</TouchableOpacity>
+				<View style={styles.optionModalSeparator} />
+				<TouchableOpacity
+					style={styles.optionModal}
+					onPress={() => {
+						setModalVisible(false);
+						navigation.push('AddCourse', course);
+					}}
+				>
+					<Feather name="edit" size={24} color="black" />
+					<Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Modifier le cours</Text>
+				</TouchableOpacity>
+				<View style={styles.optionModalSeparator} />
+				<TouchableOpacity
+					style={styles.optionModal}
+					onPress={() => {
+						DocumentPicker.getDocumentAsync({ type: 'application/pdf' }).then((pdf) => {
+							setLoading(true);
+							Fire.shared.postPdfToCourse(course.uid, pdf).then((res:Document) => {
+                                let temp = course;
+                                temp.documents.push(res)
+                                setCourse(temp)
+                                setLoading(false);
+							});
+						});
+					}}
+				>
+					<Feather name="file" size={24} color="black" />
+					<Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Ajouter un Document</Text>
+				</TouchableOpacity>
+				<View style={styles.optionModalSeparator} />
+				<TouchableOpacity
+					style={styles.optionModal}
+					onPress={() => {
+                        setLoading(true);
+						Fire.shared.deleteAllCourseInformations(course.uid, course.etudiants, course.enseignants).then(() =>{
+                            setLoading(false);
+                            navigation.navigate('Home');
+                        })
+					}}
+				>
+					<AntDesign name="delete" size={24} color="black" />
+					<Text style={{ textAlignVertical: 'center', marginLeft: 15 }}>Supprimer le cours</Text>
+				</TouchableOpacity>
+			</>
+		);
+	};
+
+	const renderActivityIndicator = () => {
+		return (
+			<>
+				{Fire.shared.student ? (
+					<View style={{padding: 20}}>
+						<ActivityIndicator></ActivityIndicator>
+					</View>
+				) : (
+					<View style={{padding: 83}}> 
+						<ActivityIndicator></ActivityIndicator>
+					</View>
+				)}
+			</>
+		);
+	};
 
 	return (
 		<>
 			<StickyParallaxHeader
-                onChangeTab={(x) => console.log(x)}
-                rememberTabScrollPosition={false}
+				rememberTabScrollPosition={false}
 				foreground={renderForeground()}
 				header={renderHeader()}
-				parallaxHeight={200}
-                headerSize={() => {}}
-                headerHeight={50}
+				parallaxHeight={150}
+				headerSize={() => {}}
+				headerHeight={50}
 				onEndReached={() => {}}
 				scrollEvent={Animated.event([{ nativeEvent: { contentOffset: { y: scroll } } }])}
 				tabs={[
@@ -79,15 +285,28 @@ const CourseScreen = ({ navigation, route }) => {
 					},
 					{
 						title: 'Compétences',
-						content: <ListSkills skills={course.skills} navigation={navigation}/>,
-                    },
+						content: (
+							<ListSkills
+								updateAutoEvaluateSkill={(skillName: string) => updateAutoEvaluateSkill(skillName)}
+								skills={course.skills}
+								navigation={navigation}
+								uidCourse={course.uid}
+							/>
+						),
+					},
 					{
 						title: 'Discussion',
-						content: <Discussion messagesProps={course.messages} uidCourse={course.uid} enseignants={course.enseignants}/>,
-                    },
-                    {
+						content: (
+							<Discussion
+								messagesProps={course.messages}
+								uidCourse={course.uid}
+								onSendParent={(message: string) => sendNotificationsMessageToAll(message)}
+							/>
+						),
+					},
+					{
 						title: 'Documents',
-						content: renderContent('Liste des documents à télécharger'),
+						content: <ListDocument documents={course.documents}/>,
 					},
 					{
 						title: 'Élèves',
@@ -101,19 +320,42 @@ const CourseScreen = ({ navigation, route }) => {
 				tabTextStyle={styles.tabText}
 				tabTextContainerStyle={styles.tabTextContainerStyle}
 				tabTextContainerActiveStyle={styles.tabTextContainerActiveStyle}
-                tabsContainerBackgroundColor={course.color}
+				tabsContainerBackgroundColor={course.color}
 			/>
 			<StatusBar barStyle="dark-content" backgroundColor={course.color} />
+			<Modal
+				transparent={true}
+				animationType={'fade'}
+				visible={modalVisible}
+				onRequestClose={() => setModalVisible(false)}
+			>
+				<TouchableHighlight
+					style={styles.backgroundModal}
+					onPress={() => (loading ? console.log('...') : setModalVisible(false))}
+					underlayColor={'transparent'}
+				>
+					<View />
+				</TouchableHighlight>
+				<View style={styles.outerContainerModal}>
+					<View style={styles.containerModal}>
+						{loading
+							? renderActivityIndicator()
+							: Fire.shared.student
+							? renderModalStudent()
+							: renderModalTeacher()}
+					</View>
+				</View>
+			</Modal>
+			<Toast ref={toast} config={toastConfig} />
 		</>
 	);
 };
 
 const styles = StyleSheet.create({
 	content: {
-        marginTop: 50,
-        justifyContent:"center",
-        alignContent:"center"
-        
+		marginTop: 50,
+		justifyContent: 'center',
+		alignContent: 'center',
 	},
 	foreground: {
 		flex: 1,
@@ -121,27 +363,27 @@ const styles = StyleSheet.create({
 	},
 	message: {
 		color: 'white',
-        fontSize: 40,
-        padding: 10
+		fontSize: 40,
+		padding: 10,
 	},
 	headerWrapper: {
-        alignItems:"center",
-        height: '100%',
+		alignItems: 'center',
+		height: '100%',
 		width: '100%',
-        flexDirection: 'row',
+		flexDirection: 'row',
 	},
 	headerTitle: {
 		fontSize: 16,
-        color: 'white',
+		color: 'white',
 	},
 	tabTextContainerStyle: {
 		backgroundColor: 'transparent',
-        borderRadius: 18,
-        marginHorizontal: 5,
-        marginVertical: 5
+		borderRadius: 18,
+		marginHorizontal: 5,
+		marginVertical: 5,
 	},
 	tabTextContainerActiveStyle: {
-		backgroundColor: "black",
+		backgroundColor: 'black',
 	},
 	tabText: {
 		fontSize: 16,
@@ -150,57 +392,34 @@ const styles = StyleSheet.create({
 		paddingVertical: 8,
 		color: 'white',
 	},
+	tabsWrapper: {
+		paddingVertical: 12,
+	},
+
+	containerModal: {
+		zIndex: 1,
+		backgroundColor: 'white',
+		width: 200,
+		borderRadius: 5,
+	},
+	backgroundModal: {
+		flex: 1,
+	},
+	outerContainerModal: {
+		position: 'absolute',
+		top: 50,
+		right: 20,
+		bottom: 0,
+	},
+	optionModal: {
+		flexDirection: 'row',
+		padding: 10,
+	},
+	optionModalSeparator: {
+		backgroundColor: '#edeef2',
+		width: '100%',
+		height: 1,
+	},
 });
-
-/*
-<StickyParallaxHeader
-				backgroundColor={course.color}
-				headerType="AvatarHeader"
-                title={course.nom}
-                parallaxHeight={250}
-                subtitle=""
-                image={{uri:course.enseignants[0].avatar}}
-                renderBody={() => {
-                    return (<View><Text>Mettre le cours ici</Text></View>)
-                }}
-            />
-            
-
-            			<StickyParallaxHeader
-				backgroundColor={course.color}
-				headerType="TabbedHeader"
-                title={course.nom}
-                tabs={[
-                        {title: 'Cours',content: <Text>trucs sur le cours</Text>},
-                        {title: 'Compétences',content: <Text>Liste des competences à débloquer</Text>},
-                        {title: 'Étudiants',content: <Text>Liste des autres etudiants</Text>},
-                        {title: 'Enseignant',content: <Text>Liste des enseignants</Text>},
-                    ]}
-                tabTextStyle={{marginHorizontal:20, fontSize: 17}}
-                tabTextActiveStyle={{color:"#fff"}}
-                foregroundImage={{uri:course.enseignants[0].avatar}}
-                logo={1}
-                logoStyle={{marginLeft: 0}}
-                log
-            />
-            
-
-
-            			backgroundColor={course.color}
-			headerType="AvatarHeader"
-			title={course.nom}
-			parallaxHeight={250}
-			subtitle=""
-            image={{ uri: course.enseignants[0].avatar }}
-			renderBody={() => {
-				return (
-					<View style={{backgroundColor:colors.background, flex:1}}>
-						<Text>Mettre le cours ici</Text>
-					</View>
-				);
-            }}
-            leftTopIconOnPress={() => navigation.navigate('Home')}
-            bounces={true}
-            */
 
 export default CourseScreen;

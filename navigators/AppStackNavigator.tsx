@@ -12,10 +12,6 @@ import JoinCoursesScreen from '../screens/app/JoinCoursesScreen';
 import AddCourseScreen from '../screens/app/teacher/AddCourseScreen';
 import CourseScreen from '../screens/app/CourseScreen';
 import QuizzScreen from '../screens/app/QuizzScreen';
-
-//Temporary
-import QuizzAnswerScreen from '../screens/app/QuizzAnswerScreen';
-
 import HeaderAvatar from '../components/app/HeaderAvatar';
 import { TouchableOpacity, View } from 'react-native';
 
@@ -72,28 +68,10 @@ const HomeStackScreen = ({ navigation }: any) => (
 			options={{
                 title: 'Ajouter un cours',
 				headerTransparent: true,
-				headerLeft: () => (
-					<TouchableOpacity
-						style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}
-						onPress={() => navigation.navigate("JoinCourses")}
-					>
-						<Feather name="arrow-left" size={25} color="#000" />
-					</TouchableOpacity>
-				),
-				headerTitleAlign: 'center',
+                headerTitleAlign: 'center',
+                headerTintColor: "#fff"
 			}}
 		/>
-
-		{/* ===== Temporary for Quizz answer ===== */}
-		<HomeStack.Screen
-			name="QuizzAnswer"
-			component={QuizzAnswerScreen}
-			options={{
-				title: 'réponse quizz',
-			}}
-
-		/>
-		{/* ===== ===== */}
 	</HomeStack.Navigator>
 );
 

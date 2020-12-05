@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { createRef, useEffect, useState } from 'react';
 import { StyleSheet, View, Animated, StatusBar, ScrollView, Dimensions } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { CardQuizz, Quizz } from '../../config/constantType';
 import QuizCard from '../../components/app/Course/Quizz/QuizCard';
 import { colors } from '../../config/constants';
+import Toast from 'react-native-toast-message';
+import Fire from '../../config/Fire';
+import CustomToastQuizz from '../../components/app/Course/Quizz/CustomToastQuizz';
 
 const { width } = Dimensions.get('window');
 
@@ -13,16 +16,27 @@ export interface QuizzScreenProps {
 	route: any;
 }
 
+
+const toastConfig = {
+    good: (internalState) => <CustomToastQuizz internalState={internalState} status={'good'}></CustomToastQuizz>,
+    bad: (internalState) => <CustomToastQuizz internalState={internalState} status={'bad'}></CustomToastQuizz>,
+    wait: (internalState) => <CustomToastQuizz internalState={internalState} status={'wait'}></CustomToastQuizz>,
+};
+
+
 const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 	const [cardsQuizz, setCardsQuizz] = useState<CardQuizz[]>([]);
 	const [headerResponse, setHeaderResponse] = useState<number[]>([]);
 	const [animations, setAnimations] = useState<Animated.Value[]>([]);
+	const [nbResponse, setNbResponse] = useState<number>(0);
+    const toast = createRef<any>();
+
 
 	React.useLayoutEffect(() => {}, [navigation]);
 
 	useEffect(() => {
 		var tempArr: CardQuizz[] = [];
-		route.params.quizz?.map((q: Quizz) => {
+		route.params.skill.quizz?.map((q: Quizz) => {
 			var temp: CardQuizz = {
 				question: q.question,
 				cards: [
@@ -42,9 +56,9 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 		shuffle(tempArr);
 		setCardsQuizz(tempArr);
 
-		var arr = Array(route.params.quizz.length).fill(0);
+		var arr = Array(route.params.skill.quizz.length).fill(0);
 		setHeaderResponse(arr);
-		var arrAnim = Array(route.params.quizz.length).fill(new Animated.Value(0));
+		var arrAnim = Array(route.params.skill.quizz.length).fill(new Animated.Value(0));
 		setAnimations(arrAnim);
 	}, []);
 
@@ -67,7 +81,7 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 		<View style={styles.container}>
 			<View style={styles.header}>
 				<TouchableOpacity
-					style={styles.icon}
+					style={styles.iconLeft}
 					onPress={() => {
 						navigation.goBack();
 					}}
@@ -82,7 +96,7 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 								style={[
 									styles.headerContentBar,
 									{
-										width: ((width - 50 - 10) / cardsQuizz.length) - 5,
+										width: (width - 50 * 2) / cardsQuizz.length - 4,
 										backgroundColor: '#bbbbbb',
 									},
 								]}
@@ -92,14 +106,14 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 										{
 											height: '100%',
 											backgroundColor: x == 0 ? 'red' : x == 1 ? '#1da75d' : '#ff5e6b',
-                                            borderRadius: 3,
+											borderRadius: 3,
 										},
 										{
 											transform: [
 												{
-													scaleX : animations[index].interpolate({
+													scaleX: animations[index].interpolate({
 														inputRange: [0, 0.5, 1],
-														outputRange: [0, .8 ,1],
+														outputRange: [0, 0.8, 1],
 													}),
 												},
 											],
@@ -110,8 +124,35 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 						);
 					})}
 				</View>
+				<TouchableOpacity
+					style={styles.iconRight}
+					onPress={() => {
+						if (nbResponse == route.params.skill.quizz.length) {
+                            //si il y a des erreurs
+                            if(headerResponse.includes(2)){
+                                navigation.navigate('CourseScreen');
+                            }
+                            //si il y a pas d'erreurs
+                            else{
+                                Fire.shared.updateSkillBySkillName(route.params.skill.nom, route.params.uidCourse).then(() => {
+                                    navigation.navigate('CourseScreen');
+                                })
+                            }
+                            
+						} else {
+							toast.current.show({
+								type: 'wait',
+								position: 'bottom',
+								text1: 'Pas si vite...',
+                                text2: "Tu n'as pas terminé de remplir le quiz",
+							});
+						}
+					}}
+				>
+					<MaterialIcons name="navigate-next" size={32} color="black" />
+				</TouchableOpacity>
 			</View>
-			<ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+			<ScrollView showsVerticalScrollIndicator={false}>
 				{cardsQuizz.map((data, index: number, arr) => (
 					<QuizCard
 						data={data}
@@ -129,13 +170,34 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
 								toValue: 1,
 								duration: 500,
 								useNativeDriver: true,
-                            }).start();
-                            setAnimations(newarrA);
+							}).start();
+							setAnimations(newarrA);
+                            setNbResponse(nbResponse + 1);
+
+                            //moins un parce que le state c'est pas encore à jours ?
+                            if(nbResponse == route.params.skill.quizz.length - 1){
+                                if(headerResponse.includes(2)){
+                                    toast.current.show({
+                                        type: 'bad',
+                                        position: 'bottom',
+                                        text1: 'Aïe aïe aïe...',
+                                        text2: "Tu as encore des choses à revoir...",
+                                    });
+                                }else{
+                                    toast.current.show({
+                                        type: 'good',
+                                        position: 'bottom',
+                                        text1: 'Hip hip hip',
+                                        text2: "Houra !! Tu peux passer à la suite maintenant",
+                                    });
+                                }
+                            }
 						}}
 					/>
 				))}
 			</ScrollView>
 			<StatusBar backgroundColor={colors.background}></StatusBar>
+			<Toast ref={toast} config={toastConfig} />
 		</View>
 	);
 };
@@ -148,21 +210,23 @@ const styles = StyleSheet.create({
 		height: 50,
 		flexDirection: 'row',
 	},
-	icon: {
-		flex: 1,
+	iconLeft: {
 		height: 50,
 		width: 50,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
-	content: {},
+	iconRight: {
+		height: 50,
+		width: 50,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
 	headerContent: {
-		flex: 9,
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
 	headerContentBar: {
-		width: '100%',
 		height: 10,
 		marginHorizontal: 2,
 		borderRadius: 3,

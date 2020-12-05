@@ -7,16 +7,20 @@ export interface Course {
 	skills: Skill[];
     etudiants: BasicUserInfos[];
     color: string;
-    messages: IMessage[]
+    messages: IMessage[],
+    tokens: string[],
+    documents: Document[];
 }
 
 export interface CourseWithoutUID {
 	enseignants: BasicUserInfos[];
 	nom: string;
-	skills: any;
+	skills: Skill[];
     etudiants: BasicUserInfos[];
     color: string;
-    messages: IMessage[]
+    messages: IMessage[],
+    tokens: string[];
+    documents: Document[];
 }
 
 export interface User {
@@ -48,7 +52,8 @@ export interface Skill {
 	nom: string;
 	autoEvaluate: boolean;
 	isSoftSkill: boolean;
-	quizz: Quizz[] | null;
+    quizz: Quizz[] | null;
+    check: string[];
 }
 
 export interface Reward {
@@ -70,4 +75,9 @@ export interface Card{
     value: boolean;
     revealed: boolean;
     picked: boolean;
+}
+
+export interface Document{
+    titre:string;
+    url:string;
 }
