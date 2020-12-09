@@ -184,24 +184,51 @@ class Fire {
 		console.log('addCourse...');
 		return new Promise(async (res, rej) => {
 			try {
-				var newCourseRef = this.firestore.collection('cours').doc();
+				this.checkIfCourseNameAlreadyTaken(course.nom).then(async canUse => {
+					if (canUse == false) {
+						res(false);
+					} else {
+						var newCourseRef = this.firestore.collection('cours').doc();
 
-				var id = newCourseRef.id;
-				await newCourseRef.set(course);
-				await newCourseRef.update({
-					tokens: firebase.firestore.FieldValue.arrayUnion(this.token),
+						var id = newCourseRef.id;
+						await newCourseRef.set(course);
+						await newCourseRef.update({
+							tokens: firebase.firestore.FieldValue.arrayUnion(this.token),
+						});
+
+						course.uid = id;
+
+						let dbUser = this.firestore.collection('users').doc(this.uid);
+						await dbUser.update({
+							coursEnseignant: firebase.firestore.FieldValue.arrayUnion(course),
+						});
+						res(true);
+					}
 				});
-
-				course.uid = id;
-
-				let dbUser = this.firestore.collection('users').doc(this.uid);
-				await dbUser.update({
-					coursEnseignant: firebase.firestore.FieldValue.arrayUnion(course),
-				});
-				res(true);
 			} catch (error) {
 				rej(error);
 			}
+		});
+	};
+
+	/* ******************************
+                 check
+    ****************************** */
+
+	checkIfCourseNameAlreadyTaken = async courseName => {
+		console.log('courseName...');
+		return new Promise(async res => {
+			let db = this.firestore.collection('cours');
+			await db.get().then(querySnapshot => {
+				let docs = querySnapshot.docs;
+				for (let doc of docs) {
+                    cours = doc.data();
+					if (cours.nom == courseName) {
+						res(false);
+					}
+				}
+			});
+			res(true);
 		});
 	};
 
@@ -525,10 +552,10 @@ class Fire {
 				},
 				{ merge: true }
 			);
-        });
-    };
-    
-    deleteStudentIntoCourse = async (uidCourse, uidUser) => {
+		});
+	};
+
+	deleteStudentIntoCourse = async (uidCourse, uidUser) => {
 		console.log('deleteStudentIntoCourse...');
 		let db = this.firestore.collection('cours').doc(uidCourse);
 		await db.get().then(async querySnapshot => {
@@ -543,9 +570,9 @@ class Fire {
 				{ merge: true }
 			);
 		});
-    };
+	};
 
-    deleteCourseIntoTeacher = async (uidCourse, uidUser) => {
+	deleteCourseIntoTeacher = async (uidCourse, uidUser) => {
 		console.log('deleteCourseIntoTeacher...');
 		let dbUser = this.firestore.collection('users').doc(uidUser);
 		await dbUser.get().then(async querySnapshot => {
@@ -559,10 +586,10 @@ class Fire {
 				},
 				{ merge: true }
 			);
-        });
-    };
-    
-    deleteTeacherIntoCourse = async (uidCourse, uidUser) => {
+		});
+	};
+
+	deleteTeacherIntoCourse = async (uidCourse, uidUser) => {
 		console.log('deleteTeacherIntoCourse...');
 		let db = this.firestore.collection('cours').doc(uidCourse);
 		await db.get().then(async querySnapshot => {
@@ -577,25 +604,20 @@ class Fire {
 				{ merge: true }
 			);
 		});
-    };
+	};
 
-    deleteAllCourseInformations = async (uidCourse, arrStudent, arrTeacher) => {
-        console.log(arrStudent)
-        console.log("deleteAllCourseInformations...");
-        await this.firestore.collection('cours').doc(uidCourse).delete().then(async () => {
-            arrStudent.map(async (student) => {
-                await this.deleteCourseIntoStudent(uidCourse, student.uid)
-            })
-            arrTeacher.map(async (teacher) => {
-                await this.deleteCourseIntoTeacher(uidCourse, teacher.uid)
-            })
-        })
-
-    }
-
-
-    
-
+	deleteAllCourseInformations = async (uidCourse, arrStudent, arrTeacher) => {
+		console.log(arrStudent);
+		console.log('deleteAllCourseInformations...');
+		await this.firestore.collection('cours').doc(uidCourse).delete().then(async () => {
+			arrStudent.map(async student => {
+				await this.deleteCourseIntoStudent(uidCourse, student.uid);
+			});
+			arrTeacher.map(async teacher => {
+				await this.deleteCourseIntoTeacher(uidCourse, teacher.uid);
+			});
+		});
+	};
 
 	/* ******************************
                  rewards

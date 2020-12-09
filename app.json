@@ -19,7 +19,10 @@
 		},
 		"web": {
 			"favicon": "./assets/favicon.png"
-		},
+        },
+        "android": {
+            "package": "com.samuel.campusachievements"
+        },
 		"notification": {
 			"androidMode": "default",
             "icon": "./assets/iconApp.png"

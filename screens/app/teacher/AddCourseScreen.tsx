@@ -1,4 +1,4 @@
-import React, { ElementRef, useEffect, useRef, useState } from 'react';
+import React, { createRef, useEffect, useRef, useState } from 'react';
 import {
 	StyleSheet,
 	View,
@@ -6,7 +6,6 @@ import {
 	Text,
 	TouchableOpacity,
 	Switch,
-	ToastAndroid,
 	Animated,
 	StatusBar,
 } from 'react-native';
@@ -19,6 +18,12 @@ import Fire from '../../../config/Fire';
 import { Skill, Quizz, BasicUserInfos, CourseWithoutUID, Course } from '../../../config/constantType';
 import ColorPalette from 'react-native-color-palette';
 import ConnectedView from '../../../components/common/ConnectedView';
+import Toast from 'react-native-toast-message';
+import CustomToastQuizz from '../../../components/app/Course/Quizz/CustomToastQuizz';
+
+const toastConfig = {
+    courseNameAlreadyUse: (internalState) => <CustomToastQuizz internalState={internalState} status={'bad'}></CustomToastQuizz>,
+};
 
 const AddCourseScreen = ({ navigation, route }: any) => {
 	const [nom, setNom] = useState('');
@@ -30,7 +35,9 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 	const [animationBg, setanimationBg] = useState(new Animated.Value(0));
 	const [backgroundColor, setBackgroundColor] = useState(courseColors[0]);
 
-	const scrollViewRef = useRef<ScrollView | null>(null);
+    const scrollViewRef = useRef<ScrollView | null>(null);
+    
+    const toast = createRef<any>();
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
@@ -69,8 +76,17 @@ const AddCourseScreen = ({ navigation, route }: any) => {
                                 tokens: [],
                                 documents: [],
 							};
-							Fire.shared.addCourse(course).then(() => {
-								navigation.navigate('Home');
+							Fire.shared.addCourse(course).then(canUse => {
+								if(canUse == false){
+                                    toast.current.show({
+                                        type: 'courseNameAlreadyUse',
+                                        position: 'bottom',
+                                        text1: 'Attention',
+                                        text2: "Le nom de ce cours est déja pris...",
+                                    });
+                                }else{
+                                    navigation.navigate('Home');
+                                }
 							});
 						}
 					}}
@@ -428,6 +444,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 				</ScrollView>
 			</Animated.View>
 			<StatusBar barStyle="dark-content" backgroundColor={color} />
+            <Toast ref={toast} config={toastConfig} />
 		</>
 	);
 };
