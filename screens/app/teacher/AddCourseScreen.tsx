@@ -1,14 +1,5 @@
 import React, { createRef, useEffect, useRef, useState } from 'react';
-import {
-	StyleSheet,
-	View,
-	ScrollView,
-	Text,
-	TouchableOpacity,
-	Switch,
-	Animated,
-	StatusBar,
-} from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Switch, Animated, StatusBar } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
@@ -22,7 +13,7 @@ import Toast from 'react-native-toast-message';
 import CustomToastQuizz from '../../../components/app/Course/Quizz/CustomToastQuizz';
 
 const toastConfig = {
-    courseNameAlreadyUse: (internalState) => <CustomToastQuizz internalState={internalState} status={'bad'}></CustomToastQuizz>,
+	badToast: (internalState) => <CustomToastQuizz internalState={internalState} status={'bad'}></CustomToastQuizz>,
 };
 
 const AddCourseScreen = ({ navigation, route }: any) => {
@@ -35,9 +26,9 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 	const [animationBg, setanimationBg] = useState(new Animated.Value(0));
 	const [backgroundColor, setBackgroundColor] = useState(courseColors[0]);
 
-    const scrollViewRef = useRef<ScrollView | null>(null);
-    
-    const toast = createRef<any>();
+	const scrollViewRef = useRef<ScrollView | null>(null);
+
+	const toast = createRef<any>();
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
@@ -53,8 +44,8 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 								nom: nom,
 								skills: skills,
 								messages: route.params.messages,
-                                tokens: route.params.tokens,
-                                documents: [],
+								tokens: route.params.tokens,
+								documents: [],
 							};
 							Fire.shared.updateCourseByUID(course, route.params.uid).then(() => {
 								navigation.goBack();
@@ -73,21 +64,38 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 								nom: nom,
 								skills: skills,
 								messages: [],
-                                tokens: [],
-                                documents: [],
+								tokens: [],
+								documents: [],
 							};
-							Fire.shared.addCourse(course).then(canUse => {
-								if(canUse == false){
-                                    toast.current.show({
-                                        type: 'courseNameAlreadyUse',
-                                        position: 'bottom',
-                                        text1: 'Attention',
-                                        text2: "Le nom de ce cours est déja pris...",
-                                    });
-                                }else{
-                                    navigation.navigate('Home');
-                                }
+							let canContinu = true;
+							course.skills.map((skill: Skill) => {
+								if (skill.quizz != null) {
+									if (skill.quizz.length == 0) {
+										canContinu = false;
+									}
+								}
 							});
+							if (canContinu) {
+								Fire.shared.addCourse(course).then((canUse) => {
+									if (canUse == false) {
+										toast.current.show({
+											type: 'badToast',
+											position: 'bottom',
+											text1: 'Attention',
+											text2: 'Le nom de ce cours est déja pris...',
+										});
+									} else {
+										navigation.navigate('Home');
+									}
+								});
+							} else {
+								toast.current.show({
+									type: 'badToast',
+									position: 'bottom',
+									text1: 'Attention',
+									text2: 'les skills avec quiz doivent avoir au moins un quiz...',
+								});
+							}
 						}
 					}}
 				>
@@ -112,33 +120,35 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 		if (route.params) {
 			const c: Course = route.params;
 			setNom(c.nom);
-            setSkills(c.skills);
-            setColor(c.color)
-            setBackgroundColor(c.color)
+			setSkills(c.skills);
+			setColor(c.color);
+			setBackgroundColor(c.color);
 			setAnimation(new Array(c.skills.length).fill(new Animated.Value(1)));
 		} else {
 		}
-	}, [route]);
+    }, [route]);
+    
+    let boxInterpolation = animationBg.interpolate({
+		inputRange: [0, 1],
+		outputRange: [backgroundColor, color],
+	});
+
+	let animatedStyle = {
+		backgroundColor: boxInterpolation,
+    };
+    
 
 	const handleAnimation = () => {
-		setBackgroundColor(color);
+        setBackgroundColor(color);
 		Animated.timing(animationBg, {
 			toValue: 1,
 			duration: 1000,
 			useNativeDriver: false,
 		}).start(() => {
-			setanimationBg(new Animated.Value(0));
-		});
+            setanimationBg(new Animated.Value(0));
+        });
 	};
 
-	const boxInterpolation = animationBg.interpolate({
-		inputRange: [0, 1],
-		outputRange: [backgroundColor, color],
-	});
-
-	const animatedStyle = {
-		backgroundColor: boxInterpolation,
-	};
 
 	return (
 		<>
@@ -178,8 +188,8 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 						children={
 							<ColorPalette
 								onChange={(colorValue: string) => {
-									setColor(colorValue);
-									handleAnimation()
+                                    setColor(colorValue);
+									handleAnimation();
 								}}
 								defaultColor={route.params ? route.params.color : courseColors[0]}
 								colors={courseColors}
@@ -429,7 +439,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 										setAnimation([...animation, newAnimation]);
 										Animated.timing(newAnimation, {
 											toValue: 1,
-											duration: 400,
+											duration: 600,
 											useNativeDriver: true,
 										}).start();
 									}}
@@ -444,7 +454,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 				</ScrollView>
 			</Animated.View>
 			<StatusBar barStyle="dark-content" backgroundColor={color} />
-            <Toast ref={toast} config={toastConfig} />
+			<Toast ref={toast} config={toastConfig} />
 		</>
 	);
 };
