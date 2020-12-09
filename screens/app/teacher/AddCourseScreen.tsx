@@ -138,14 +138,14 @@ const AddCourseScreen = ({ navigation, route }: any) => {
     };
     
 
-	const handleAnimation = () => {
-        setBackgroundColor(color);
+	const handleAnimation = (colorValue:string) => {
 		Animated.timing(animationBg, {
 			toValue: 1,
 			duration: 1000,
 			useNativeDriver: false,
 		}).start(() => {
             setanimationBg(new Animated.Value(0));
+            setBackgroundColor(colorValue);
         });
 	};
 
@@ -189,7 +189,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 							<ColorPalette
 								onChange={(colorValue: string) => {
                                     setColor(colorValue);
-									handleAnimation();
+									handleAnimation(colorValue);
 								}}
 								defaultColor={route.params ? route.params.color : courseColors[0]}
 								colors={courseColors}
