@@ -68,10 +68,37 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 								documents: [],
 							};
 							let canContinu = true;
+							let quizzEmpty = false;
+							let fieldEmpty = false;
+							if (course.nom == '') {
+								fieldEmpty = true;
+							}
 							course.skills.map((skill: Skill) => {
+								if (skill.nom == '') {
+                                    canContinu = false;
+									fieldEmpty = true;
+								}
 								if (skill.quizz != null) {
 									if (skill.quizz.length == 0) {
 										canContinu = false;
+										quizzEmpty = true;
+									} else {
+										skill.quizz.map((quiz) => {
+											if (quiz.question == '') {
+                                                canContinu = false;
+												fieldEmpty = true;
+											}
+											if (quiz.solution == '') {
+                                                canContinu = false;
+												fieldEmpty = true;
+                                            }
+											quiz.propositions.map((proposition) => {
+												if (proposition == '') {
+                                                    canContinu = false;
+													fieldEmpty = true;
+												}
+											});
+										});
 									}
 								}
 							});
@@ -89,12 +116,21 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 									}
 								});
 							} else {
-								toast.current.show({
-									type: 'badToast',
-									position: 'bottom',
-									text1: 'Attention',
-									text2: 'les skills avec quiz doivent avoir au moins un quiz...',
-								});
+								if (quizzEmpty != false) {
+									toast.current.show({
+										type: 'badToast',
+										position: 'bottom',
+										text1: 'Attention',
+										text2: 'les skills avec quiz doivent avoir au moins un quiz...',
+									});
+								} else if (fieldEmpty != false) {
+									toast.current.show({
+										type: 'badToast',
+										position: 'bottom',
+										text1: 'Attention, un des champs est vide...',
+										text2: 'Vous devez tout remplir.',
+									});
+								}
 							}
 						}
 					}}
@@ -126,29 +162,27 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 			setAnimation(new Array(c.skills.length).fill(new Animated.Value(1)));
 		} else {
 		}
-    }, [route]);
-    
-    let boxInterpolation = animationBg.interpolate({
+	}, [route]);
+
+	let boxInterpolation = animationBg.interpolate({
 		inputRange: [0, 1],
 		outputRange: [backgroundColor, color],
 	});
 
 	let animatedStyle = {
 		backgroundColor: boxInterpolation,
-    };
-    
+	};
 
-	const handleAnimation = (colorValue:string) => {
+	const handleAnimation = (colorValue: string) => {
 		Animated.timing(animationBg, {
 			toValue: 1,
 			duration: 1000,
 			useNativeDriver: false,
 		}).start(() => {
-            setanimationBg(new Animated.Value(0));
-            setBackgroundColor(colorValue);
-        });
+			setanimationBg(new Animated.Value(0));
+			setBackgroundColor(colorValue);
+		});
 	};
-
 
 	return (
 		<>
@@ -177,7 +211,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 								mode="outlined"
 								label="Nom de la matière"
 								value={nom}
-								onChangeText={(text) => setNom(text)}
+								onChangeText={(text) => setNom(text.trim())}
 							/>
 						}
 					/>
@@ -188,7 +222,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 						children={
 							<ColorPalette
 								onChange={(colorValue: string) => {
-                                    setColor(colorValue);
+									setColor(colorValue);
 									handleAnimation(colorValue);
 								}}
 								defaultColor={route.params ? route.params.color : courseColors[0]}
@@ -227,7 +261,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 											value={skills[index].nom}
 											onChangeText={(text) => {
 												let newArr = [...skills];
-												newArr[index].nom = text;
+												newArr[index].nom = text.trim();
 												setSkills(newArr);
 											}}
 										/>
@@ -293,7 +327,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 																	);
 																	let temp: Skill = skills[index];
 																	if (temp.quizz) {
-																		temp.quizz[indexQuestion].question = text;
+																		temp.quizz[indexQuestion].question = text.trim();
 																	}
 																	tempArrSkill = [...tempArrSkill, temp];
 																	setSkills(tempArrSkill);
@@ -337,7 +371,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 																	if (temp.quizz) {
 																		temp.quizz[
 																			indexQuestion
-																		].propositions[0] = text;
+																		].propositions[0] = text.trim();
 																	}
 																	tempArrSkill = [...tempArrSkill, temp];
 																	setSkills(tempArrSkill);
@@ -383,7 +417,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 																	if (temp.quizz) {
 																		temp.quizz[
 																			indexQuestion
-																		].propositions[2] = text;
+																		].propositions[2] = text.trim();
 																	}
 																	tempArrSkill = [...tempArrSkill, temp];
 																	setSkills(tempArrSkill);
