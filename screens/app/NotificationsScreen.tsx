@@ -1,54 +1,70 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Button, TextInput } from 'react-native';
+import { useHeaderHeight } from '@react-navigation/stack';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Button, TouchableOpacity } from 'react-native';
+import { Notification, TypeNotification } from '../../config/constantType';
+import { MaterialIcons } from '@expo/vector-icons'; 
+import faker from 'faker';
+
+import { FlatList } from 'react-native-gesture-handler';
+
+import NotificationItem from '../../components/app/Notification/NotificationItem';
 
 import Fire from '../../config/Fire';
 
-
-const NotificationsScreen = () => {
-
-    const [messageContent, setMessageContent] = useState('');
+const NotificationsScreen = ({ navigation }: any) => {
+	const headerHeight = useHeaderHeight();
+    const [notifications, setNotifications] = useState<Notification[]>([]);
     
-    const sendNotification = async (token:any) => {
-        const message = {
-          to: token,
-          sound: 'default',
-          title: 'Nouveau message',
-          body: messageContent,
-          data: { data: 'goes here' },
-        };
-      
-        await fetch('https://exp.host/--/api/v2/push/send', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Accept-encoding': 'gzip, deflate',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(message),
-        });
-      }
+    React.useLayoutEffect(() => {
+		navigation.setOptions({
+			headerRight: () => (
+				<TouchableOpacity style={{marginRight:10}} onPress={() => {
 
+                }}>
+					<MaterialIcons name="delete-sweep" size={33} color="black" />
+				</TouchableOpacity>
+			),	
+		});
+	}, [navigation]);
 
-  return (
-    <View style={styles.container}>
-        <TextInput  style={styles.input} placeholder="message..." value={messageContent} onChangeText={setMessageContent}/>
-        <Button title="envoyer" onPress={() => sendNotification('ExponentPushToken[XUjR3rCIeJjnpUoLFIexoN]')}></Button>
-        <Button title="log" onPress={() => {}}></Button>
-    </View>
-  );
+	useEffect(() => {
+		Fire.shared.getMyNotifications().then((notifs: Notification[]) => {
+           notifs.sort(function(a, b) {
+                var c:any = new Date(a.date);
+                var d:any = new Date(b.date);
+                return d-c;
+            });
+			setNotifications(notifs);
+		});
+	}, []);
+
+	return (
+		<View style={[styles.container, { marginTop: headerHeight }]}>
+			<FlatList
+                data={notifications}
+                keyExtractor={(item, index) => index.toString()}
+				renderItem={({ item }) => (
+					<NotificationItem
+						onSwipe={() => {
+							console.log("swipe")
+						}}
+						{...{ item }}
+					/>
+				)}
+			/>
+		</View>
+	);
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    input: {
-        height: 100,
-        width: 200,
-        backgroundColor: "grey"
-    }
+	container: {
+		flex: 1,
+	},
+	input: {
+		height: 100,
+		width: 200,
+		backgroundColor: 'grey',
+	},
 });
 
 export default NotificationsScreen;
