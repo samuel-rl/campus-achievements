@@ -131,7 +131,8 @@ class Fire {
 					etudiant: isStudent,
 					annee: annee,
 					filliere: filliere,
-					rewards: initialRewards,
+                    rewards: initialRewards,
+                    notifications : []
 				});
 
 				var urls = [
@@ -209,7 +210,15 @@ class Fire {
 				rej(error);
 			}
 		});
-	};
+    };
+    
+    addNotificationById = async (uid, notification) => {
+        console.log('addNotificationById...');
+        let db = this.firestore.collection('users').doc(uid);
+		await db.update({
+			notifications: firebase.firestore.FieldValue.arrayUnion(notification),
+		});
+    }
 
 	/* ******************************
                  check
@@ -356,7 +365,25 @@ class Fire {
 				rej(error);
 			}
 		});
-	};
+    };
+    
+    getMyNotifications = async () => {
+        console.log('getMyCoursesInformationsByUID...');
+        return new Promise(async (res, rej) => {
+            try {
+                let db = this.firestore.collection('users').doc(this.uid);
+                await db.get().then(querySnapshot => {
+                    const data = querySnapshot.data();
+                    data.notifications.map(notif => {
+						notif.date = new Date(notif.date.seconds * 1000);
+					});
+					res(data.notifications);
+				});
+			} catch (error) {
+				rej(error);
+			}
+        })
+    }
 
 	//function qui déconnecte l'utilisateur
 	signOut = () => {
