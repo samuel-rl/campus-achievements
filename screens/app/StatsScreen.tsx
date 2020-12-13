@@ -23,7 +23,7 @@ const StatsScreen = () => {
                             },
                         ]}
                     >
-                        <Text>{ratioPercentage}</Text>
+                        <Text style={styles.ratioStyle}>{ratioPercentage}</Text>
                     </View>
                 </View>
             </View>
@@ -31,6 +31,7 @@ const StatsScreen = () => {
 		};
 		
 		const [users, setusers] = useState<any>(null);
+		const [NbUsers, setNbUsers] = useState(0);
 		const [NbStudents, setNbStudents] = useState<any>(null);
 		const [UsersCourses, setUsersCourses] = useState<any>(null);
 		const [NbStudentsInMoreThan3Courses, setNbStudentsInMoreThan3Courses] = useState(0);
@@ -40,56 +41,74 @@ const StatsScreen = () => {
 			Fire.shared.getAllUsers().then((result)=>{
 				setusers(result);
 				// console.log(users);
-				// setNbStudents(nbStudentsInMoreThan3Courses());
-				// setNbStudents(studentRatio());
+				setNbUsers(countUsersNumber());
 				setStudentRatio(studentRatio());
 				setNbStudentsInMoreThan3Courses(nbStudentsInMoreThan3Courses());
 			});
+			// return () => {
 
-			// Fire.shared.getAllStudentsCourses().then((result)=>{
-			// 	setUsersCourses(result);
-			// 	console.log("UsersCourses : " + UsersCourses);
-			// 	// var nbStudents = () => {}
-			// 	// setNbStudentsInMoreThan3Courses(nbStudents);
-			// });
-
-			// Fire.shared.getNbStudents().then((result)=>{
-			// 	setNbStudents(result);
-
-			// });
+			// }
 
 		}, []);
+
+		/**
+		 * Compte le nombre d'utilisateurs et range le résultat dans un use state, que
+		 * ce soit des étudiants ou professeurs.
+		 */
+		const countUsersNumber = () => {
+			let res = 0;
+			users.forEach(user => {
+				res++;
+			});
+			console.log("countUsersNumber : " + res);
+			return res;
+		}
 
 		/**
 		 * Compte le nombre d'étudiants inscrits à au moins 3 cours.
 		 */
 		const nbStudentsInMoreThan3Courses = () => {
-			let res = 40;
+			let curNbStudents = 0;
 			users.forEach(user => {
 				if (user.etudiant == true) {
 					console.log("user cours : "+user.cours);
+
+
+					//calcul du nombre de cours par étudiant
+					//================
+					var coursSize = 0;
+					if (typeof(user.cours) == "undefined") {
+						coursSize = 0;
+					}
+					else {
+						coursSize = Object.keys(user.cours).length;
+					}
+					console.log("Cours Size : "+coursSize);
+					//================
+
+
+					if (coursSize >= 3) {
+						curNbStudents++;
+					}
 				}
 			});
-			console.log("nb Students + de 3 cours : " + res);
-			return res;
+			console.log("nb Students + de 3 cours : " + curNbStudents);
+			let ratioRes = Math.ceil(curNbStudents/NbUsers * 100);
+			return ratioRes;
 		}
+
 
 		/**
 		 * Compte la proportion d'étudiants par rapport aux professeurs
 		 */
 		const studentRatio = () => {
 			let nbEtudiant = 0;
-			let nbAll = 0;
 			users.forEach(user => {
 				if (user.etudiant == true) {
 					nbEtudiant++;
-					nbAll++;
-				}
-				else{
-					nbAll++;
 				}
 			});
-			let res = Math.ceil(nbEtudiant/nbAll * 100);
+			let res = Math.ceil(nbEtudiant/NbUsers * 100);
 			// console.log("%etu : " + res);
 			return res;
 		}
@@ -138,9 +157,7 @@ const styles = StyleSheet.create({
         alignSelf: "flex-start",
         backgroundColor: colors.foam,
         // width: "80%",
-        //   borderBottomEndRadius:8,
-				borderBottomStartRadius: 8,
-				borderTopStartRadius:8,
+				borderRadius:8,
         paddingLeft: 5,
         // flexWrap: "nowrap",
         // overflow: "hidden",
@@ -152,7 +169,9 @@ const styles = StyleSheet.create({
         // borderBottomEndRadius: 8,
 				// borderBottomStartRadius: 8,
 				borderRadius: 8,
-    },
+		},
+		ratioStyle:{
+		},
 });
 
 export default StatsScreen;
