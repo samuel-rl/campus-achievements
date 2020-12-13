@@ -212,8 +212,8 @@ class Fire {
 		});
     };
     
-    addNotificationById = async (uid, notification) => {
-        console.log('addNotificationById...');
+    addNotificationToUserByUid = async (uid, notification) => {
+        console.log('addNotificationToUserByUid...');
         let db = this.firestore.collection('users').doc(uid);
 		await db.update({
 			notifications: firebase.firestore.FieldValue.arrayUnion(notification),
@@ -650,7 +650,9 @@ class Fire {
         let db = this.firestore.collection('users').doc(this.uid);
 		await db.set({
 			notifications: []
-		});
+		}, {
+            merge: true
+        });
     }
 
 	/* ******************************

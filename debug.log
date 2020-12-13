@@ -5,3 +5,5 @@
 [1128/134922.815:ERROR:directory_reader_win.cc(43)] FindFirstFile: Le chemin d’accès spécifié est introuvable. (0x3)
 [1205/112425.348:ERROR:directory_reader_win.cc(43)] FindFirstFile: Le chemin d’accès spécifié est introuvable. (0x3)
 [1207/104540.069:ERROR:directory_reader_win.cc(43)] FindFirstFile: Le chemin d’accès spécifié est introuvable. (0x3)
+[1213/105216.947:ERROR:directory_reader_win.cc(43)] FindFirstFile: Le chemin d’accès spécifié est introuvable. (0x3)
+[1213/105217.045:ERROR:filesystem_win.cc(129)] GetFileAttributes C:\Users\samue\AppData\Local\BraveSoftware\Brave-Browser\User Data\Crashpad\attachments\0097f234-bd86-4e40-a510-90ff6b1d1bb1: Le chemin d’accès spécifié est introuvable. (0x3)

@@ -1,7 +1,7 @@
 import React, { createRef } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Image, FlatList } from 'react-native';
 import { colors } from '../../config/constants';
-import { BasicUserInfos, Course } from '../../config/constantType';
+import { BasicUserInfos, Course, Notification, TypeNotification} from '../../config/constantType';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import Fire from '../../config/Fire';
 import AlertPro from 'react-native-alert-pro';
@@ -27,9 +27,18 @@ const SearchCoursesItem = ({ item, navigation, deleteItemOnParent }: SearchCours
 			displayName: Fire.shared.displayName,
 			token: Fire.shared.token,
 		};
-		deleteItemOnParent(item);
+        deleteItemOnParent(item);
+        const notification:Notification = {
+            date: new Date(),
+            from: Fire.shared.photoURL ? Fire.shared.photoURL : '',
+            message: Fire.shared.displayName ? Fire.shared.displayName + " est entré dans le cours " + item.nom : ''  + " est entré dans le cours " + item.nom,
+            type: TypeNotification.JOINCOURSE
+        }
 		Fire.shared.student
 			? Fire.shared.enterInCourseStudent(userAdd, item).then(() => {
+                    item.enseignants.map((enseignant) => {
+                        Fire.shared.addNotificationToUserByUid(enseignant.uid, notification)
+                    })
 					navigation.goBack();
 			  })
 			: Fire.shared.enterInCourseTeacher(userAdd, item).then(() => {
