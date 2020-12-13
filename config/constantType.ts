@@ -32,8 +32,21 @@ export interface User {
     etudiant: boolean;
     token: string;
     avatar: string;
+    notifications: Notification[];
 }
 
+export interface Notification {
+    type: TypeNotification;
+    message : string;
+    date: Date;
+    from : string; 
+}
+
+export enum TypeNotification {
+    MESSAGE = "Nouveau message",
+    JOINCOURSE = "Nouveau membre",
+    SKILLDONE = "Skill acquis"
+}
 export interface BasicUserInfos {
     uid: string | null | undefined;
     displayName: string | null | undefined;

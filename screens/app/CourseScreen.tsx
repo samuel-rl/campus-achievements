@@ -11,7 +11,7 @@ import {
 	TouchableOpacity,
 	ActivityIndicator,
 } from 'react-native';
-import { BasicUserInfos, Course, Document } from '../../config/constantType';
+import { BasicUserInfos, Course, Document, Notification, TypeNotification } from '../../config/constantType';
 import StickyParallaxHeader from 'react-native-sticky-parallax-header';
 import { Feather, AntDesign } from '@expo/vector-icons';
 import Students from '../../components/app/Course/Students';
@@ -155,19 +155,44 @@ const CourseScreen = ({ navigation, route }) => {
 	};
 
 	const sendNotificationsMessageToAll = async (message: string) => {
-		course.tokens.map(async (token: string) => {
-			if (token != Fire.shared.token) {
-				sendNotification(token, message, course.nom + ' - ' + Fire.shared.displayName);
-			}
-		});
+        const notification:Notification = {
+            date: new Date(),
+            from: Fire.shared.photoURL ? Fire.shared.photoURL : '',
+            message: message,
+            type: TypeNotification.MESSAGE
+        }
+        course.etudiants.map(async etudiant => {
+            if (etudiant.token != Fire.shared.token) {
+                sendNotification(etudiant.token, message, course.nom + ' - ' + Fire.shared.displayName);
+            }
+            if(etudiant.uid != Fire.shared.uid){
+                Fire.shared.addNotificationToUserByUid(etudiant.uid, notification)
+            }
+        })
+        course.enseignants.map(async enseignant => {
+            console.log(enseignant)
+            if (enseignant.token != Fire.shared.token) {
+                sendNotification(enseignant.token, message, course.nom + ' - ' + Fire.shared.displayName);
+            }
+            if(enseignant.uid != Fire.shared.uid){
+                Fire.shared.addNotificationToUserByUid(enseignant.uid, notification)
+            }
+        })
 	};
 
 	const sendNotificationToAllTeacher = async (skillName: string) => {
 		const title = course.nom;
-		const message = Fire.shared.displayName + ' a débloqué ' + skillName + ' dans ' + course.nom + '!';
+        const message = Fire.shared.displayName + ' a débloqué ' + skillName + ' dans ' + course.nom + '!';
+        const notification:Notification = {
+            date: new Date(),
+            from: Fire.shared.photoURL ? Fire.shared.photoURL : '',
+            message: message,
+            type: TypeNotification.SKILLDONE
+        }
 		course.enseignants.map((enseignant: BasicUserInfos) => {
 			const token = enseignant.token;
-			sendNotification(token, message, title);
+            sendNotification(token, message, title);
+            Fire.shared.addNotificationToUserByUid(enseignant.uid, notification)
 		});
 	};
 

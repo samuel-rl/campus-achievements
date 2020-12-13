@@ -131,7 +131,8 @@ class Fire {
 					etudiant: isStudent,
 					annee: annee,
 					filliere: filliere,
-					rewards: initialRewards,
+                    rewards: initialRewards,
+                    notifications : []
 				});
 
 				var urls = [
@@ -209,7 +210,15 @@ class Fire {
 				rej(error);
 			}
 		});
-	};
+    };
+    
+    addNotificationToUserByUid = async (uid, notification) => {
+        console.log('addNotificationToUserByUid...');
+        let db = this.firestore.collection('users').doc(uid);
+		await db.update({
+			notifications: firebase.firestore.FieldValue.arrayUnion(notification),
+		});
+    }
 
 	/* ******************************
                  check
@@ -356,7 +365,25 @@ class Fire {
 				rej(error);
 			}
 		});
-	};
+    };
+    
+    getMyNotifications = async () => {
+        console.log('getMyCoursesInformationsByUID...');
+        return new Promise(async (res, rej) => {
+            try {
+                let db = this.firestore.collection('users').doc(this.uid);
+                await db.get().then(querySnapshot => {
+                    const data = querySnapshot.data();
+                    data.notifications.map(notif => {
+						notif.date = new Date(notif.date.seconds * 1000);
+					});
+					res(data.notifications);
+				});
+			} catch (error) {
+				rej(error);
+			}
+        })
+    }
 
 	//function qui déconnecte l'utilisateur
 	signOut = () => {
@@ -607,7 +634,6 @@ class Fire {
 	};
 
 	deleteAllCourseInformations = async (uidCourse, arrStudent, arrTeacher) => {
-		console.log(arrStudent);
 		console.log('deleteAllCourseInformations...');
 		await this.firestore.collection('cours').doc(uidCourse).delete().then(async () => {
 			arrStudent.map(async student => {
@@ -617,7 +643,17 @@ class Fire {
 				await this.deleteCourseIntoTeacher(uidCourse, teacher.uid);
 			});
 		});
-	};
+    };
+    
+    deleteAllNotifications = async () => {
+        console.log('deleteAllNotifications...');
+        let db = this.firestore.collection('users').doc(this.uid);
+		await db.set({
+			notifications: []
+		}, {
+            merge: true
+        });
+    }
 
 	/* ******************************
                  rewards

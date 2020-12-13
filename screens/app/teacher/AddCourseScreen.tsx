@@ -1,14 +1,5 @@
 import React, { createRef, useEffect, useRef, useState } from 'react';
-import {
-	StyleSheet,
-	View,
-	ScrollView,
-	Text,
-	TouchableOpacity,
-	Switch,
-	Animated,
-	StatusBar,
-} from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Switch, Animated, StatusBar } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
@@ -22,7 +13,7 @@ import Toast from 'react-native-toast-message';
 import CustomToastQuizz from '../../../components/app/Course/Quizz/CustomToastQuizz';
 
 const toastConfig = {
-    courseNameAlreadyUse: (internalState) => <CustomToastQuizz internalState={internalState} status={'bad'}></CustomToastQuizz>,
+	badToast: (internalState) => <CustomToastQuizz internalState={internalState} status={'bad'}></CustomToastQuizz>,
 };
 
 const AddCourseScreen = ({ navigation, route }: any) => {
@@ -35,9 +26,9 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 	const [animationBg, setanimationBg] = useState(new Animated.Value(0));
 	const [backgroundColor, setBackgroundColor] = useState(courseColors[0]);
 
-    const scrollViewRef = useRef<ScrollView | null>(null);
-    
-    const toast = createRef<any>();
+	const scrollViewRef = useRef<ScrollView | null>(null);
+
+	const toast = createRef<any>();
 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
@@ -53,8 +44,8 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 								nom: nom,
 								skills: skills,
 								messages: route.params.messages,
-                                tokens: route.params.tokens,
-                                documents: [],
+								tokens: route.params.tokens,
+								documents: [],
 							};
 							Fire.shared.updateCourseByUID(course, route.params.uid).then(() => {
 								navigation.goBack();
@@ -73,21 +64,74 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 								nom: nom,
 								skills: skills,
 								messages: [],
-                                tokens: [],
-                                documents: [],
+								tokens: [],
+								documents: [],
 							};
-							Fire.shared.addCourse(course).then(canUse => {
-								if(canUse == false){
-                                    toast.current.show({
-                                        type: 'courseNameAlreadyUse',
-                                        position: 'bottom',
-                                        text1: 'Attention',
-                                        text2: "Le nom de ce cours est déja pris...",
-                                    });
-                                }else{
-                                    navigation.navigate('Home');
-                                }
+							let canContinu = true;
+							let quizzEmpty = false;
+							let fieldEmpty = false;
+							if (course.nom == '') {
+								fieldEmpty = true;
+							}
+							course.skills.map((skill: Skill) => {
+								if (skill.nom == '') {
+                                    canContinu = false;
+									fieldEmpty = true;
+								}
+								if (skill.quizz != null) {
+									if (skill.quizz.length == 0) {
+										canContinu = false;
+										quizzEmpty = true;
+									} else {
+										skill.quizz.map((quiz) => {
+											if (quiz.question == '') {
+                                                canContinu = false;
+												fieldEmpty = true;
+											}
+											if (quiz.solution == '') {
+                                                canContinu = false;
+												fieldEmpty = true;
+                                            }
+											quiz.propositions.map((proposition) => {
+												if (proposition == '') {
+                                                    canContinu = false;
+													fieldEmpty = true;
+												}
+											});
+										});
+									}
+								}
 							});
+							if (canContinu) {
+								Fire.shared.addCourse(course).then((canUse) => {
+									if (canUse == false) {
+										toast.current.show({
+											type: 'badToast',
+											position: 'bottom',
+											text1: 'Attention',
+											text2: 'Le nom de ce cours est déja pris...',
+										});
+									} else {
+										navigation.navigate('Home');
+									}
+								});
+							} else {
+								if (quizzEmpty != false) {
+									toast.current.show({
+										type: 'badToast',
+										position: 'bottom',
+										text1: 'Attention',
+										text2: 'les skills avec quiz doivent avoir au moins un quiz...',
+									});
+								} else if (fieldEmpty != false) {
+									toast.current.show({
+										type: 'badToast',
+										position: 'bottom',
+										text1: 'Attention, un des champs est vide...',
+										text2: 'Vous devez tout remplir.',
+									});
+								}
+							}
 						}
 					}}
 				>
@@ -112,32 +156,32 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 		if (route.params) {
 			const c: Course = route.params;
 			setNom(c.nom);
-            setSkills(c.skills);
-            setColor(c.color)
-            setBackgroundColor(c.color)
+			setSkills(c.skills);
+			setColor(c.color);
+			setBackgroundColor(c.color);
 			setAnimation(new Array(c.skills.length).fill(new Animated.Value(1)));
 		} else {
 		}
 	}, [route]);
 
-	const handleAnimation = () => {
-		setBackgroundColor(color);
+	let boxInterpolation = animationBg.interpolate({
+		inputRange: [0, 1],
+		outputRange: [backgroundColor, color],
+	});
+
+	let animatedStyle = {
+		backgroundColor: boxInterpolation,
+	};
+
+	const handleAnimation = (colorValue: string) => {
 		Animated.timing(animationBg, {
 			toValue: 1,
 			duration: 1000,
 			useNativeDriver: false,
 		}).start(() => {
 			setanimationBg(new Animated.Value(0));
+			setBackgroundColor(colorValue);
 		});
-	};
-
-	const boxInterpolation = animationBg.interpolate({
-		inputRange: [0, 1],
-		outputRange: [backgroundColor, color],
-	});
-
-	const animatedStyle = {
-		backgroundColor: boxInterpolation,
 	};
 
 	return (
@@ -167,7 +211,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 								mode="outlined"
 								label="Nom de la matière"
 								value={nom}
-								onChangeText={(text) => setNom(text)}
+								onChangeText={(text) => setNom(text.trim())}
 							/>
 						}
 					/>
@@ -179,7 +223,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 							<ColorPalette
 								onChange={(colorValue: string) => {
 									setColor(colorValue);
-									handleAnimation()
+									handleAnimation(colorValue);
 								}}
 								defaultColor={route.params ? route.params.color : courseColors[0]}
 								colors={courseColors}
@@ -217,7 +261,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 											value={skills[index].nom}
 											onChangeText={(text) => {
 												let newArr = [...skills];
-												newArr[index].nom = text;
+												newArr[index].nom = text.trim();
 												setSkills(newArr);
 											}}
 										/>
@@ -283,7 +327,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 																	);
 																	let temp: Skill = skills[index];
 																	if (temp.quizz) {
-																		temp.quizz[indexQuestion].question = text;
+																		temp.quizz[indexQuestion].question = text.trim();
 																	}
 																	tempArrSkill = [...tempArrSkill, temp];
 																	setSkills(tempArrSkill);
@@ -327,7 +371,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 																	if (temp.quizz) {
 																		temp.quizz[
 																			indexQuestion
-																		].propositions[0] = text;
+																		].propositions[0] = text.trim();
 																	}
 																	tempArrSkill = [...tempArrSkill, temp];
 																	setSkills(tempArrSkill);
@@ -373,7 +417,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 																	if (temp.quizz) {
 																		temp.quizz[
 																			indexQuestion
-																		].propositions[2] = text;
+																		].propositions[2] = text.trim();
 																	}
 																	tempArrSkill = [...tempArrSkill, temp];
 																	setSkills(tempArrSkill);
@@ -429,7 +473,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 										setAnimation([...animation, newAnimation]);
 										Animated.timing(newAnimation, {
 											toValue: 1,
-											duration: 400,
+											duration: 600,
 											useNativeDriver: true,
 										}).start();
 									}}
@@ -444,7 +488,7 @@ const AddCourseScreen = ({ navigation, route }: any) => {
 				</ScrollView>
 			</Animated.View>
 			<StatusBar barStyle="dark-content" backgroundColor={color} />
-            <Toast ref={toast} config={toastConfig} />
+			<Toast ref={toast} config={toastConfig} />
 		</>
 	);
 };

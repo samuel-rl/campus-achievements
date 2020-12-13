@@ -1,54 +1,72 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Button, TextInput } from 'react-native';
+import { useHeaderHeight } from '@react-navigation/stack';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { Notification } from '../../config/constantType';
+import { MaterialIcons } from '@expo/vector-icons';
+
+import { FlatList } from 'react-native-gesture-handler';
+
+import NotificationItem from '../../components/app/Notification/NotificationItem';
 
 import Fire from '../../config/Fire';
+import { ActivityIndicator } from 'react-native-paper';
 
+const NotificationsScreen = ({ navigation }: any) => {
+	const headerHeight = useHeaderHeight();
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [loading, setLoading] = useState(false);
 
-const NotificationsScreen = () => {
+	React.useLayoutEffect(() => {
+		navigation.setOptions({
+			headerRight: () => (
+				<TouchableOpacity style={{ marginRight: 10 }} onPress={() => {
+                    setLoading(true)
+                    Fire.shared.deleteAllNotifications().then(() => {
+                        setNotifications([]);
+                        setLoading(false)
+                    })
+                }}>
+					{loading ? <ActivityIndicator /> : <MaterialIcons name="delete-sweep" size={33} color="black" />}
+				</TouchableOpacity>
+			),
+		});
+	}, [navigation]);
 
-    const [messageContent, setMessageContent] = useState('');
-    
-    const sendNotification = async (token:any) => {
-        const message = {
-          to: token,
-          sound: 'default',
-          title: 'Nouveau message',
-          body: messageContent,
-          data: { data: 'goes here' },
-        };
-      
-        await fetch('https://exp.host/--/api/v2/push/send', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Accept-encoding': 'gzip, deflate',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(message),
-        });
-      }
+	useEffect(() => {
+		Fire.shared.getMyNotifications().then((notifs: Notification[]) => {
+			notifs.sort(function (a, b) {
+				var c: any = new Date(a.date);
+				var d: any = new Date(b.date);
+				return d - c;
+			});
+			setNotifications(notifs);
+		});
+	}, []);
 
-
-  return (
-    <View style={styles.container}>
-        <TextInput  style={styles.input} placeholder="message..." value={messageContent} onChangeText={setMessageContent}/>
-        <Button title="envoyer" onPress={() => sendNotification('ExponentPushToken[XUjR3rCIeJjnpUoLFIexoN]')}></Button>
-        <Button title="log" onPress={() => {}}></Button>
-    </View>
-  );
+	return (
+		<View style={[styles.container, { marginTop: headerHeight }]}>
+            {notifications.length == 0 ? <Text style={{textAlign:"center", marginTop: 100}}>Vous avez aucune notifications</Text>: null}
+			<FlatList
+				data={notifications}
+				keyExtractor={(item, index) => index.toString()}
+				renderItem={({ item, index }) => (
+					<NotificationItem
+						onSwipe={() => {
+                            console.log(index);
+                            //TODO delete
+						}}
+						{...{ item }}
+					/>
+				)}
+			/>
+		</View>
+	);
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    input: {
-        height: 100,
-        width: 200,
-        backgroundColor: "grey"
-    }
+	container: {
+		flex: 1,
+	}
 });
 
 export default NotificationsScreen;
