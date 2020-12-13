@@ -634,7 +634,6 @@ class Fire {
 	};
 
 	deleteAllCourseInformations = async (uidCourse, arrStudent, arrTeacher) => {
-		console.log(arrStudent);
 		console.log('deleteAllCourseInformations...');
 		await this.firestore.collection('cours').doc(uidCourse).delete().then(async () => {
 			arrStudent.map(async student => {
@@ -644,7 +643,15 @@ class Fire {
 				await this.deleteCourseIntoTeacher(uidCourse, teacher.uid);
 			});
 		});
-	};
+    };
+    
+    deleteAllNotifications = async () => {
+        console.log('deleteAllNotifications...');
+        let db = this.firestore.collection('users').doc(this.uid);
+		await db.set({
+			notifications: []
+		});
+    }
 
 	/* ******************************
                  rewards
