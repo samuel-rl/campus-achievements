@@ -1,7 +1,8 @@
 import React, { createRef } from 'react';
-import { StyleSheet, View, Image, TouchableOpacity, Text, FlatList } from 'react-native';
+import { StyleSheet, View, Image, TouchableOpacity, Text, FlatList, ToastAndroid } from 'react-native';
 import { Course } from '../../../config/constantType';
 import { SimpleLineIcons } from '@expo/vector-icons'; 
+import Fire from '../../../config/Fire';
 
 export interface CoursesItemProps {
     item: Course;
@@ -25,7 +26,9 @@ const CoursesItem = ({ item, navigation}:CoursesItemProps) => {
 
   return (
     <TouchableOpacity style={styles.container} activeOpacity={1} onPress={()=> {
-        openCourse()
+        Fire.shared.connectedToInternet 
+        ? openCourse()
+        : ToastAndroid.show("Aucune connexion", 1000);
     }}>
         <View style={styles.containerColor}>
             <View style={[styles.color, {backgroundColor:item.color}]}></View>

@@ -10,7 +10,7 @@ const initialRewards: Reward[] = [
 	{
 		id: 2,
 		src: require('../assets/rewards/2.png'),
-		name: 'Notification',
+		name: 'Notifications',
 		func: '() => {}',
 		done: false,
 	},
@@ -24,9 +24,8 @@ const initialRewards: Reward[] = [
 	{
 		id: 4,
 		src: require('../assets/rewards/4.png'),
-		name: 'Celebrer',
+		name: 'Cheeeeese !',
 		func: '() => {}',
-
 		done: false,
 	},
 	{
@@ -39,7 +38,7 @@ const initialRewards: Reward[] = [
 	{
 		id: 6,
 		src: require('../assets/rewards/6.png'),
-		name: 'Celebrer',
+		name: 'Social!',
 		func: '() => {}',
 		done: false,
 	},
@@ -53,28 +52,28 @@ const initialRewards: Reward[] = [
 	{
 		id: 8,
 		src: require('../assets/rewards/8.png'),
-		name: 'Bon début',
+		name: 'soldat des quiz',
 		func: '() => {}',
 		done: false,
 	},
 	{
 		id: 9,
 		src: require('../assets/rewards/9.png'),
-		name: 'Celebrer',
+		name: 'Boss des quiz',
 		func: '() => {}',
 		done: false,
 	},
 	{
 		id: 10,
 		src: require('../assets/rewards/10.png'),
-		name: 'Celebrer',
+		name: 'Maitre des quiz',
 		func: '() => {}',
 		done: false,
 	},
 	{
 		id: 11,
 		src: require('../assets/rewards/11.png'),
-		name: 'Celebrer',
+		name: 'Dans le mille, un quiz sans faute',
 		func: '() => {}',
 		done: false,
 	},
@@ -116,14 +115,14 @@ const initialRewards: Reward[] = [
 	{
 		id: 17,
 		src: require('../assets/rewards/17.png'),
-		name: 'Celebrer',
+		name: "l'ami des PDF",
 		func: '() => {}',
 		done: false,
 	},
 	{
 		id: 18,
 		src: require('../assets/rewards/18.png'),
-		name: 'Celebrer',
+		name: 'Stonks',
 		func: '() => {}',
 		done: false,
 	},
