@@ -153,7 +153,7 @@ const RegisterScreen = ({ navigation, route }: any) => {
 			<Input
 				style={styles.input}
 				placeholder={'Mot de Passe'}
-				//secureTextEntry
+				secureTextEntry
 				value={password}
 				onChangeText={setPassword}
 			/>
