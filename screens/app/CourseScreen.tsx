@@ -23,6 +23,7 @@ import Toast from 'react-native-toast-message';
 import CustomToastCourse from '../../components/app/Course/components/CustomToastCourse';
 import * as DocumentPicker from 'expo-document-picker';
 import ListDocument from '../../components/app/Course/ListDocument';
+import AgendaCourse from '../../components/app/Course/AgendaCourse';
 
 export interface CourseScreenProps {}
 
@@ -51,9 +52,9 @@ const CourseScreen = ({ navigation, route }) => {
 	);
 
 	useEffect(() => {
-		const unsubscribe = navigation.addListener('focus', () => {
+        const unsubscribe = navigation.addListener('focus', () => {
 			Fire.shared.getCoursesByUID(course.uid).then((c: Course) => {
-				setCourse(c);
+                setCourse(c);
 			});
 		});
 		return unsubscribe;
@@ -305,8 +306,8 @@ const CourseScreen = ({ navigation, route }) => {
 				scrollEvent={Animated.event([{ nativeEvent: { contentOffset: { y: scroll } } }])}
 				tabs={[
 					{
-						title: 'Cours',
-						content: renderContent('Infos sur le cours'),
+						title: 'Emploi du temps',
+						content: <AgendaCourse color={course.color}/>,
 					},
 					{
 						title: 'Compétences',

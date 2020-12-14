@@ -105,7 +105,6 @@ const StatsScreen = () => {
                 var dktq;
                 var dsta;
                 var dsts;
-                var tsk
                 if(dataSkillsTempQuiz != 0){
                     dktq = (dataSkillsTempQuiz / totalSkillDone)
                 }else{
@@ -128,7 +127,7 @@ const StatsScreen = () => {
 
 
 				var dataSkillsTemp: dataSkillsInterface = {
-					labels: ['Quiz', 'AutoEval', 'SoftSkill'],
+					labels: ['Quiz', 'Auto', 'SoftSkill'],
 					data: [dktq, dsta, dsts],
 				};
 				setDataSkillProgressChart(dataSkillsTemp);
@@ -163,7 +162,7 @@ const StatsScreen = () => {
 				myCours.map((cours: Course) => {
 					cours.messages.map((message: IMessage) => {
 						var date = new Date(message.createdAt);
-						var month = date.getMonth();
+                        var month = date.getMonth() + 1;
 						if (message.user._id == Fire.shared.uid) {
 							switch (month) {
 								case 1:
@@ -381,7 +380,8 @@ const StatsScreen = () => {
 		backgroundGradientTo: '#182e83',
 		backgroundGradientToOpacity: 0.9,
 		color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-		barPercentage: 0.5,
+        barPercentage: 0.5,
+
 	};
 
 	const chartMessagesConfig = {
@@ -410,9 +410,6 @@ const StatsScreen = () => {
         backgroundGradientTo: '#6fac66',
 		decimalPlaces: 2,
 		color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-		style: {
-			borderRadius: 16,
-		},
 	};
 
 	return (
@@ -421,25 +418,7 @@ const StatsScreen = () => {
 				<ActivityIndicator />
 			) : (
 				<ScrollView style={{ marginTop: headerHeight }} showsVerticalScrollIndicator={false}>
-					<View style={{ marginVertical: 15 }}>
-						<Text>Skills réussi par type:</Text>
-						<ProgressChart
-							accessor=""
-							backgroundColor="red"
-							paddingLeft="0"
-							data={dataSkillProgressChart}
-							width={widthCard}
-							height={220}
-							strokeWidth={14}
-							radius={32}
-							chartConfig={chartSkillsConfig}
-							hideLegend={false}
-							style={{
-								borderRadius: 16,
-							}}
-						/>
-					</View>
-
+					
 					<View style={{ marginVertical: 15 }}>
 						<Text>Messages envoyés par vous dans vos cours:</Text>
 						<LineChart
@@ -469,7 +448,27 @@ const StatsScreen = () => {
 					</View>
 
                     <View style={{ marginVertical: 15 }}>
-						<Text>Documents dans les cours:</Text>
+						<Text>Skills réussi par type:</Text>
+						<ProgressChart
+							accessor=""
+							backgroundColor="none"
+							paddingLeft="100"
+							data={dataSkillProgressChart}
+							width={widthCard}
+							height={220}
+							strokeWidth={16}
+							radius={22}
+							chartConfig={chartSkillsConfig}
+							hideLegend={false}
+							style={{
+                                borderRadius: 16,
+                            }}
+
+						/>
+					</View>
+
+                    <View style={{ marginVertical: 15 }}>
+						<Text>Nombre de documents dans les cours:</Text>
 						<PieChart
 							data={dataDocumentPieChart}
 							width={widthCard}
