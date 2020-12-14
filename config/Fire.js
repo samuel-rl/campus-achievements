@@ -120,7 +120,11 @@ class Fire {
 				});
 
 				//on rajoute dans la collection Users (l'ID sera son UID)
-				let db = this.firestore.collection('users').doc(this.uid);
+                let db = this.firestore.collection('users').doc(this.uid);
+                
+                if (typeof avatar == 'string') {
+                    initialRewards[3].done = true;
+                }
 
 				//On met dans son document ses informations
 				db.set({
@@ -419,7 +423,27 @@ class Fire {
 				{ merge: true }
 			);
 		});
-	};
+    };
+    
+    updateRewardByName = async (rewardName) => {
+        console.log("updateRewardByName...");
+        let dbUser = this.firestore.collection('users').doc(this.uid);
+        dbUser.get().then(async querySnapshot => {
+            const data = querySnapshot.data();
+            let rewards = data.rewards;
+            rewards.map(reward => {
+                if(reward.name == rewardName){
+                    reward.done = true
+                }
+            })
+            await dbUser.set(
+				{
+					rewards: rewards,
+				},
+				{ merge: true }
+			);
+        })
+    }
 
 	enterInCourseStudent = async (userAdd, course) => {
 		console.log('enterInCourseStudent');

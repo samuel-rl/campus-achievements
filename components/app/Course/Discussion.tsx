@@ -4,6 +4,8 @@ import { Feather } from '@expo/vector-icons';
 import { Bubble, GiftedChat, IMessage, Message, Send } from 'react-native-gifted-chat';
 import Fire from '../../../config/Fire';
 import 'dayjs/locale/fr';
+import { getDataRewards, storeDataRewards } from '../../../config/localDatabase';
+import { Reward } from '../../../config/constantType';
 
 export interface DiscussionProps {
 	messagesProps: IMessage[];
@@ -28,6 +30,14 @@ const Discussion = ({ messagesProps, uidCourse, onSendParent }: DiscussionProps)
         setMessages((previousMessages) => GiftedChat.append(previousMessages, message));
         Fire.shared.sendMessage(message[0], uidCourse);
         onSendParent(message[0].text)
+        getDataRewards().then((rewards: Reward[]) => {
+            console.log(rewards)
+            if(rewards[5].done != true){
+                rewards[5].done = true;
+                storeDataRewards(rewards)
+                Fire.shared.updateRewardByName(rewards[5].name)
+            }
+        });
 	};
 
 	const renderSendButton = (props) => {

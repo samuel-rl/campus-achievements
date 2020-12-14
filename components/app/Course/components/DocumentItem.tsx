@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text, Modal } from 'react-native';
-import { Document } from '../../../../config/constantType';
+import { Document, Reward } from '../../../../config/constantType';
 import { FontAwesome } from '@expo/vector-icons';
 import PDFReader from 'rn-pdf-reader-js';
 import { Feather } from '@expo/vector-icons';
+import { getDataRewards, storeDataRewards } from '../../../../config/localDatabase';
+import Fire from '../../../../config/Fire';
 
 export interface DocumentItemProps {
 	document: Document;
@@ -16,9 +18,12 @@ const DocumentItem = ({ document }: DocumentItemProps) => {
 			{open ? (
 				<Modal animationType={'slide'}>
 					<View style={{ height: 50, backgroundColor: '#24292d' }}>
-						<TouchableOpacity style={{padding: 8}} onPress={() => {
-                            setOpen(false)
-                        }}>
+						<TouchableOpacity
+							style={{ padding: 8 }}
+							onPress={() => {
+								setOpen(false);
+							}}
+						>
 							<Feather name="arrow-left" size={34} color="#fff" />
 						</TouchableOpacity>
 					</View>
@@ -35,6 +40,11 @@ const DocumentItem = ({ document }: DocumentItemProps) => {
 					activeOpacity={1}
 					onPress={() => {
 						setOpen(true);
+						getDataRewards().then((rewards: Reward[]) => {
+                            rewards[16].done == true;
+                            storeDataRewards(rewards)
+                            Fire.shared.updateRewardByName(rewards[16].name)
+						});
 					}}
 				>
 					<View style={styles.content}>
