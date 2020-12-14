@@ -2,12 +2,13 @@ import React, { createRef, useEffect, useState } from 'react';
 import { StyleSheet, View, Animated, StatusBar, ScrollView, Dimensions } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
-import { CardQuizz, Quizz } from '../../config/constantType';
+import { CardQuizz, Quizz, Reward } from '../../config/constantType';
 import QuizCard from '../../components/app/Course/Quizz/QuizCard';
 import { colors } from '../../config/constants';
 import Toast from 'react-native-toast-message';
 import Fire from '../../config/Fire';
 import CustomToastQuizz from '../../components/app/Course/Quizz/CustomToastQuizz';
+import { getDataRewards, storeDataRewards } from '../../config/localDatabase';
 
 const { width } = Dimensions.get('window');
 
@@ -189,6 +190,26 @@ const QuizzScreen = ({ navigation, route }: QuizzScreenProps) => {
                                         position: 'bottom',
                                         text1: 'Hip hip hip',
                                         text2: "Houra !! Tu peux passer à la suite maintenant",
+                                    });
+                                    getDataRewards().then((rewards: Reward[]) => {
+                                        console.log(rewards)
+                                        if(rewards[7].done != true){
+                                            rewards[7].done = true;
+                                            storeDataRewards(rewards)
+                                            Fire.shared.updateRewardByName(rewards[7].name)
+                                        }else{
+                                            if(rewards[8].done != true){
+                                                rewards[8].done = true;
+                                                storeDataRewards(rewards)
+                                                Fire.shared.updateRewardByName(rewards[8].name)
+                                            }else{
+                                                if(rewards[9].done != true){
+                                                    rewards[9].done = true;
+                                                    storeDataRewards(rewards)
+                                                    Fire.shared.updateRewardByName(rewards[9].name)
+                                                }
+                                            }
+                                        }
                                     });
                                 }
                             }

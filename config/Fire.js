@@ -120,7 +120,11 @@ class Fire {
 				});
 
 				//on rajoute dans la collection Users (l'ID sera son UID)
-				let db = this.firestore.collection('users').doc(this.uid);
+                let db = this.firestore.collection('users').doc(this.uid);
+                
+                if (typeof avatar == 'string') {
+                    initialRewards[3].done = true;
+                }
 
 				//On met dans son document ses informations
 				db.set({
@@ -131,7 +135,8 @@ class Fire {
 					etudiant: isStudent,
 					annee: annee,
 					filliere: filliere,
-					rewards: initialRewards,
+                    rewards: initialRewards,
+                    notifications : []
 				});
 
 				var urls = [
@@ -209,7 +214,15 @@ class Fire {
 				rej(error);
 			}
 		});
-	};
+    };
+    
+    addNotificationToUserByUid = async (uid, notification) => {
+        console.log('addNotificationToUserByUid...');
+        let db = this.firestore.collection('users').doc(uid);
+		await db.update({
+			notifications: firebase.firestore.FieldValue.arrayUnion(notification),
+		});
+    }
 
 	/* ******************************
                  check
@@ -356,7 +369,25 @@ class Fire {
 				rej(error);
 			}
 		});
-	};
+    };
+    
+    getMyNotifications = async () => {
+        console.log('getMyCoursesInformationsByUID...');
+        return new Promise(async (res, rej) => {
+            try {
+                let db = this.firestore.collection('users').doc(this.uid);
+                await db.get().then(querySnapshot => {
+                    const data = querySnapshot.data();
+                    data.notifications.map(notif => {
+						notif.date = new Date(notif.date.seconds * 1000);
+					});
+					res(data.notifications);
+				});
+			} catch (error) {
+				rej(error);
+			}
+        })
+    }
 
 	//function qui déconnecte l'utilisateur
 	signOut = () => {
@@ -392,7 +423,27 @@ class Fire {
 				{ merge: true }
 			);
 		});
-	};
+    };
+    
+    updateRewardByName = async (rewardName) => {
+        console.log("updateRewardByName...");
+        let dbUser = this.firestore.collection('users').doc(this.uid);
+        dbUser.get().then(async querySnapshot => {
+            const data = querySnapshot.data();
+            let rewards = data.rewards;
+            rewards.map(reward => {
+                if(reward.name == rewardName){
+                    reward.done = true
+                }
+            })
+            await dbUser.set(
+				{
+					rewards: rewards,
+				},
+				{ merge: true }
+			);
+        })
+    }
 
 	enterInCourseStudent = async (userAdd, course) => {
 		console.log('enterInCourseStudent');
@@ -607,7 +658,6 @@ class Fire {
 	};
 
 	deleteAllCourseInformations = async (uidCourse, arrStudent, arrTeacher) => {
-		console.log(arrStudent);
 		console.log('deleteAllCourseInformations...');
 		await this.firestore.collection('cours').doc(uidCourse).delete().then(async () => {
 			arrStudent.map(async student => {
@@ -617,7 +667,17 @@ class Fire {
 				await this.deleteCourseIntoTeacher(uidCourse, teacher.uid);
 			});
 		});
-	};
+    };
+    
+    deleteAllNotifications = async () => {
+        console.log('deleteAllNotifications...');
+        let db = this.firestore.collection('users').doc(this.uid);
+		await db.set({
+			notifications: []
+		}, {
+            merge: true
+        });
+    }
 
 	/* ******************************
                  rewards

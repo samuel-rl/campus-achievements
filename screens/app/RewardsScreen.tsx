@@ -7,38 +7,43 @@ import initialRewards from '../../config/rewards';
 import Fire from '../../config/Fire';
 import Toast from 'react-native-toast-message';
 import CustomToast from '../../components/common/CustomToast';
+import { getDataRewards, storeDataRewards } from '../../config/localDatabase';
 
 const toastConfig = {
 	any_custom_type: (internalState) => <CustomToast internalState={internalState}></CustomToast>,
 };
 
-const RewardsScreen = () => {
+const RewardsScreen = ({navigation}) => {
 	const headerHeight = useHeaderHeight();
 	const toast = createRef<any>();
 
 	const [rewards, setRewards] = useState<Reward[]>(initialRewards);
 
 	useEffect(() => {
-		Fire.shared.getMyRewards().then((myRewards: Reward[]) => {
-			setRewards(myRewards);
+        const unsubscribe = navigation.addListener('focus', () => {
+            if(Fire.shared.connectedToInternet == true){
+                Fire.shared.getMyRewards().then((myRewards: Reward[]) => {
+                    setRewards(myRewards);
+                    storeDataRewards(myRewards);
+                });
+            }else{
+                getDataRewards().then((rewards) => {
+                    setRewards(rewards)
+                })
+            }
 		});
-	}, []);
+		return unsubscribe;
+    }, [navigation]);
+    
+    //Photo
+    //rentrer dans un cours
+    //reussir un quizz
+    //avoir tout dans un cours
+    //ouvrir un pdf
 
 	return (
 		<View style={styles.container}>
 			<ScrollView style={{ marginTop: headerHeight }}>
-				<Button
-					title="example toast"
-					onPress={() => {
-						toast.current.show({
-							type: 'any_custom_type',
-							position: 'bottom',
-							visibilityTime: 4000,
-							text1: 'Cheeeese !',
-							text2: 'Bravo. Vous avez débloqué un nouveau succès',
-						});
-					}}
-				></Button>
 				<View style={{ flexWrap: 'wrap', flexDirection: 'row', justifyContent:"center" }}>
 					{rewards.map((item: Reward, index: any) => {
 						return (

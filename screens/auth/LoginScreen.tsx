@@ -118,7 +118,8 @@ const LoginScreen = ({ navigation }: any) => {
 				etudiant: student == 1 ? true : false,
 				annee: student == 1 ? 'M1' : null,
 				filiere: student == 1 ? 'GEO' : null,
-				rewards: initialRewards,
+                rewards: initialRewards,
+                notifications: []
 			};
 			const userAdd: BasicUserInfos = {
 				uid: x,
